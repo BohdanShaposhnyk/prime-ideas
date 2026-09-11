@@ -41,6 +41,38 @@ export const candidates: CandidateMeta[] = [
     thesis:
       'A single Warsaw night compressed into four rooms — eat, play, sing, linger.',
   },
+  {
+    id: 'c03',
+    slug: 'blade-night',
+    title: 'Blade Night',
+    status: 'structure',
+    thesis:
+      'A single diagonal cut opens Prime — heat, play, stage, hush — until the night is flush with the frame.',
+  },
+  {
+    id: 'c04',
+    slug: 'film-gate',
+    title: 'Film Gate',
+    status: 'structure',
+    thesis:
+      'Prime framed like cinema stock — each gate holds a room until the night advances one frame.',
+  },
+  {
+    id: 'c05',
+    slug: 'smoke-line',
+    title: 'Smoke Line',
+    status: 'structure',
+    thesis:
+      'A single smoke horizon cuts the night — rooms drift past beneath it until Prime fills both sides of the line.',
+  },
+  {
+    id: 'c06',
+    slug: 'glass-cap',
+    title: 'Glass Cap',
+    status: 'structure',
+    thesis:
+      'The night is sealed under a glass canopy — scroll lifts the frost and the rooms bloom underneath.',
+  },
 ]
 
 export function candidateKey(c: Pick<CandidateMeta, 'id' | 'slug'>) {
