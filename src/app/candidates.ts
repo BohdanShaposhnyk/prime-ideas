@@ -73,6 +73,14 @@ export const candidates: CandidateMeta[] = [
     thesis:
       'The night is sealed under a glass canopy — scroll lifts the frost and the rooms bloom underneath.',
   },
+  {
+    id: 'c07',
+    slug: 'lodge-depth',
+    title: 'Lodge Depth',
+    status: 'structure',
+    thesis:
+      'From a Norwegian lodge window onto a cloudy street, scroll pulls you back into stone-wood greenery — then rooms shear open on diagonals with captions that migrate across the glass.',
+  },
 ]
 
 export function candidateKey(c: Pick<CandidateMeta, 'id' | 'slug'>) {
