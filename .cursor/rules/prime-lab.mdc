@@ -1,0 +1,38 @@
+---
+description: Prime Warsaw candidate lab — env, stack, goal, hard constraints
+alwaysApply: true
+---
+
+# Prime Warsaw — Candidate Lab
+
+## Goal
+
+Vision lab for inventing **isolated landing-page candidates** for Prime Warsaw (gaming, cinema, karaoke, hookah, bar, kitchen — premium lounge + cyber arena). Not a single production site yet. Brand: [@prime_warsaw](https://www.instagram.com/prime_warsaw/).
+
+## Stack
+
+`pnpm` · Vite · React 19 · TypeScript · TanStack Router · Tailwind 4 · shadcn (`src/shared/ui`) · GSAP · `@/*` → `src/*`. No backend, auth, or env files.
+
+## Layout
+
+- Hub `/` → `src/visions/hub`
+- Template → `src/visions/_template`
+- Candidates → `src/visions/candidates/<id>-<slug>` (register in `src/app/candidates.ts`)
+- Shared → `src/shared/ui`, `src/shared/bits`, `src/shared/lib`
+
+## Commands
+
+`pnpm install` · `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm build`
+
+## Hard constraints
+
+- One candidate at a time; don’t cross-edit sibling folders unless asked
+- Mobile-first; wow-effect over copy; English microcopy only
+- Motion/UI: GSAP, React Bits on demand, shadcn — no parallel frameworks
+- No new global deps without a README note; match existing tokens/fonts
+- `instagram_ref/` is moodboard only — don’t import unless curated into `src/assets` or a candidate `assets/`
+- Keep `pnpm lint` and `pnpm build` green
+
+## Docs
+
+When doing candidate work, read `docs/OVERVIEW.md`, `docs/AGENT_FLOW.md`, `docs/AGENT_ETIQUETTE.md`. Skills live in `.cursor/skills/` (M1+).
