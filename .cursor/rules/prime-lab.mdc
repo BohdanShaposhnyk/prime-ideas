@@ -29,7 +29,7 @@ Vision lab for inventing **isolated landing-page candidates** for Prime Warsaw (
 - One candidate at a time; don’t cross-edit sibling folders unless asked
 - Mobile-first; wow-effect over copy; English microcopy only
 - Motion/UI: GSAP, React Bits on demand, shadcn — no parallel frameworks
-- No new global deps without a README note; match existing tokens/fonts
+- Hub / shared chrome use shared tokens; **candidates invent type, layout, and scroll per CONCEPT** (no new global deps without a README note)
 - `instagram_ref/` is moodboard only — don’t import unless curated into `src/assets` or a candidate `assets/`
 - Keep `pnpm lint` and `pnpm build` green
 

@@ -11,25 +11,31 @@ One sentence vibe hook.
 ## Mood
 keyword, keyword, keyword
 
+## Scroll grammar
+One primary scroll mechanic (invent freely — e.g. sticky-zoom, horizontal-track, dive-scale, diagonal-cut, split-pin, vertical-parallax, marquee-strip, or something new).
+
+## Layout grammar
+How brand / type / media sit (invent freely — e.g. asymmetric edge, centered masthead, type-as-plane, strip panels).
+
 ## Hero
-- **Composition:** full-bleed / typography-led / …
+- **Composition:** …
 - **Phrases:** “Phrase one.” / “Phrase two.”
 
 ## Structure
 1. **Hero** — …
-2. **Section** — one line
+2. **Section** — one line (beats that fit the scroll grammar — not always room zones)
 3. **Section** — one line
 
 ## Motion signature
-1. Effect (GSAP | Bits) — …
+1. Effect (GSAP | Bits) — amplifies the scroll grammar
 2. Effect — …
 
 ## Type
-- **Display:** …
-- **Body:** …
+- **Display:** Named family + scale / placement intent
+- **Body:** Named family + role
 
 ## Palette cue
-Dark base; warm … / cool …
+Concrete colors / temperature for CSS gradient planes — no photos required (invent freely; not required to be dark)
 
 ## Non-goals
 - …

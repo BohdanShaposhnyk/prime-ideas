@@ -11,24 +11,30 @@ Scaffold only — copy this folder when inventing a real candidate.
 ## Mood
 placeholder
 
+## Scroll grammar
+TBD — invent a primary scroll mechanic
+
+## Layout grammar
+TBD — invent how brand / type / media sit
+
 ## Hero
 - **Composition:** TBD
 - **Phrases:** “PRIME.” / “Stay the night.”
 
 ## Structure
-1. **Hero** — full-bleed brand moment
-2. **Zones** — defined per concept
+1. **Hero** — brand moment shaped by layout grammar
+2. **Beats** — defined per scroll grammar
 
 ## Motion signature
-1. TBD (GSAP)
+1. TBD — amplify scroll grammar (GSAP)
 2. TBD (Bits optional)
 
 ## Type
-- **Display:** expressive, eye-candy
-- **Body:** minimal
+- **Display:** TBD named family
+- **Body:** TBD named family
 
 ## Palette cue
-Dark base; accents TBD
+Concrete colors TBD
 
 ## Non-goals
 - Not a shippable landing

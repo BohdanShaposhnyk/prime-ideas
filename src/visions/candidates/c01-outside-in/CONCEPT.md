@@ -3,7 +3,7 @@
 - **id:** `c01`
 - **slug:** `outside-in`
 - **title:** Outside In
-- **status:** `concept`
+- **status:** `structure`
 
 ## Thesis
 Moody weather outside the terrace glass, then you descend into Prime — richer, darker, more intimate room by room.

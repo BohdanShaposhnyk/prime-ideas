@@ -29,9 +29,17 @@ export const candidates: CandidateMeta[] = [
     id: 'c01',
     slug: 'outside-in',
     title: 'Outside In',
-    status: 'concept',
+    status: 'structure',
     thesis:
       'Moody weather outside the terrace glass, then you descend into Prime — richer, darker, more intimate room by room.',
+  },
+  {
+    id: 'c02',
+    slug: 'one-night',
+    title: 'One Night',
+    status: 'structure',
+    thesis:
+      'A single Warsaw night compressed into four rooms — eat, play, sing, linger.',
   },
 ]
 

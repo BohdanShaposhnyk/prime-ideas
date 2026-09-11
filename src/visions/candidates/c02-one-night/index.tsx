@@ -1,12 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import Hero from './sections/hero'
-import ZoneGameRoom from './sections/zone-game-room'
-import ZoneHookahBar from './sections/zone-hookah-bar'
-import ZonePanorama from './sections/zone-panorama'
+import ZoneArena from './sections/zone-arena'
+import ZoneKitchen from './sections/zone-kitchen'
+import ZoneLounge from './sections/zone-lounge'
+import ZoneStage from './sections/zone-stage'
 
-export default function OutsideInPage() {
+export default function OneNightPage() {
   return (
-    <main className="relative bg-[oklch(0.12_0.01_50)] text-foreground">
+    <main className="relative bg-[oklch(0.09_0.01_260)] text-foreground">
       <Link
         to="/"
         className="absolute top-8 right-5 z-20 text-[0.65rem] tracking-[0.16em] text-[color-mix(in_oklch,white_55%,transparent)] uppercase underline-offset-4 hover:text-white hover:underline sm:right-8 lg:right-12"
@@ -14,9 +15,10 @@ export default function OutsideInPage() {
         Hub
       </Link>
       <Hero />
-      <ZonePanorama />
-      <ZoneGameRoom />
-      <ZoneHookahBar />
+      <ZoneKitchen />
+      <ZoneArena />
+      <ZoneStage />
+      <ZoneLounge />
     </main>
   )
 }
