@@ -30,13 +30,13 @@ src/visions/candidates/<id>-<slug>/
   assets/         # candidate-local media only if needed
 ```
 
-Route: `/c/<id>-<slug>`. Champion later aliases to `/` without deleting the folder.
+Route: `/c/<id>-<slug>` (dynamic — one `/c/$candidateKey` route loads `candidates/<id>-<slug>/index.tsx` via glob; do not edit the router per candidate). Champion later aliases to `/` without deleting the folder.
 
 Register every candidate in `src/app/candidates.ts` (hub reads this).
 
 ## CONCEPT.md (lean)
 
-Template: [`docs/templates/CONCEPT.md`](./templates/CONCEPT.md). No essays.
+Template: [`docs/templates/CONCEPT.md`](./templates/CONCEPT.md). Checklist: [`docs/templates/CONCEPT_CHECKLIST.md`](./templates/CONCEPT_CHECKLIST.md). No essays.
 
 | Field | Intent |
 |-------|--------|

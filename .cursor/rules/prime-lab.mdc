@@ -35,4 +35,6 @@ Vision lab for inventing **isolated landing-page candidates** for Prime Warsaw (
 
 ## Docs
 
-When doing candidate work, read `docs/OVERVIEW.md`, `docs/AGENT_FLOW.md`, `docs/AGENT_ETIQUETTE.md`. Skills live in `.cursor/skills/` (M1+).
+Candidate work: `docs/AGENT_FLOW.md` (+ `docs/templates/CONCEPT.md` when inventing).
+Open OVERVIEW / ETIQUETTE only if brand or constraints are unclear.
+Skills live in `.cursor/skills/` (on-demand).

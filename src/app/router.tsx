@@ -4,6 +4,7 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router'
+import { CandidatePage } from '@/app/CandidatePage'
 import { HubPage } from '@/visions/hub/HubPage'
 import { TemplatePage } from '@/visions/_template'
 
@@ -23,7 +24,17 @@ const templateRoute = createRoute({
   component: TemplatePage,
 })
 
-const routeTree = rootRoute.addChildren([indexRoute, templateRoute])
+const candidateRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/c/$candidateKey',
+  component: CandidatePage,
+})
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  templateRoute,
+  candidateRoute,
+])
 
 export const router = createRouter({ routeTree })
 

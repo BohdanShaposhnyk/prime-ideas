@@ -1,13 +1,15 @@
-# Project skills (M1+)
+# Project skills
 
-Skills for the candidate pipeline will live here:
+On-demand skills for the candidate pipeline (`disable-model-invocation: true`).
 
-- `prime-concept`
-- `prime-implement-hero`
-- `prime-implement-structure`
-- `prime-implement-block`
-- `prime-wire-motion`
-- `prime-polish`
-- `prime-promote`
+| Skill | Status |
+|-------|--------|
+| [`prime-concept`](./prime-concept/) | M1 — scaffold candidate + CONCEPT |
+| `prime-implement-hero` | M2 |
+| `prime-implement-structure` | M2 |
+| `prime-implement-block` | M2 |
+| `prime-wire-motion` | M3 |
+| `prime-polish` | M3 |
+| `prime-promote` | M3 |
 
 See `docs/AGENT_FLOW.md` and `docs/ROADMAP.md`.
