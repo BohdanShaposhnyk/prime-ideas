@@ -27,7 +27,7 @@ How brand / type / media sit (invent freely — e.g. asymmetric edge, centered m
 3. **Section** — one line
 
 ## Motion signature
-1. Effect (GSAP | Bits) — amplifies the scroll grammar
+1. Effect (GSAP | Bits) — amplifies the scroll grammar; wired later by `prime-wire-motion` (implement leaves inert hooks only)
 2. Effect — …
 
 ## Type

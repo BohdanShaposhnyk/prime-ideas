@@ -137,7 +137,7 @@ export default function SceneEmber() {
           href="https://www.instagram.com/prime_warsaw/"
           target="_blank"
           rel="noreferrer"
-          className="mt-8 inline-flex h-10 w-fit items-center justify-center rounded-md bg-[var(--ld-lamp)] px-4 font-['IBM_Plex_Sans',sans-serif] text-sm font-medium text-[var(--ld-sill)] transition-opacity hover:opacity-90"
+          className="mt-8 inline-flex h-10 w-fit items-center justify-center rounded-md bg-[var(--ld-lamp)] px-4 font-['IBM_Plex_Sans',sans-serif] text-sm font-medium text-[var(--ld-sill)] transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ld-linen)]"
         >
           @prime_warsaw
         </a>

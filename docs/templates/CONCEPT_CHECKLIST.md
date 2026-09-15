@@ -20,7 +20,7 @@ Validate before finishing `prime-concept` (or any CONCEPT edit). No Zod — conv
 - Layout grammar = one line naming how brand / type / media sit
 - Hero phrases = 1–2 short English lines
 - Structure = ordered one-liners that fit the scroll grammar
-- Motion signature = amplifies the named scroll grammar
+- Motion signature = 2–3 effects that amplify scroll grammar; **owned by `prime-wire-motion`** — implement must not CSS-preview these
 - Type = named display + body families (not “expressive sans”)
 - Palette cue = concrete colors/temperature so implement can build CSS placeholders without assets
 - No essays

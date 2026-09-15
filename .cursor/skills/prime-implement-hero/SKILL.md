@@ -26,7 +26,7 @@ Implement **only** the hero for one candidate. Stop — do not scaffold other se
    - Hero budget (quality rail): brand, one headline, one short supporting line, one CTA group, one dominant visual plane — **where** they sit comes from Layout grammar
    - Dominant plane = CSS gradient / layered color planes from **Palette cue** + Mood (see IMPLEMENT placeholders). Never ask for assets; use `data-placeholder="visual"` on the swap target
    - No detached badges / promo chips / stat strips on media
-   - Leave semantic hooks for later GSAP / scroll skeleton (no timeline wiring here)
+   - Leave semantic hooks for later scroll skeleton / GSAP (no timelines, no CSS Motion signature previews)
 4. **Compose** `index.tsx` — render Hero + Link back to `/`. Remove the concept stub layout. Do not assume a final vertical stack if Structure will own a different container.
 5. **Status** — Set CONCEPT `status: hero` and matching entry in `src/app/candidates.ts`.
 6. **Bits** — Only if CONCEPT Hero already names a **free** Bit. Read [`docs/react-bits-free.md`](../../../docs/react-bits-free.md); install via `@react-bits` into `src/shared/bits/`. Never Pro.

@@ -21,16 +21,27 @@ src/visions/candidates/<id>-<slug>/
   - panels → `panel-glow.tsx`
 - Default export per section file
 - No cards / stat strips / badge overlays unless CONCEPT demands interaction chrome
-- Full GSAP timelines live in `motion/` (M3). Structure stage may use **CSS scroll skeletons** + semantic hooks; wire fine timelines in `prime-wire-motion`
+- Motion effects live in `motion/` via `prime-wire-motion` — see [`MOTION.md`](./MOTION.md). Implement builds **inert structure only**.
 
 ## Scroll skeleton (required at structure)
 
-Build the page container from CONCEPT **Scroll grammar** — CSS first:
+Build **inert structure** from CONCEPT **Scroll grammar** — containers, resting layout, and `data-*` hooks. Do **not** preview **Motion signature**.
 
-- Examples: `position: sticky` pin/zoom stages, overflow-x tracks, scroll-snap, scale/transform dive stages, diagonal clip/mask stages, split panes
-- Vertical `min-h` stacking is **only** when CONCEPT Scroll grammar is vertical — not the lab default
-- Compose `index.tsx` as whatever container the grammar needs (track, pin wrapper, scale stage, etc.), then mount sections as scenes/panels/strips
-- Add semantic hooks (`data-scroll`, `data-plane`, `data-scene`, …) for later GSAP; do not ship full `motion/` timelines here
+**Allowed (structure):**
+
+- Sticky pin wrappers, tall scroll stages (`h-[…vh]`), overflow-x tracks, scroll-snap
+- Resting layout that matches Layout grammar (e.g. diagonal media|caption *slabs* as static composition)
+- Semantic hooks (`data-scroll`, `data-plane`, `data-scene`, `data-pane`, …) for later GSAP
+- Vertical `min-h` stacking **only** when CONCEPT Scroll grammar is vertical — not the lab default
+
+**Forbidden (defer to `prime-wire-motion`):**
+
+- `motion/` folder or GSAP imports
+- CSS scroll-driven motion (`animation-timeline`, scroll-linked `@keyframes`) for Motion signature effects
+- Scrubbing or previewing those effects via transform / `clip-path` / opacity / filter keyframes or transitions
+- “End-state” styling that exists only so wire can animate into it (no fake from→to in CSS)
+
+Compose `index.tsx` as the container the grammar needs, mount sections in Structure order, leave planes inert. Page must stay readable with motion off — brand + copy visible; placeholders are static atmosphere, not a timeline.
 
 ## Per-candidate type
 

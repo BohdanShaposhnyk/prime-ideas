@@ -41,7 +41,8 @@ Flesh **one** named section. Stop — do not scaffold siblings or jump to motion
 - One candidate, one section per run
 - Free Bits only; never recommend Pro (compose custom + free Bits + GSAP instead)
 - Never ask for assets; curate into `assets/` before any import; never import `instagram_ref/` directly
-- No GSAP timeline package in `motion/` here (that’s `prime-wire-motion`)
+- No GSAP / `motion/` here (that’s `prime-wire-motion`)
+- No CSS scroll-driven or keyframed Motion signature previews
 
 ## Done when
 

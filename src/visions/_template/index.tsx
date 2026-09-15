@@ -11,7 +11,7 @@ export function TemplatePage() {
         Copy this folder for a new candidate. Fill CONCEPT.md, then grow via
         skills (hero → structure → motion).
       </p>
-      <Link to="/" className="text-sm underline underline-offset-4">
+      <Link to="/lab" className="text-sm underline underline-offset-4">
         Back to hub
       </Link>
     </main>

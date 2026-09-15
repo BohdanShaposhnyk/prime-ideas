@@ -69,7 +69,7 @@ export const candidates: CandidateMeta[] = [
     id: 'c06',
     slug: 'glass-cap',
     title: 'Glass Cap',
-    status: 'structure',
+    status: 'motion',
     thesis:
       'The night is sealed under a glass canopy — scroll lifts the frost and the rooms bloom underneath.',
   },
@@ -77,7 +77,7 @@ export const candidates: CandidateMeta[] = [
     id: 'c07',
     slug: 'lodge-depth',
     title: 'Lodge Depth',
-    status: 'structure',
+    status: 'motion',
     thesis:
       'From a Norwegian lodge window onto a cloudy street, scroll pulls you back into stone-wood greenery — then rooms shear open on diagonals with captions that migrate across the glass.',
   },
@@ -106,6 +106,16 @@ export function getCandidateByKey(key: string) {
   const parsed = parseCandidateKey(key)
   if (!parsed) return undefined
   return candidates.find((c) => c.id === parsed.id && c.slug === parsed.slug)
+}
+
+/** Active champion, if any (at most one). */
+export function getChampion(list: CandidateMeta[] = candidates) {
+  return list.find((c) => c.status === 'champion')
+}
+
+/** Permanent archive via registry status (skills / CONCEPT). */
+export function isRegistryArchived(c: Pick<CandidateMeta, 'status'>) {
+  return c.status === 'archived'
 }
 
 /** Next id like c01, c02… (skips non-cNN ids such as c00 dry-run numbering). */

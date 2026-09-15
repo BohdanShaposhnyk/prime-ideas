@@ -3,7 +3,7 @@
 - **id:** `c07`
 - **slug:** `lodge-depth`
 - **title:** Lodge Depth
-- **status:** `structure`
+- **status:** `motion`
 
 ## Thesis
 From a Norwegian lodge window onto a cloudy street, scroll pulls you back into stone-wood greenery — then rooms shear open on diagonals with captions that migrate across the glass.

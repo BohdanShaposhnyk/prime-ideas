@@ -23,7 +23,10 @@ Skills are additive and re-runnable. Stop after any stage.
 4. Trigger **motion** → **polish**
 5. **Promote** winner, or archive / spawn a new concept
 
-**Fast path:** Trigger **`prime-implement-candidate`** (after concept, or invent+implement in one ask) → hero + section shells + light deepen in one pass, status `structure`. Builds the CONCEPT’s scroll skeleton (CSS first) with palette placeholders — never asks for assets. Still stop before motion.
+**Fast paths:**
+
+- **`prime-implement-candidate`** (after concept, or invent+implement) → hero + section shells + light deepen; status `structure`. Inert scroll skeleton + palette placeholders (no Motion signature preview); stop before motion.
+- **`prime-build-candidate`** → concept (if needed) + implement-candidate + wire-motion; status `motion`. Stop before polish/promote.
 
 ## Candidate folder
 
@@ -36,9 +39,9 @@ src/visions/candidates/<id>-<slug>/
   assets/         # candidate-local media only if needed
 ```
 
-Route: `/c/<id>-<slug>` (dynamic — one `/c/$candidateKey` route loads `candidates/<id>-<slug>/index.tsx` via glob; do not edit the router per candidate). Champion later aliases to `/` without deleting the folder.
+Route: `/c/<id>-<slug>` (dynamic — one `/c/$candidateKey` route loads `candidates/<id>-<slug>/index.tsx` via glob; do not edit the router per candidate). Hub lives at `/lab` (and `/` when no champion). After **`prime-promote`**, the champion aliases to `/` without deleting the folder; hub stays at `/lab`.
 
-Register every candidate in `src/app/candidates.ts` (hub reads this).
+Register every candidate in `src/app/candidates.ts` (hub reads this). The hub hides archived candidates by default (toggle to show); the archive icon uses browser localStorage, while permanent archive is registry `status: archived`.
 
 ## CONCEPT.md (lean)
 
@@ -53,7 +56,7 @@ Template: [`docs/templates/CONCEPT.md`](./templates/CONCEPT.md). Checklist: [`do
 | layout grammar | How brand / type / media sit (one line) |
 | hero | Composition + 1–2 microcopy phrases |
 | structure | Ordered beats that fit the scroll grammar |
-| motion signature | 2–3 effects that amplify the scroll grammar |
+| motion signature | 2–3 effects (wired by `prime-wire-motion`; implement does not preview) |
 | type | Named display + body families; scale / placement |
 | palette cue | Concrete colors / temperature for CSS planes |
 | non-goals | What this candidate will *not* do |
@@ -66,18 +69,20 @@ Template: [`docs/templates/CONCEPT.md`](./templates/CONCEPT.md). Checklist: [`do
 |-------|------|--------|
 | `prime-concept` | New concept / candidate | Folder + CONCEPT + registry + stub route |
 | `prime-implement-hero` | Implement hero for cXX | `sections/hero.tsx`; status ≥ `hero` |
-| `prime-implement-structure` | Scaffold sections | Scroll skeleton + shells + page; status ≥ `structure` |
+| `prime-implement-structure` | Scaffold sections | Inert scroll skeleton + shells + page; status ≥ `structure` |
 | `prime-implement-block` | Flesh one section | One section (may pull React Bits) |
 | `prime-implement-candidate` | Fast path: full implement | Hero + sections + light deepen; status `structure` |
 | `prime-wire-motion` | Transitions / motion | `motion/` + GSAP; status ≥ `motion` |
 | `prime-polish` | Polish candidate | Reduced-motion, cleanup; status `ready` |
-| `prime-promote` | Make champion | Hub/champion wiring; status `champion` |
+| `prime-promote` | Make champion | `/` ← champion; hub `/lab`; status `champion` |
+| `prime-build-candidate` | Full pipeline | Concept → implement → motion; status `motion` |
 
 Skills live under `.cursor/skills/` (project). Rules under `.cursor/rules/` (M1+).
 
 ## Implement conventions
 
-Section file layout, **scroll skeleton** (CSS first from Scroll grammar), **visual placeholders** (CSS from Palette cue — never ask for assets), per-candidate type, and free-only React Bits: [`docs/IMPLEMENT.md`](./IMPLEMENT.md).  
+Section file layout, **inert scroll skeleton** (containers + hooks from Scroll grammar; no Motion signature preview), **visual placeholders** (CSS from Palette cue — never ask for assets), per-candidate type, and free-only React Bits: [`docs/IMPLEMENT.md`](./IMPLEMENT.md).  
+GSAP ownership / reduced-motion / teardown: [`docs/MOTION.md`](./MOTION.md).  
 Free Bits catalog (token-cheap; read before remote): [`docs/react-bits-free.md`](./react-bits-free.md).
 
 ## Hard rules for skills

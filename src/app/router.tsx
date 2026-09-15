@@ -4,7 +4,8 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router'
-import { CandidatePage } from '@/app/CandidatePage'
+import { CandidatePage, ChampionPage } from '@/app/CandidatePage'
+import { getChampion } from '@/app/candidates'
 import { HubPage } from '@/visions/hub/HubPage'
 import { TemplatePage } from '@/visions/_template'
 
@@ -12,9 +13,17 @@ const rootRoute = createRootRoute({
   component: () => <Outlet />,
 })
 
+/** `/` — champion landing when one exists; otherwise hub (backward compatible). */
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  component: () => (getChampion() ? <ChampionPage /> : <HubPage />),
+})
+
+/** Lab hub — always available (use after a champion owns `/`). */
+const labRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/lab',
   component: HubPage,
 })
 
@@ -32,6 +41,7 @@ const candidateRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  labRoute,
   templateRoute,
   candidateRoute,
 ])

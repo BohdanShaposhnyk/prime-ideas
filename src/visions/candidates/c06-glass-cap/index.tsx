@@ -4,8 +4,9 @@ import '@fontsource/figtree/400.css'
 import '@fontsource/figtree/500.css'
 import '@fontsource/figtree/600.css'
 
-import type { CSSProperties } from 'react'
+import { useRef, type CSSProperties } from 'react'
 import { Link } from '@tanstack/react-router'
+import { useCandidateMotion } from './motion'
 import Hero from './sections/hero'
 import SceneArena from './sections/scene-arena'
 import SceneEmber from './sections/scene-ember'
@@ -14,23 +15,27 @@ import SceneStage from './sections/scene-stage'
 
 /**
  * Glass Cap — sticky frost canopy over blooming rooms.
- * Cap Y-translate / frost dissolve wired later in motion/.
+ * Cap lift / bloom / rim shimmer via motion/.
  */
 export default function GlassCapPage() {
+  const rootRef = useRef<HTMLElement>(null)
+  useCandidateMotion(rootRef)
+
   return (
     <main
+      ref={rootRef}
       className="relative bg-[#0F171C] text-[#F7F4EF]"
       style={{ fontFamily: '"Figtree", sans-serif' }}
     >
       <Link
-        to="/"
+        to="/lab"
         className="fixed top-3 right-5 z-[60] font-['Figtree',sans-serif] text-[0.65rem] tracking-[0.16em] text-[color-mix(in_srgb,#E8EEF2_55%,transparent)] uppercase underline-offset-4 hover:text-[#E8EEF2] hover:underline sm:right-8 lg:right-12"
       >
         Hub
       </Link>
 
       <div data-scroll="cap-lift" className="relative">
-        {/* Sticky frost canopy — lifts via GSAP later */}
+        {/* Sticky frost canopy — planes lift + dissolve via motion/ */}
         <div
           data-cap="glass"
           aria-hidden

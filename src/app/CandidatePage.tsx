@@ -5,7 +5,7 @@ import {
   type ComponentType,
   type LazyExoticComponent,
 } from 'react'
-import { getCandidateByKey } from '@/app/candidates'
+import { candidateKey, getCandidateByKey, getChampion } from '@/app/candidates'
 
 const modules = import.meta.glob<{ default: ComponentType }>(
   '../visions/candidates/*/index.tsx',
@@ -28,20 +28,23 @@ function CandidateNotFound({ candidateKey }: { candidateKey: string }) {
         No page for <code className="text-foreground">{candidateKey}</code>. Check
         the registry and folder name.
       </p>
-      <Link to="/" className="text-sm underline underline-offset-4">
+      <Link to="/lab" className="text-sm underline underline-offset-4">
         Back to hub
       </Link>
     </main>
   )
 }
 
-export function CandidatePage() {
-  const { candidateKey } = useParams({ from: '/c/$candidateKey' })
-  const meta = getCandidateByKey(candidateKey)
-  const Page = pages[candidateKey]
+function CandidateSuspense({
+  pageKey,
+}: {
+  pageKey: string
+}) {
+  const meta = getCandidateByKey(pageKey)
+  const Page = pages[pageKey]
 
   if (!meta || !Page) {
-    return <CandidateNotFound candidateKey={candidateKey} />
+    return <CandidateNotFound candidateKey={pageKey} />
   }
 
   return (
@@ -55,4 +58,18 @@ export function CandidatePage() {
       <Page />
     </Suspense>
   )
+}
+
+export function CandidatePage() {
+  const { candidateKey: key } = useParams({ from: '/c/$candidateKey' })
+  return <CandidateSuspense pageKey={key} />
+}
+
+/** `/` when a champion exists — same glob loader as `/c/$candidateKey`. */
+export function ChampionPage() {
+  const champion = getChampion()
+  if (!champion) {
+    return <CandidateNotFound candidateKey="(no champion)" />
+  }
+  return <CandidateSuspense pageKey={candidateKey(champion)} />
 }

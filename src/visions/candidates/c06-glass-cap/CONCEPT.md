@@ -3,7 +3,7 @@
 - **id:** `c06`
 - **slug:** `glass-cap`
 - **title:** Glass Cap
-- **status:** `structure`
+- **status:** `motion`
 
 ## Thesis
 The night is sealed under a glass canopy — scroll lifts the frost and the rooms bloom underneath.

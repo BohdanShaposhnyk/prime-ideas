@@ -26,7 +26,7 @@ TBD — invent how brand / type / media sit
 2. **Beats** — defined per scroll grammar
 
 ## Motion signature
-1. TBD — amplify scroll grammar (GSAP)
+1. TBD — amplify scroll grammar (GSAP via `prime-wire-motion`)
 2. TBD (Bits optional)
 
 ## Type

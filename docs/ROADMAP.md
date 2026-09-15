@@ -24,13 +24,13 @@ Toolchain (Vite, React, TS, TanStack Router, Tailwind, shadcn, GSAP, pnpm, lint)
 - Conventions: `docs/IMPLEMENT.md` (incl. CSS palette placeholders — never ask for assets) + free catalog `docs/react-bits-free.md`
 - Free `@react-bits` registry in `components.json` (never Pro)
 
-## M3 — Motion & promote
-- `prime-wire-motion`, `prime-polish`, `prime-promote`
-- `prefers-reduced-motion` + GSAP teardown conventions
+## M3 — Motion & promote (done)
+- `prime-wire-motion`, `prime-polish`, `prime-promote`, `prime-build-candidate`
+- `prefers-reduced-motion` + GSAP teardown conventions (`docs/MOTION.md`, `@/shared/lib/gsap`, `@/shared/lib/motion`)
+- Champion wiring: `/` shows champion when one exists; hub at `/lab`
 
 ## M4 — Ship path
-- Champion → production `/`
-- Meta/OG, deploy target
+- Production polish on champion `/` (meta/OG, deploy)
 - CTA wiring (Instagram / Telegram)
 
 ## Motion / UI stack notes
