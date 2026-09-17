@@ -81,6 +81,14 @@ export const candidates: CandidateMeta[] = [
     thesis:
       'From a Norwegian lodge window onto a cloudy street, scroll pulls you back into stone-wood greenery — then rooms shear open on diagonals with captions that migrate across the glass.',
   },
+  {
+    id: 'c08',
+    slug: 'storm-seam',
+    title: 'Storm Seam',
+    status: 'motion',
+    thesis:
+      'A storm sky opens into a Norwegian lodge bar, then a corner seam rips the night into neon dual panels, a black spiral of four rooms, and the side floor.',
+  },
 ]
 
 export function candidateKey(c: Pick<CandidateMeta, 'id' | 'slug'>) {
