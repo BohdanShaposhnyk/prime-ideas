@@ -89,6 +89,94 @@ export const candidates: CandidateMeta[] = [
     thesis:
       'A storm sky opens into a Norwegian lodge bar, then a corner seam rips the night into neon dual panels, a black spiral of four rooms, and the side floor.',
   },
+  {
+    id: 'c09',
+    slug: 'private-axis',
+    title: 'Private Axis',
+    status: 'motion',
+    thesis:
+      'Scroll plunges you down Prime’s private Z-axis — rooms dock from the sides and from behind while type discovers on its own delay.',
+  },
+  {
+    id: 'c10',
+    slug: 'lockup',
+    title: 'Lockup',
+    status: 'motion',
+    thesis:
+      'Prime is a compositor’s wall — type-blocks slam from the edges, latch to a spine, and restack until the night is locked.',
+  },
+  {
+    id: 'c11',
+    slug: 'ember-lattice',
+    title: 'Ember Lattice',
+    status: 'motion',
+    thesis:
+      'Prime is a voltage lattice — each scroll pulse ripples a new room through living shader currents until the night ignites.',
+  },
+  {
+    id: 'c12',
+    slug: 'caustic-focus',
+    title: 'Caustic Focus',
+    status: 'motion',
+    thesis:
+      'Prime is seen through a cinema lens — scroll racks the focal plane through liquid glass until each room snaps sharp.',
+  },
+  {
+    id: 'c13',
+    slug: 'penumbra',
+    title: 'Penumbra',
+    status: 'motion',
+    thesis:
+      'Prime is found in a moving rake of light — scroll pulls focus through warm shadow until each room snaps in the penumbra.',
+  },
+  {
+    id: 'c14',
+    slug: 'live-offset',
+    title: 'Live Offset',
+    status: 'motion',
+    thesis:
+      'Prime is a dim field cut by a living bright offset — rooms arrive as zooming shards while type belts run the seam.',
+  },
+  {
+    id: 'c15',
+    slug: 'hard-invert',
+    title: 'Hard Invert',
+    status: 'motion',
+    thesis:
+      'Prime is a Warsaw rave poster that inverts as you snap — rooms slam as flyer frames until the night strobes OWN / THE / NIGHT.',
+  },
+  {
+    id: 'c16',
+    slug: 'night-crop',
+    title: 'Night Crop',
+    status: 'motion',
+    thesis:
+      'Prime is shot like a fashion night — vertical scroll recrops the frame until each room is the only thing in the finder.',
+  },
+  {
+    id: 'c17',
+    slug: 'quiet-cast',
+    title: 'Quiet Cast',
+    status: 'motion',
+    thesis:
+      'Prime is a composing stick — one contained measure of living type; scroll recasts the night in place.',
+  },
+  {
+    id: 'c18',
+    slug: 'rsvp',
+    title: 'RSVP',
+    status: 'motion',
+    thesis:
+      'Prime is a stack of night invitations — scroll compresses each look into a thin lip until the house is indexed.',
+  },
+  {
+    id: 'c19',
+    slug: 'flyhouse',
+    title: 'Flyhouse',
+    status: 'motion',
+    thesis:
+      'Prime is scenery in the flies — scroll docks each room on the pinrail, then flies it out for the next drop.',
+  },
 ]
 
 export function candidateKey(c: Pick<CandidateMeta, 'id' | 'slug'>) {
