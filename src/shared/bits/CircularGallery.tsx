@@ -495,6 +495,7 @@ interface AppConfig {
   scrollSpeed?: number;
   scrollEase?: number;
   hideCenter?: boolean;
+  autoplay?: number;
 }
 
 class App {
@@ -529,6 +530,11 @@ class App {
   isDown: boolean = false;
   start: number = 0;
   hideCenter: boolean = false;
+  autoplayMs: number = 0;
+  nextAutoplayAt: number = 0;
+  autoplayVisible: boolean = true;
+  intersectionObserver?: IntersectionObserver;
+  boundOnVisibilityChange!: () => void;
 
   constructor(
     container: HTMLElement,
@@ -540,13 +546,15 @@ class App {
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
       scrollEase = 0.05,
-      hideCenter = false
+      hideCenter = false,
+      autoplay = 0
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.hideCenter = hideCenter;
+    this.autoplayMs = autoplay;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
@@ -671,8 +679,33 @@ class App {
     });
   }
 
+  prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  stepRight() {
+    if (this.isDown || !this.medias[0]) return;
+    const width = this.medias[0].width;
+    if (!width) return;
+    this.scroll.target -= width;
+    this.onCheck();
+  }
+
+  pauseAutoplay() {
+    this.nextAutoplayAt = 0;
+  }
+
+  armAutoplay(from = performance.now()) {
+    if (!this.autoplayMs || this.prefersReducedMotion() || !this.autoplayVisible || document.hidden) {
+      this.nextAutoplayAt = 0;
+      return;
+    }
+    this.nextAutoplayAt = from + this.autoplayMs;
+  }
+
   onTouchDown(e: MouseEvent | TouchEvent) {
     this.isDown = true;
+    this.pauseAutoplay();
     this.scroll.position = this.scroll.current;
     this.start = 'touches' in e ? e.touches[0].clientX : e.clientX;
   }
@@ -685,8 +718,10 @@ class App {
   }
 
   onTouchUp() {
+    if (!this.isDown) return;
     this.isDown = false;
     this.onCheck();
+    this.armAutoplay();
   }
 
   onWheel(e: Event) {
@@ -694,6 +729,7 @@ class App {
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
+    this.armAutoplay();
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -702,12 +738,14 @@ class App {
         e.preventDefault();
         this.scroll.target += this.scrollSpeed * 5;
         this.onCheckDebounce();
+        this.armAutoplay();
         break;
 
       case 'ArrowLeft':
         e.preventDefault();
         this.scroll.target -= this.scrollSpeed * 5;
         this.onCheckDebounce();
+        this.armAutoplay();
         break;
     }
   }
@@ -746,6 +784,16 @@ class App {
     }
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
+
+    if (this.autoplayMs && !this.isDown && this.autoplayVisible && !document.hidden && !this.prefersReducedMotion()) {
+      const now = performance.now();
+      if (!this.nextAutoplayAt) this.armAutoplay(now);
+      if (this.nextAutoplayAt && now >= this.nextAutoplayAt) {
+        this.stepRight();
+        this.armAutoplay(now);
+      }
+    }
+
     this.raf = window.requestAnimationFrame(this.update.bind(this));
   }
 
@@ -767,9 +815,20 @@ class App {
     window.addEventListener('touchend', this.boundOnTouchUp);
 
     this.container.addEventListener('keydown', this.boundOnKeyDown);
+
+    this.boundOnVisibilityChange = () => this.armAutoplay();
+    document.addEventListener('visibilitychange', this.boundOnVisibilityChange);
+    this.intersectionObserver = new IntersectionObserver(([entry]) => {
+      this.autoplayVisible = Boolean(entry?.isIntersecting);
+      this.armAutoplay();
+    });
+    this.intersectionObserver.observe(this.container);
   }
 
   destroy() {
+    this.pauseAutoplay();
+    this.intersectionObserver?.disconnect();
+    document.removeEventListener('visibilitychange', this.boundOnVisibilityChange);
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.boundOnResize);
     this.container.removeEventListener('wheel', this.boundOnWheel);
@@ -796,6 +855,7 @@ interface CircularGalleryProps {
   scrollSpeed?: number;
   scrollEase?: number;
   hideCenter?: boolean;
+  autoplay?: number;
 }
 
 export default function CircularGallery({
@@ -807,7 +867,8 @@ export default function CircularGallery({
   fontUrl,
   scrollSpeed = 2,
   scrollEase = 0.05,
-  hideCenter = false
+  hideCenter = false,
+  autoplay = 0
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -824,14 +885,15 @@ export default function CircularGallery({
         font: resolvedFont,
         scrollSpeed,
         scrollEase,
-        hideCenter
+        hideCenter,
+        autoplay
       });
     });
     return () => {
       isMounted = false;
       if (app) app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, hideCenter]);
+  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase, hideCenter, autoplay]);
   return (
     <div
       className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing"

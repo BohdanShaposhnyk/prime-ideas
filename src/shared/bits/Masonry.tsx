@@ -79,10 +79,16 @@ interface MasonryProps {
   blurToFocus?: boolean;
   colorShiftOnHover?: boolean;
   columnCount?: number;
+  /** Relative widths per column. Falls back to equal columns when omitted or mismatched. */
+  columnFractions?: number[];
   gap?: number;
   exactHeight?: boolean;
   /** When false, tiles stay hidden at their start pose until it flips true. */
   active?: boolean;
+  /** Opacity at the off-stage pose. 0 is a pure fade; higher keeps the stack-up readable. */
+  fromOpacity?: number;
+  /** Off-stage travel as a fraction of the container’s height. */
+  travelRatio?: number;
 }
 
 const Masonry: React.FC<MasonryProps> = ({
@@ -96,9 +102,12 @@ const Masonry: React.FC<MasonryProps> = ({
   blurToFocus = true,
   colorShiftOnHover = false,
   columnCount,
+  columnFractions,
   gap = 16,
   exactHeight = false,
-  active = true
+  active = true,
+  fromOpacity = 0,
+  travelRatio = 0.22
 }) => {
   const mediaColumns = useMedia(
     ['(min-width:1500px)', '(min-width:1000px)', '(min-width:600px)', '(min-width:400px)'],
@@ -113,7 +122,7 @@ const Masonry: React.FC<MasonryProps> = ({
   const getInitialPosition = (item: GridItem) => {
     const containerRect = containerRef.current?.getBoundingClientRect();
     if (!containerRect) return { x: item.x, y: item.y };
-    const rise = Math.max(containerRect.height * 0.22, 140);
+    const rise = Math.max(containerRect.height * travelRatio, 180);
 
     let direction = animateFrom;
     if (animateFrom === 'random') {
@@ -155,21 +164,34 @@ const Masonry: React.FC<MasonryProps> = ({
     if (!width) return [];
     const colHeights = new Array(columns).fill(0);
     const totalGaps = (columns - 1) * gap;
-    const columnWidth = (width - totalGaps) / columns;
+    const fractions =
+      columnFractions && columnFractions.length === columns
+        ? columnFractions
+        : new Array(columns).fill(1);
+    const fracSum = fractions.reduce((sum, value) => sum + value, 0) || columns;
+    const usable = width - totalGaps;
+    const colWidths = fractions.map(value => (usable * value) / fracSum);
+    const colX: number[] = [];
+    let cursor = 0;
+    for (let i = 0; i < columns; i += 1) {
+      colX[i] = cursor;
+      cursor += colWidths[i] + gap;
+    }
 
     return items.map(child => {
       const pinned =
         typeof child.column === 'number'
           ? Math.min(Math.max(0, child.column), columns - 1)
           : colHeights.indexOf(Math.min(...colHeights));
-      const x = pinned * (columnWidth + gap);
+      const columnWidth = colWidths[pinned];
+      const x = colX[pinned];
       const height = exactHeight ? child.height : child.height / 2;
       const y = colHeights[pinned];
 
       colHeights[pinned] += height + gap;
       return { ...child, x, y, w: columnWidth, h: height };
     });
-  }, [columns, exactHeight, gap, items, width]);
+  }, [columnFractions, columns, exactHeight, gap, items, width]);
 
   useLayoutEffect(() => {
     const root = containerRef.current;
@@ -178,41 +200,56 @@ const Masonry: React.FC<MasonryProps> = ({
     const nodeOf = (id: string) =>
       root.querySelector<HTMLElement>(`[data-key="${CSS.escape(id)}"]`);
 
-    const ctx = gsap.context(() => {
-      grid.forEach((item, index) => {
-        const el = nodeOf(item.id);
-        if (!el) return;
-        const start = getInitialPosition(item);
-        const hidden = {
-          opacity: 0,
-          x: start.x,
-          y: start.y,
-          width: item.w,
-          height: item.h,
-          ...(blurToFocus && { filter: 'blur(12px)' })
-        };
+    const tweens: gsap.core.Tween[] = [];
+    grid.forEach((item, index) => {
+      const el = nodeOf(item.id);
+      if (!el) return;
+      const start = getInitialPosition(item);
+      const hidden = {
+        opacity: fromOpacity,
+        x: start.x,
+        y: start.y,
+        width: item.w,
+        height: item.h,
+        ...(blurToFocus && { filter: 'blur(12px)' })
+      };
+      const shown = {
+        opacity: 1,
+        x: item.x,
+        y: item.y,
+        width: item.w,
+        height: item.h,
+        ...(blurToFocus && { filter: 'blur(0px)' })
+      };
 
-        if (!active) {
-          gsap.set(el, hidden);
-          return;
-        }
+      if (!el.dataset.csPosed) {
+        gsap.set(el, hidden);
+        el.dataset.csPosed = '1';
+      }
 
-        gsap.fromTo(el, hidden, {
-          opacity: 1,
-          x: item.x,
-          y: item.y,
-          width: item.w,
-          height: item.h,
-          ...(blurToFocus && { filter: 'blur(0px)' }),
-          duration,
-          ease,
-          delay: index * stagger
-        });
-      });
-    }, root);
+      tweens.push(
+        active
+          ? gsap.to(el, {
+              ...shown,
+              duration,
+              ease,
+              delay: index * stagger,
+              overwrite: 'auto'
+            })
+          : gsap.to(el, {
+              ...hidden,
+              duration: duration * 0.55,
+              ease: 'power3.out',
+              delay: (grid.length - 1 - index) * 0.018,
+              overwrite: 'auto'
+            })
+      );
+    });
 
-    return () => ctx.revert();
-  }, [active, grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease]);
+    return () => {
+      tweens.forEach(tween => tween.kill());
+    };
+  }, [active, grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease, fromOpacity, travelRatio]);
 
   const handleMouseEnter = (_id: string, element: HTMLElement) => {
     if (!active) return;
@@ -250,7 +287,7 @@ const Masonry: React.FC<MasonryProps> = ({
           key={item.id}
           data-key={item.id}
           className={`absolute box-content ${item.url ? 'cursor-pointer' : ''}`}
-          style={{ opacity: 0, willChange: 'transform, width, height, opacity' }}
+          style={{ willChange: 'transform, width, height, opacity' }}
           onClick={() => {
             if (item.url) window.open(item.url, '_blank', 'noopener');
           }}

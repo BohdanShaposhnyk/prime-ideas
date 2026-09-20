@@ -73,7 +73,7 @@ export default function SceneBook() {
       aria-labelledby="cs-book-title"
       data-scene="book"
       data-scroll="book-lockup"
-      className="relative isolate flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-[var(--cs-pitch)] px-5 py-24"
+      className="relative isolate flex h-dvh flex-col items-center justify-center overflow-hidden bg-[var(--cs-pitch)] px-5 py-24"
     >
       <div
         className="pointer-events-none absolute inset-0"
@@ -93,7 +93,10 @@ export default function SceneBook() {
       />
 
       {/* swap: book circular gallery */}
-      <div data-placeholder="visual" className="absolute inset-0 z-10">
+      <div
+        data-placeholder="visual"
+        className="absolute inset-x-0 top-1/2 z-10 h-[min(44dvh,20rem)] w-full -translate-y-1/2 sm:inset-0 sm:h-full sm:translate-y-0"
+      >
         <CircularGallery
           items={ITEMS}
           bend={2.4}
@@ -103,6 +106,7 @@ export default function SceneBook() {
           font="500 20px Barlow"
           scrollSpeed={2.2}
           scrollEase={0.06}
+          autoplay={3000}
         />
       </div>
 

@@ -3,20 +3,41 @@ import Masonry from '@/shared/bits/Masonry'
 
 const GAP = 8
 const VIOLET = '#B794F6'
+const COMPACT_MAX = 640
+/** Portrait phone plate on compact; 16:9 PC screen from sm up. */
+const LOCKUP_ASPECT_COMPACT = 9 / 16
+const LOCKUP_ASPECT_DESKTOP = 16 / 9
+const COL_FR_COMPACT = [1.06, 1.28, 1]
+const COL_FR_DESKTOP = [1, 1.22, 1]
 
-/** Column 0 is two stills of unequal height; lockup sits in the middle stack. */
-const TILES = [
-  { id: 'gate', fr: 0.68, col: 0 },
-  { id: 'pit', fr: 0.32, col: 0 },
-  { id: 'rake', fr: 0.2, col: 1 },
-  { id: 'lockup', fr: 0.52, col: 1 },
-  { id: 'marquee', fr: 0.28, col: 1 },
-  { id: 'glow', fr: 0.41, col: 2 },
-  { id: 'aisle', fr: 0.59, col: 2 },
-] as const
+type Tile = { id: string; fr: number; col: 0 | 1 | 2 }
+
+/** Desktop 2 / 3 / 2; lockup height is aspect-driven, other mid fracs share leftover. */
+const TILES_DESKTOP: Tile[] = [
+  { id: 'gate', fr: 0.62, col: 0 },
+  { id: 'pit', fr: 0.38, col: 0 },
+  { id: 'rake', fr: 0.38, col: 1 },
+  { id: 'lockup', fr: 0, col: 1 },
+  { id: 'marquee', fr: 0.62, col: 1 },
+  { id: 'glow', fr: 0.44, col: 2 },
+  { id: 'aisle', fr: 0.56, col: 2 },
+]
+
+/** Mobile 3 / 3 / 3 — side stacks stay asymmetric so the wall doesn't mirror. */
+const TILES_COMPACT: Tile[] = [
+  { id: 'gate', fr: 0.4, col: 0 },
+  { id: 'pit', fr: 0.22, col: 0 },
+  { id: 'credits', fr: 0.38, col: 0 },
+  { id: 'rake', fr: 0.44, col: 1 },
+  { id: 'lockup', fr: 0, col: 1 },
+  { id: 'marquee', fr: 0.56, col: 1 },
+  { id: 'glow', fr: 0.28, col: 2 },
+  { id: 'aisle', fr: 0.4, col: 2 },
+  { id: 'leak', fr: 0.32, col: 2 },
+]
 
 const LOCKUP = (
-  <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black px-3 text-center sm:px-5">
+  <div className="@container relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black px-[8%] text-center">
     <div
       className="pointer-events-none absolute inset-0"
       style={{
@@ -28,17 +49,17 @@ const LOCKUP = (
     <h2
       id="cs-screen-title"
       data-copy="caption"
-      className="relative z-10 max-w-[16rem] sm:max-w-[22rem]"
+      className="relative z-10 flex max-w-[92%] flex-col items-center"
     >
-      <span className="block font-[family-name:var(--cs-body)] text-[clamp(0.72rem,1.7vw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)]">
+      <span className="block font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]">
         Your night.
       </span>
-      <span className="mt-1.5 flex flex-wrap items-baseline justify-center gap-x-[0.28em]">
-        <span className="font-[family-name:var(--cs-body)] text-[clamp(0.72rem,1.7vw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)]">
+      <span className="mt-[0.22em] flex flex-col items-center sm:mt-[0.12em] sm:flex-row sm:items-baseline sm:justify-center sm:gap-x-[0.28em]">
+        <span className="font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]">
           Your
         </span>
         <span
-          className="font-[family-name:var(--cs-display)] text-[clamp(1.7rem,5.2vw,5.4rem)] leading-[0.8] uppercase"
+          className="mt-[0.08em] font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[0.78] uppercase sm:mt-0 sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[0.8]"
           style={{
             color: VIOLET,
             textShadow: `0 0 36px color-mix(in srgb, ${VIOLET} 60%, transparent)`,
@@ -50,6 +71,47 @@ const LOCKUP = (
     </h2>
   </div>
 )
+
+function splitHeights(parts: number[], total: number) {
+  const sum = parts.reduce((acc, value) => acc + value, 0) || 1
+  const heights = parts.map(value => Math.round((value / sum) * total))
+  const drift = total - heights.reduce((acc, value) => acc + value, 0)
+  heights[heights.length - 1] += drift
+  return heights
+}
+
+function tileHeights(
+  tiles: Tile[],
+  stageH: number,
+  lockupH: number,
+): Map<string, number> {
+  const byCol: Tile[][] = [[], [], []]
+  for (const tile of tiles) byCol[tile.col].push(tile)
+
+  const result = new Map<string, number>()
+  for (const col of byCol) {
+    if (col.length === 0) continue
+    const available = Math.max(stageH - GAP * (col.length - 1), 1)
+    const lockupAt = col.findIndex(tile => tile.id === 'lockup')
+    if (lockupAt === -1) {
+      const heights = splitHeights(
+        col.map(tile => tile.fr),
+        available,
+      )
+      col.forEach((tile, i) => result.set(tile.id, heights[i]))
+      continue
+    }
+    const others = col.filter(tile => tile.id !== 'lockup')
+    const leftover = Math.max(available - lockupH, 1)
+    const heights = splitHeights(
+      others.map(tile => tile.fr),
+      leftover,
+    )
+    others.forEach((tile, i) => result.set(tile.id, heights[i]))
+    result.set('lockup', lockupH)
+  }
+  return result
+}
 
 function still(id: string, body: string) {
   return `data:image/svg+xml,${encodeURIComponent(
@@ -213,13 +275,13 @@ const STILLS: Record<string, string> = {
 export default function SceneScreen() {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
-  const [stageH, setStageH] = useState(0)
+  const [stage, setStage] = useState({ w: 0, h: 0 })
   const [active, setActive] = useState(false)
 
   useLayoutEffect(() => {
     const el = stageRef.current
     if (!el) return
-    const update = () => setStageH(el.clientHeight)
+    const update = () => setStage({ w: el.clientWidth, h: el.clientHeight })
     update()
     const ro = new ResizeObserver(update)
     ro.observe(el)
@@ -229,28 +291,51 @@ export default function SceneScreen() {
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => setActive(entry.isIntersecting),
-      { threshold: 0.22, rootMargin: '-6% 0px' },
-    )
-    io.observe(el)
-    return () => io.disconnect()
+
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const rect = el.getBoundingClientRect()
+      const vh = window.innerHeight || 1
+      const t = rect.top / vh
+      setActive(t > -0.06 && t < 0.38)
+    }
+    const bump = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', bump, { passive: true })
+    window.addEventListener('resize', bump)
+    return () => {
+      window.removeEventListener('scroll', bump)
+      window.removeEventListener('resize', bump)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
+  const compact = stage.w > 0 && stage.w < COMPACT_MAX
+  const tiles = compact ? TILES_COMPACT : TILES_DESKTOP
+  const colFracs = compact ? COL_FR_COMPACT : COL_FR_DESKTOP
+  const lockupAspect = compact ? LOCKUP_ASPECT_COMPACT : LOCKUP_ASPECT_DESKTOP
+
   const items = useMemo(() => {
-    const counts = [0, 0, 0]
-    for (const tile of TILES) counts[tile.col] += 1
-    return TILES.map(tile => {
-      const available = Math.max(stageH - GAP * (counts[tile.col] - 1), 1)
-      return {
-        id: tile.id,
-        column: tile.col,
-        height: Math.round(tile.fr * available),
-        img: tile.id === 'lockup' ? undefined : STILLS[tile.id],
-        content: tile.id === 'lockup' ? LOCKUP : undefined,
-      }
-    })
-  }, [stageH])
+    if (stage.w <= 0 || stage.h <= 0) return []
+    const usable = stage.w - GAP * 2
+    const frSum = colFracs.reduce((acc, value) => acc + value, 0)
+    const lockupW = (usable * colFracs[1]) / frSum
+    const midCount = tiles.filter(tile => tile.col === 1).length
+    const maxLockup = Math.max(stage.h - GAP * (midCount - 1) - 72 * (midCount - 1), 48)
+    const lockupH = Math.min(Math.round(lockupW / lockupAspect), maxLockup)
+    const heights = tileHeights(tiles, stage.h, lockupH)
+    return tiles.map(tile => ({
+      id: tile.id,
+      column: tile.col,
+      height: heights.get(tile.id) ?? 1,
+      img: tile.id === 'lockup' ? undefined : STILLS[tile.id],
+      content: tile.id === 'lockup' ? LOCKUP : undefined,
+    }))
+  }, [colFracs, lockupAspect, stage.h, stage.w, tiles])
 
   return (
     <section
@@ -258,24 +343,27 @@ export default function SceneScreen() {
       aria-labelledby="cs-screen-title"
       data-scene="screen"
       data-scroll="screen-masonry"
+      data-masonry-active={active ? '1' : '0'}
       className="relative h-dvh overflow-hidden bg-[var(--cs-pitch)]"
     >
       {/* swap: cinema masonry stills */}
       <div ref={stageRef} className="absolute inset-1.5 sm:inset-2.5">
-        {stageH > 0 ? (
+        {items.length > 0 ? (
           <Masonry
             items={items}
             columnCount={3}
+            columnFractions={colFracs}
             gap={GAP}
             exactHeight
             active={active}
             animateFrom="bottom"
+            travelRatio={0.62}
             blurToFocus
             scaleOnHover
             hoverScale={0.98}
-            duration={0.85}
-            stagger={0.08}
-            ease="power3.out"
+            duration={0.78}
+            stagger={0.1}
+            ease="power4.out"
           />
         ) : null}
       </div>

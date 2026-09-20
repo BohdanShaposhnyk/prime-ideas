@@ -3,8 +3,21 @@ import { useEffect, useRef, useState } from 'react'
 const LINE = 'NO QUEUE. JUST PLAY.'
 const HOLD_MS = 3000
 const TENSION_MS = 280
-const SNAP_MS = 780
+const TENSION_HANDOFF_MS = 200
+const SNAP_MS = 580
 const OFFSETS = [-2, -1, 0, 1, 2] as const
+const ROLL_EASE = `linear(
+  0,
+  0.018 14%,
+  0.07 22%,
+  0.28 32%,
+  0.55 44%,
+  0.82 56%,
+  0.94 70%,
+  0.98 84%,
+  0.995 93%,
+  1
+)`
 
 const CARDS = [
   {
@@ -144,7 +157,7 @@ export default function ScenePlay() {
     const wind = () => {
       if (cancelled) return
       setPhase('tension')
-      timer = window.setTimeout(snap, TENSION_MS)
+      timer = window.setTimeout(snap, TENSION_HANDOFF_MS)
     }
     const snap = () => {
       if (cancelled) return
@@ -156,7 +169,7 @@ export default function ScenePlay() {
       indexRef.current = next
       frontTimer = window.setTimeout(() => {
         if (!cancelled) setFront(next)
-      }, Math.round(SNAP_MS * 0.55))
+      }, Math.round(SNAP_MS * 0.42))
       timer = window.setTimeout(hold, SNAP_MS)
     }
 
@@ -182,14 +195,14 @@ export default function ScenePlay() {
       aria-labelledby="cs-play-title"
       data-scene="play"
       data-scroll="play-recut"
-      className="relative isolate min-h-dvh overflow-hidden bg-[var(--cs-pitch)] [--cs-play-center-w:10.75rem] [--cs-play-side-w:6.9rem] [--cs-play-gap:1.15rem] sm:[--cs-play-center-w:16.25rem] sm:[--cs-play-side-w:10.5rem] sm:[--cs-play-gap:2.35rem] lg:[--cs-play-center-w:18.75rem] lg:[--cs-play-side-w:12rem] lg:[--cs-play-gap:3.1rem]"
+      className="relative isolate h-dvh overflow-hidden bg-[var(--cs-pitch)] [--cs-play-center-w:10.75rem] [--cs-play-side-w:6.9rem] [--cs-play-gap:1.15rem] sm:[--cs-play-center-w:16.25rem] sm:[--cs-play-side-w:10.5rem] sm:[--cs-play-gap:2.35rem] lg:[--cs-play-center-w:18.75rem] lg:[--cs-play-side-w:12rem] lg:[--cs-play-gap:3.1rem]"
     >
       <style>{`
         .cs-play-stage {
           --cs-play-nudge: 0px;
         }
         .cs-play-stage[data-phase="tension"] {
-          --cs-play-nudge: 1.05rem;
+          --cs-play-nudge: -1.45rem;
         }
         .cs-play-card {
           left: 50%;
@@ -206,20 +219,20 @@ export default function ScenePlay() {
         }
         .cs-play-stage[data-ready="true"] .cs-play-card:not([data-skip]) {
           transition:
-            transform ${SNAP_MS}ms cubic-bezier(0.72, -0.38, 0.16, 1.12),
-            width ${SNAP_MS}ms cubic-bezier(0.72, -0.38, 0.16, 1.12),
+            transform ${SNAP_MS}ms ${ROLL_EASE},
+            width ${SNAP_MS}ms ${ROLL_EASE},
             opacity 180ms linear;
         }
         .cs-play-stage[data-ready="true"] .cs-play-card[data-slot="-1"]:not([data-skip]),
         .cs-play-stage[data-ready="true"] .cs-play-card[data-slot="0"]:not([data-skip]),
         .cs-play-stage[data-ready="true"] .cs-play-card[data-slot="1"]:not([data-skip]) {
           transition:
-            transform ${SNAP_MS}ms cubic-bezier(0.72, -0.38, 0.16, 1.12),
-            width ${SNAP_MS}ms cubic-bezier(0.72, -0.38, 0.16, 1.12),
-            opacity 220ms linear 360ms;
+            transform ${SNAP_MS}ms ${ROLL_EASE},
+            width ${SNAP_MS}ms ${ROLL_EASE},
+            opacity 180ms linear 220ms;
         }
         .cs-play-stage[data-ready="true"][data-phase="tension"] .cs-play-card:not([data-skip]) {
-          transition: transform ${TENSION_MS}ms cubic-bezier(0.22, 0.08, 0.25, 1);
+          transition: transform ${TENSION_MS}ms cubic-bezier(0.62, 0, 0.78, 0.22);
         }
         .cs-play-card[data-front] {
           z-index: 30;
@@ -247,7 +260,7 @@ export default function ScenePlay() {
           filter: blur(10px);
         }
         .cs-play-stage[data-ready="true"] .cs-play-card:not([data-skip]) img {
-          transition: filter ${SNAP_MS}ms cubic-bezier(0.72, -0.38, 0.16, 1.12);
+          transition: filter ${SNAP_MS}ms ${ROLL_EASE};
         }
         .cs-play-card[data-front] img {
           filter: none;
