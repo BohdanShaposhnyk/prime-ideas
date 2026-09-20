@@ -687,7 +687,7 @@ class App {
     if (this.isDown || !this.medias[0]) return;
     const width = this.medias[0].width;
     if (!width) return;
-    this.scroll.target -= width;
+    this.scroll.target += width;
     this.onCheck();
   }
 

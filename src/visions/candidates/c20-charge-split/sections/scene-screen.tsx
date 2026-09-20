@@ -1,9 +1,19 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import EchoText from '@/shared/bits/EchoText'
 import Masonry from '@/shared/bits/Masonry'
+import { gsap } from '@/shared/lib/gsap'
+import { prefersReducedMotion } from '@/shared/lib/motion'
 
 const GAP = 8
 const VIOLET = '#B794F6'
 const COMPACT_MAX = 640
+const MASONRY_DURATION = 0.78
+const MASONRY_STAGGER = 0.1
+/** Start caption this many seconds before the last masonry tile settles. */
+const CAPTION_LEAD = 0.38
+const WORD_STAGGER = 0.15
+const WORD_DURATION = 0.48
+const PRIME_LAG = 0.22
 /** Portrait phone plate on compact; 16:9 PC screen from sm up. */
 const LOCKUP_ASPECT_COMPACT = 9 / 16
 const LOCKUP_ASPECT_DESKTOP = 16 / 9
@@ -36,41 +46,124 @@ const TILES_COMPACT: Tile[] = [
   { id: 'leak', fr: 0.32, col: 2 },
 ]
 
-const LOCKUP = (
-  <div className="@container relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black px-[8%] text-center">
+const WORD_CLASS =
+  'inline-block opacity-0 will-change-[opacity,filter] font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]'
+
+function Lockup({ play, delay }: { play: boolean; delay: number }) {
+  const rootRef = useRef<HTMLDivElement>(null)
+  const [showPrime, setShowPrime] = useState(false)
+
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+    const words = gsap.utils.toArray<HTMLElement>(root.querySelectorAll('[data-cs-word]'))
+    if (words.length === 0) return
+
+    const reduced = prefersReducedMotion()
+
+    if (!play) {
+      setShowPrime(false)
+      gsap.killTweensOf(words)
+      gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
+      return
+    }
+
+    if (reduced) {
+      gsap.set(words, { opacity: 1, filter: 'blur(0px)' })
+      setShowPrime(true)
+      return
+    }
+
+    gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
+    setShowPrime(false)
+
+    const tween = gsap.to(words, {
+      opacity: 1,
+      filter: 'blur(0px)',
+      duration: WORD_DURATION,
+      stagger: WORD_STAGGER,
+      ease: 'power2.out',
+      delay,
+      overwrite: true,
+    })
+    const primeAt = (delay + WORD_STAGGER * (words.length - 1) + PRIME_LAG) * 1000
+    const timer = window.setTimeout(() => setShowPrime(true), primeAt)
+
+    return () => {
+      tween.kill()
+      window.clearTimeout(timer)
+    }
+  }, [play, delay])
+
+  return (
     <div
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background:
-          'radial-gradient(ellipse 70% 55% at 50% 58%, #160c24 0%, #000000 72%)',
-      }}
-      aria-hidden
-    />
-    <h2
-      id="cs-screen-title"
-      data-copy="caption"
-      className="relative z-10 flex max-w-[92%] flex-col items-center"
+      ref={rootRef}
+      className="@container relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black px-[8%] text-center"
     >
-      <span className="block font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]">
-        Your night.
-      </span>
-      <span className="mt-[0.22em] flex flex-col items-center sm:mt-[0.12em] sm:flex-row sm:items-baseline sm:justify-center sm:gap-x-[0.28em]">
-        <span className="font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]">
-          Your
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 55% at 50% 58%, #160c24 0%, #000000 72%)',
+        }}
+        aria-hidden
+      />
+      <h2
+        id="cs-screen-title"
+        data-copy="caption"
+        aria-label="Your night. Your PRIME"
+        className="relative z-10 flex max-w-[92%] flex-col items-center"
+      >
+        <span className="block">
+          <span data-cs-word className={WORD_CLASS}>
+            Your
+          </span>{' '}
+          <span data-cs-word className={WORD_CLASS}>
+            night.
+          </span>
         </span>
-        <span
-          className="mt-[0.08em] font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[0.78] uppercase sm:mt-0 sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[0.8]"
-          style={{
-            color: VIOLET,
-            textShadow: `0 0 36px color-mix(in srgb, ${VIOLET} 60%, transparent)`,
-          }}
-        >
-          PRIME
+        <span className="mt-[0.22em] flex flex-col items-center sm:mt-[0.12em] sm:flex-row sm:items-baseline sm:justify-center sm:gap-x-[0.28em]">
+          <span data-cs-word className={WORD_CLASS}>
+            Your
+          </span>
+          <span className="relative mt-[0.08em] inline-flex items-center justify-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[0.78] uppercase sm:mt-0 sm:items-baseline sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[0.8]">
+            <span className="invisible" aria-hidden>
+              PRIME
+            </span>
+            {showPrime ? (
+              <span
+                className="absolute inset-0 flex items-center justify-center overflow-visible sm:items-baseline sm:justify-start"
+                aria-hidden
+              >
+                <EchoText
+                  text="PRIME"
+                  fontSize="1em"
+                  fontWeight={400}
+                  color={VIOLET}
+                  tint="#E9D5FF"
+                  echoes={7}
+                  offset={20}
+                  lag={0.2}
+                  fade={0.68}
+                  blur={3.2}
+                  direction="right"
+                  mode="entrance"
+                  duration={780}
+                  ease="snappy"
+                  className="leading-[0.78] tracking-normal sm:leading-[0.8]"
+                  style={{
+                    lineHeight: 0.78,
+                    textShadow: `0 0 36px color-mix(in srgb, ${VIOLET} 60%, transparent)`,
+                  }}
+                />
+              </span>
+            ) : null}
+          </span>
         </span>
-      </span>
-    </h2>
-  </div>
-)
+      </h2>
+    </div>
+  )
+}
 
 function splitHeights(parts: number[], total: number) {
   const sum = parts.reduce((acc, value) => acc + value, 0) || 1
@@ -318,6 +411,10 @@ export default function SceneScreen() {
   const tiles = compact ? TILES_COMPACT : TILES_DESKTOP
   const colFracs = compact ? COL_FR_COMPACT : COL_FR_DESKTOP
   const lockupAspect = compact ? LOCKUP_ASPECT_COMPACT : LOCKUP_ASPECT_DESKTOP
+  const captionDelay = Math.max(
+    (tiles.length - 1) * MASONRY_STAGGER + MASONRY_DURATION - CAPTION_LEAD,
+    0.45,
+  )
 
   const items = useMemo(() => {
     if (stage.w <= 0 || stage.h <= 0) return []
@@ -333,9 +430,9 @@ export default function SceneScreen() {
       column: tile.col,
       height: heights.get(tile.id) ?? 1,
       img: tile.id === 'lockup' ? undefined : STILLS[tile.id],
-      content: tile.id === 'lockup' ? LOCKUP : undefined,
+      content: tile.id === 'lockup' ? <Lockup play={active} delay={captionDelay} /> : undefined,
     }))
-  }, [colFracs, lockupAspect, stage.h, stage.w, tiles])
+  }, [active, captionDelay, colFracs, lockupAspect, stage.h, stage.w, tiles])
 
   return (
     <section
@@ -361,8 +458,8 @@ export default function SceneScreen() {
             blurToFocus
             scaleOnHover
             hoverScale={0.98}
-            duration={0.78}
-            stagger={0.1}
+            duration={MASONRY_DURATION}
+            stagger={MASONRY_STAGGER}
             ease="power4.out"
           />
         ) : null}

@@ -106,7 +106,7 @@ export default function SceneBook() {
           font="500 20px Barlow"
           scrollSpeed={2.2}
           scrollEase={0.06}
-          autoplay={3000}
+          autoplay={2000}
         />
       </div>
 

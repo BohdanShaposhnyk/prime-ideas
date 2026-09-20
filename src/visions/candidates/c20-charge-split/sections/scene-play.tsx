@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 const LINE = 'NO QUEUE. JUST PLAY.'
-const HOLD_MS = 3000
+const HOLD_MS = 2000
 const TENSION_MS = 280
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
@@ -22,7 +22,6 @@ const ROLL_EASE = `linear(
 const CARDS = [
   {
     id: 'rigs',
-    caption: 'Forty seats under one voltage roof.',
     image: plate(
       'rigs',
       `<radialGradient id="g" cx="46%" cy="32%" r="68%">
@@ -43,7 +42,6 @@ const CARDS = [
   },
   {
     id: 'glow',
-    caption: 'Screens hold the pit until last call.',
     image: plate(
       'glow',
       `<rect width="900" height="1200" fill="#000000"/>
@@ -57,7 +55,6 @@ const CARDS = [
   },
   {
     id: 'pit',
-    caption: 'One chair. The night stays in it.',
     image: plate(
       'pit',
       `<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
@@ -75,7 +72,6 @@ const CARDS = [
   },
   {
     id: 'aisle',
-    caption: 'Aisle light. Walk in. Play.',
     image: plate(
       'aisle',
       `<rect width="900" height="1200" fill="#000000"/>
@@ -89,7 +85,6 @@ const CARDS = [
   },
   {
     id: 'charge',
-    caption: 'Call the game. Keep the booth.',
     image: plate(
       'charge',
       `<radialGradient id="g" cx="58%" cy="42%" r="70%">
@@ -269,7 +264,7 @@ export default function ScenePlay() {
           box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
         }
         .cs-play-type {
-          animation: cs-play-type 11s linear infinite;
+          animation: cs-play-type 16s linear infinite;
           will-change: transform;
         }
         @keyframes cs-play-type {
@@ -324,12 +319,9 @@ export default function ScenePlay() {
               data-skip={skip ? '' : undefined}
               className="cs-play-card absolute"
             >
-              <figcaption className="absolute bottom-[calc(100%+0.85rem)] left-0 max-w-[92%] font-[family-name:var(--cs-body)] text-[0.68rem] leading-snug tracking-[0.02em] text-[var(--cs-caption)] sm:text-[0.74rem]">
-                {card.caption}
-              </figcaption>
               <div
                 data-placeholder="visual"
-                className="cs-play-plate overflow-hidden bg-[var(--cs-void)]"
+                className="cs-play-plate overflow-hidden rounded-[0.7rem] bg-[var(--cs-void)]"
               >
                 <img
                   src={card.image}
