@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
 
 export interface InfiniteSpiralItem {
   id?: string | number;
@@ -30,6 +30,8 @@ export interface InfiniteSpiralProps {
   imageFit?: CSSProperties['objectFit'];
   grayscale?: number;
   className?: string;
+  /** When set, the helix follows this value (card index) instead of auto / window-scroll. */
+  drivenProgressRef?: RefObject<number>;
 }
 
 type NormalizedItem = InfiniteSpiralItem & { alt: string };
@@ -61,7 +63,8 @@ const InfiniteSpiral = ({
   pauseOnHover = true,
   imageFit = 'cover',
   grayscale = 0,
-  className = ''
+  className = '',
+  drivenProgressRef
 }: InfiniteSpiralProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLAnchorElement | HTMLDivElement | null>>([]);
@@ -92,8 +95,14 @@ const InfiniteSpiral = ({
     let previousTime = performance.now();
     let bounds = root.getBoundingClientRect();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const scrollEnabled = animationMode === 'scroll' || animationMode === 'all';
+    const driven = Boolean(drivenProgressRef);
+    const scrollEnabled = !driven && (animationMode === 'scroll' || animationMode === 'all');
     const scrollSpeedMultiplier = Math.max(speed, 0) / 0.55;
+    if (driven && drivenProgressRef) {
+      const start = drivenProgressRef.current;
+      progressRef.current = start;
+      targetProgressRef.current = start;
+    }
     let lastScrollY = window.scrollY;
     const resizeObserver = new ResizeObserver(() => {
       bounds = root.getBoundingClientRect();
@@ -120,18 +129,23 @@ const InfiniteSpiral = ({
     const render = (time: number) => {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
-      const autoEnabled = animationMode === 'auto' || animationMode === 'all';
-      const motionPaused = draggingRef.current || (pauseOnHover && hoveredRef.current);
-      const directionMultiplier = direction === 'down' ? -1 : 1;
-      const desiredAutoSpeed =
-        autoEnabled && visibleRef.current && !reducedMotion.matches && !motionPaused
-          ? speed * directionMultiplier
-          : 0;
-      const speedBlend = 1 - Math.exp(-delta * 7);
-      autoSpeedRef.current += (desiredAutoSpeed - autoSpeedRef.current) * speedBlend;
-      targetProgressRef.current += autoSpeedRef.current * delta;
+      if (driven && drivenProgressRef) {
+        targetProgressRef.current = drivenProgressRef.current;
+      } else {
+        const autoEnabled = animationMode === 'auto' || animationMode === 'all';
+        const motionPaused = draggingRef.current || (pauseOnHover && hoveredRef.current);
+        const directionMultiplier = direction === 'down' ? -1 : 1;
+        const desiredAutoSpeed =
+          autoEnabled && visibleRef.current && !reducedMotion.matches && !motionPaused
+            ? speed * directionMultiplier
+            : 0;
+        const speedBlend = 1 - Math.exp(-delta * 7);
+        autoSpeedRef.current += (desiredAutoSpeed - autoSpeedRef.current) * speedBlend;
+        targetProgressRef.current += autoSpeedRef.current * delta;
+      }
 
-      const followBlend = 1 - Math.exp(-delta * (draggingRef.current ? 22 : 11));
+      const followK = driven ? 18 : draggingRef.current ? 22 : 11;
+      const followBlend = 1 - Math.exp(-delta * followK);
       progressRef.current += (targetProgressRef.current - progressRef.current) * followBlend;
 
       const count = normalizedItems.length;
@@ -190,7 +204,8 @@ const InfiniteSpiral = ({
     centerScale,
     edgeFade,
     edgeBlur,
-    pauseOnHover
+    pauseOnHover,
+    drivenProgressRef
   ]);
 
   const rootStyle = {

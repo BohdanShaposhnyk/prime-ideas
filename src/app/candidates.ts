@@ -177,6 +177,14 @@ export const candidates: CandidateMeta[] = [
     thesis:
       'Prime is scenery in the flies — scroll docks each room on the pinrail, then flies it out for the next drop.',
   },
+  {
+    id: 'c20',
+    slug: 'charge-split',
+    title: 'Charge Split',
+    status: 'structure',
+    thesis:
+      'Prime holds the left cell as a charged name — lightning over a deep-blue core — while the night plays on the right.',
+  },
 ]
 
 export function candidateKey(c: Pick<CandidateMeta, 'id' | 'slug'>) {
