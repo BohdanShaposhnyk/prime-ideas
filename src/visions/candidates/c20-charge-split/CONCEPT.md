@@ -27,8 +27,7 @@ Full-viewport 50/50 vertical split for the charge cell. After it, a full-bleed l
 3. **Play** — right pane recuts to the arena
 4. **Screen** — full-viewport masonry (2 / 3 / 2); black center lockup, cinema stills around it
 5. **Showcase** — almost-full-screen InfiniteSpiral of four stills; scroll snaps card to card; dark gradient + one big word
-6. **Heat** — hookah / bar recut
-7. **Close** — kitchen / lodge; last hold
+6. **Locations** — full-viewport AccordionGallery as dimmed backdrop; venue title, map, and Book / Call / Telegram sit inside the active card
 
 ## Motion signature
 1. Split-hold pin (GSAP) — 50/50 frame sticks while the right pane recuts

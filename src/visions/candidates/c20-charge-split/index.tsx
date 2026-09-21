@@ -7,11 +7,13 @@ import { useEffect, useRef, type CSSProperties, type RefObject } from 'react'
 import { Link } from '@tanstack/react-router'
 import { gsap } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
-import Hero from './sections/hero'
+// import Hero from './sections/hero'
+import HeroV2 from './sections/hero-v2'
 import SceneBook from './sections/scene-book'
 import ScenePlay from './sections/scene-play'
 import SceneScreen from './sections/scene-screen'
 import SceneShowcase from './sections/scene-showcase'
+import SceneLocations from './sections/scene-locations'
 
 const tokens = {
   '--cs-pitch': '#000000',
@@ -143,11 +145,13 @@ export default function ChargeSplitPage() {
       >
         Hub
       </Link>
-      <Hero />
+      {/* <Hero /> */}
+      <HeroV2 />
       <SceneBook />
       <ScenePlay />
       <SceneScreen />
       <SceneShowcase />
+      <SceneLocations />
     </main>
   )
 }

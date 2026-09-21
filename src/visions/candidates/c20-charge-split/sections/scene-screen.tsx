@@ -62,7 +62,7 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
     const reduced = prefersReducedMotion()
 
     if (!play) {
-      setShowPrime(false)
+      queueMicrotask(() => setShowPrime(false))
       gsap.killTweensOf(words)
       gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
       return
@@ -70,12 +70,12 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
 
     if (reduced) {
       gsap.set(words, { opacity: 1, filter: 'blur(0px)' })
-      setShowPrime(true)
+      queueMicrotask(() => setShowPrime(true))
       return
     }
 
     gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
-    setShowPrime(false)
+    queueMicrotask(() => setShowPrime(false))
 
     const tween = gsap.to(words, {
       opacity: 1,
