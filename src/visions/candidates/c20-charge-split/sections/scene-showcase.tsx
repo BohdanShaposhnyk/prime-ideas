@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import InfiniteSpiral from '@/shared/bits/InfiniteSpiral'
+import bottles from '../assets/bar/bottles.jpg'
+import controllerDark from '../assets/gaming/controller-dark-purple.jpg'
+import hookahCoal from '../assets/hookah/hookah-coal.jpg'
+import micGold from '../assets/karaoke/mic-gold.jpg'
 
 const LAND_SCALE = 1 / 0.75
 const REVEAL_SCALE = 1
@@ -12,66 +16,26 @@ const CARDS = [
   {
     id: 'ice',
     word: 'ICE',
-    alt: 'Ice light still',
-    src: still(
-      'ice',
-      `<radialGradient id="g-ice" cx="48%" cy="38%" r="62%">
-        <stop offset="0%" stop-color="#F4F7FF"/>
-        <stop offset="28%" stop-color="#A9BBE0"/>
-        <stop offset="68%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000"/>
-      </radialGradient>
-      <rect width="900" height="1200" fill="url(#g-ice)"/>
-      <ellipse cx="450" cy="420" rx="260" ry="180" fill="#F4F7FF" opacity="0.18"/>`,
-    ),
+    alt: 'Bar still',
+    src: bottles,
   },
   {
     id: 'charge',
     word: 'CHARGE',
-    alt: 'Charge bloom still',
-    src: still(
-      'charge',
-      `<radialGradient id="g-charge" cx="54%" cy="44%" r="68%">
-        <stop offset="0%" stop-color="#0A2478"/>
-        <stop offset="42%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000"/>
-      </radialGradient>
-      <rect width="900" height="1200" fill="url(#g-charge)"/>
-      <ellipse cx="520" cy="380" rx="220" ry="300" fill="#0A2478" opacity="0.85"/>
-      <ellipse cx="300" cy="760" rx="180" ry="120" fill="#A9BBE0" opacity="0.12"/>`,
-    ),
+    alt: 'Play still',
+    src: controllerDark,
   },
   {
     id: 'voltage',
     word: 'VOLTAGE',
-    alt: 'Voltage streak still',
-    src: still(
-      'voltage',
-      `<linearGradient id="g-voltage" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#000"/>
-        <stop offset="38%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000"/>
-      </linearGradient>
-      <rect width="900" height="1200" fill="url(#g-voltage)"/>
-      <polyline points="180,40 280,460 220,460 380,1180 300,560 360,560 240,40" fill="#F4F7FF" opacity="0.42"/>
-      <polyline points="560,0 640,520 600,520 720,1200" fill="none" stroke="#A9BBE0" stroke-width="14" opacity="0.35"/>`,
-    ),
+    alt: 'Heat still',
+    src: hookahCoal,
   },
   {
     id: 'night',
     word: 'NIGHT',
-    alt: 'Night field still',
-    src: still(
-      'night',
-      `<linearGradient id="g-night" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stop-color="#000"/>
-        <stop offset="55%" stop-color="#050814"/>
-        <stop offset="100%" stop-color="#071A52"/>
-      </linearGradient>
-      <rect width="900" height="1200" fill="url(#g-night)"/>
-      <ellipse cx="450" cy="1080" rx="420" ry="160" fill="#0A2478" opacity="0.55"/>
-      <ellipse cx="450" cy="1020" rx="180" ry="40" fill="#F4F7FF" opacity="0.16"/>`,
-    ),
+    alt: 'Stage still',
+    src: micGold,
   },
 ] as const
 
@@ -81,20 +45,6 @@ const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   alt,
   label: word,
 }))
-
-function still(id: string, body: string) {
-  return `data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
-      <defs>
-        <filter id="${id}-grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" stitchTiles="stitch"/>
-        </filter>
-      </defs>
-      ${body}
-      <rect width="900" height="1200" filter="url(#${id}-grain)" opacity="0.16"/>
-    </svg>`,
-  )}`
-}
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
@@ -243,11 +193,7 @@ export default function SceneShowcase() {
           {word}
         </p>
 
-        {/* swap: showcase spiral stills */}
-        <div
-          data-placeholder="visual"
-          className="absolute inset-[2.5%] z-20 sm:inset-[3.5%]"
-        >
+        <div className="absolute inset-[2.5%] z-20 sm:inset-[3.5%]">
           <div
             ref={cameraRef}
             className="h-full w-full origin-center will-change-transform [transform:scale(1)]"

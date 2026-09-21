@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
+import barPartyGirl from '../assets/bar/bar-party-girl.jpg'
+import pcParty from '../assets/gaming/pc-party.jpg'
+import smoking from '../assets/hookah/smoking.jpg'
+import micRay from '../assets/karaoke/mic-ray.jpg'
 
 const LINE = 'NO QUEUE. JUST PLAY.'
 const HOLD_MS = 2000
 const TENSION_MS = 280
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
-const OFFSETS = [-2, -1, 0, 1, 2] as const
+const OFFSETS = [-2, -1, 0, 1] as const
 const ROLL_EASE = `linear(
   0,
   0.018 14%,
@@ -20,100 +24,14 @@ const ROLL_EASE = `linear(
 )`
 
 const CARDS = [
-  {
-    id: 'rigs',
-    image: plate(
-      'rigs',
-      `<radialGradient id="g" cx="46%" cy="32%" r="68%">
-        <stop offset="0%" stop-color="#0A2478"/>
-        <stop offset="58%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000000"/>
-      </radialGradient>
-      <rect width="900" height="1200" fill="url(#g)"/>
-      <rect x="80" y="150" width="220" height="150" rx="8" fill="#161A24"/>
-      <rect x="340" y="130" width="220" height="180" rx="8" fill="#0C0E14"/>
-      <rect x="600" y="160" width="220" height="150" rx="8" fill="#161A24"/>
-      <rect x="80" y="420" width="220" height="160" rx="8" fill="#0C0E14"/>
-      <rect x="340" y="400" width="220" height="190" rx="8" fill="#161A24"/>
-      <rect x="600" y="430" width="220" height="160" rx="8" fill="#0C0E14"/>
-      <rect x="180" y="780" width="540" height="10" fill="#A9BBE0" opacity="0.3"/>
-      <rect x="260" y="860" width="380" height="6" fill="#F4F7FF" opacity="0.16"/>`,
-    ),
-  },
-  {
-    id: 'glow',
-    image: plate(
-      'glow',
-      `<rect width="900" height="1200" fill="#000000"/>
-      <rect x="70" y="90" width="760" height="1020" fill="#071A52"/>
-      <rect x="130" y="150" width="640" height="900" fill="#0A2478" opacity="0.9"/>
-      <rect x="210" y="250" width="480" height="620" fill="#F4F7FF" opacity="0.18"/>
-      <rect x="0" y="0" width="900" height="90" fill="#0C0E14"/>
-      <rect x="0" y="1110" width="900" height="90" fill="#0C0E14"/>
-      <rect x="210" y="250" width="480" height="12" fill="#A9BBE0" opacity="0.35"/>`,
-    ),
-  },
-  {
-    id: 'pit',
-    image: plate(
-      'pit',
-      `<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#000000"/>
-        <stop offset="40%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000000"/>
-      </linearGradient>
-      <rect width="900" height="1200" fill="url(#g)"/>
-      <ellipse cx="450" cy="760" rx="260" ry="70" fill="#0C0E14" opacity="0.85"/>
-      <rect x="330" y="420" width="240" height="280" rx="18" fill="#161A24"/>
-      <rect x="360" y="390" width="180" height="24" rx="8" fill="#0A2478"/>
-      <rect x="300" y="200" width="300" height="170" rx="10" fill="#0C0E14"/>
-      <rect x="330" y="230" width="240" height="110" fill="#F4F7FF" opacity="0.14"/>`,
-    ),
-  },
-  {
-    id: 'aisle',
-    image: plate(
-      'aisle',
-      `<rect width="900" height="1200" fill="#000000"/>
-      <rect x="0" y="640" width="900" height="560" fill="#071A52"/>
-      <rect x="0" y="640" width="900" height="20" fill="#A9BBE0" opacity="0.38"/>
-      <rect x="70" y="730" width="760" height="8" fill="#F4F7FF" opacity="0.16"/>
-      <rect x="160" y="140" width="26" height="500" fill="#0A2478"/>
-      <rect x="430" y="90" width="40" height="550" fill="#0A2478" opacity="0.75"/>
-      <rect x="710" y="180" width="22" height="460" fill="#161A24"/>`,
-    ),
-  },
-  {
-    id: 'charge',
-    image: plate(
-      'charge',
-      `<radialGradient id="g" cx="58%" cy="42%" r="70%">
-        <stop offset="0%" stop-color="#0A2478"/>
-        <stop offset="50%" stop-color="#071A52"/>
-        <stop offset="100%" stop-color="#000000"/>
-      </radialGradient>
-      <rect width="900" height="1200" fill="url(#g)"/>
-      <polyline points="180,80 260,420 210,420 340,1120 280,520 330,520 220,80" fill="#F4F7FF" opacity="0.5"/>
-      <polyline points="520,40 580,380 540,380 640,1180" fill="none" stroke="#A9BBE0" stroke-width="10" opacity="0.45"/>
-      <polyline points="720,120 760,500 730,500 800,1100" fill="none" stroke="#0A2478" stroke-width="16"/>`,
-    ),
-  },
+  { id: 'floor', image: pcParty },
+  { id: 'voice', image: micRay },
+  { id: 'bar', image: barPartyGirl },
+  { id: 'ember', image: smoking },
 ]
 
 const TYPE_LOOP = Array.from({ length: 8 }, () => LINE)
 const CARD_COUNT = CARDS.length
-
-function plate(id: string, body: string) {
-  return `data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
-      <defs>
-        <filter id="${id}-grain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/></filter>
-      </defs>
-      ${body}
-      <rect width="900" height="1200" filter="url(#${id}-grain)" opacity="0.14"/>
-    </svg>`,
-  )}`
-}
 
 function slotOf(cardIndex: number, current: number) {
   let delta = ((cardIndex - current) % CARD_COUNT + CARD_COUNT) % CARD_COUNT
@@ -301,7 +219,6 @@ export default function ScenePlay() {
         No queue. Just play.
       </h2>
 
-      {/* swap: play arena carousel */}
       <div
         className="cs-play-stage absolute inset-0 overflow-hidden"
         data-phase={phase}
@@ -319,10 +236,7 @@ export default function ScenePlay() {
               data-skip={skip ? '' : undefined}
               className="cs-play-card absolute"
             >
-              <div
-                data-placeholder="visual"
-                className="cs-play-plate overflow-hidden rounded-[0.7rem] bg-[var(--cs-void)]"
-              >
+              <div className="cs-play-plate overflow-hidden rounded-[0.7rem] bg-[var(--cs-void)]">
                 <img
                   src={card.image}
                   alt=""
