@@ -121,7 +121,7 @@ export default function ScenePlay() {
           left: 50%;
           top: 50%;
           width: var(--cs-play-side-w);
-          z-index: 10;
+          z-index: 6;
           opacity: 0;
           transform: translate3d(
             calc(-50% + var(--cs-play-nudge) + var(--cs-play-x)),
@@ -147,19 +147,19 @@ export default function ScenePlay() {
         .cs-play-stage[data-ready="true"][data-phase="tension"] .cs-play-card:not([data-skip]) {
           transition: transform ${TENSION_MS}ms cubic-bezier(0.62, 0, 0.78, 0.22);
         }
-        .cs-play-card[data-front] {
-          z-index: 30;
-        }
         .cs-play-card[data-slot="0"] {
+          z-index: 20;
           width: var(--cs-play-center-w);
           opacity: 1;
           --cs-play-x: 0px;
         }
         .cs-play-card[data-slot="-1"] {
+          z-index: 12;
           opacity: 1;
           --cs-play-x: calc(-0.5 * var(--cs-play-center-w) - var(--cs-play-gap) - 0.5 * var(--cs-play-side-w));
         }
         .cs-play-card[data-slot="1"] {
+          z-index: 8;
           opacity: 1;
           --cs-play-x: calc(0.5 * var(--cs-play-center-w) + var(--cs-play-gap) + 0.5 * var(--cs-play-side-w));
         }
@@ -168,6 +168,9 @@ export default function ScenePlay() {
         }
         .cs-play-card[data-slot="2"] {
           --cs-play-x: calc(0.5 * var(--cs-play-center-w) + 2 * var(--cs-play-gap) + 1.5 * var(--cs-play-side-w));
+        }
+        .cs-play-card[data-front] {
+          z-index: 30;
         }
         .cs-play-card img {
           filter: blur(10px);
