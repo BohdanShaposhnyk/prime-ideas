@@ -88,7 +88,7 @@ export default function SceneApp() {
             <img
               src={mockupDesktop}
               alt="SENET ID login on iPhone"
-              className="absolute inset-y-0 right-0 h-full w-auto max-w-full object-contain object-right select-none"
+              className="absolute top-0 right-0 h-[160%] w-auto max-w-none select-none"
               draggable={false}
             />
           </div>
