@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import MaskedHeading from '@/shared/bits/MaskedHeading'
+import MoltenMetal from '@/shared/bits/MoltenMetal'
 import SpecularButton from '@/shared/bits/SpecularButton'
 import SplitText from '@/shared/bits/SplitText'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
@@ -9,11 +10,25 @@ import { BOOKING_URL } from '../booking'
 
 const FADE_S = 0.85
 const REVEAL_S = 1.1
-const HOLD_S = 0.8
 const DIVE_S = 1.6
 const DIVE_SCALE = 22
 const CRISP_S = 1.5
 const BLUR_PX = 5.5
+
+/** Molten beat — after PRIME settles, before the dive. */
+const MOLTEN_IN_S = 0.75
+const MOLTEN_HOLD_S = 2
+const MOLTEN_OUT_S = 0.5
+const MOLTEN_MOUNT_AT = REVEAL_S
+const DIVE_AT = MOLTEN_MOUNT_AT + MOLTEN_IN_S + MOLTEN_HOLD_S
+
+/** Gold molten — matches hero CTA / “prime” accent. */
+const MOLTEN_GOLD = {
+  color1: '#2A1806',
+  color2: '#CFB53B',
+  color3: '#FFF1B8',
+  speed: 0.42,
+} as const
 
 /** MaskedHeading measures SVG glyphs from DOM boxes — wrong until Bebas is live. */
 async function waitForDisplayFont() {
@@ -109,10 +124,13 @@ export default function HeroV2() {
   const rootRef = useRef<HTMLElement>(null)
   const brandRef = useRef<HTMLDivElement>(null)
   const vignetteRef = useRef<HTMLDivElement>(null)
+  const moltenRef = useRef<HTMLDivElement>(null)
   const reduced = prefersReducedMotion()
   /** Don't mount MaskedHeading until display font is live — avoids glyph teleport. */
   const [fontReady, setFontReady] = useState(reduced)
   const [copyReady, setCopyReady] = useState(reduced)
+  /** Mount MoltenMetal only for the mid-hold beat — not during initial load. */
+  const [moltenLive, setMoltenLive] = useState(false)
 
   useEffect(() => {
     if (reduced) return
@@ -127,6 +145,23 @@ export default function HeroV2() {
 
   useGSAP(
     () => {
+      if (!moltenLive) return
+      const el = moltenRef.current
+      if (!el) return
+      gsap.fromTo(
+        el,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: MOLTEN_IN_S, ease: 'power2.out' },
+      )
+      return () => {
+        gsap.killTweensOf(el)
+      }
+    },
+    { dependencies: [moltenLive] },
+  )
+
+  useGSAP(
+    () => {
       if (reduced || !fontReady) return
       const root = rootRef.current
       const brand = brandRef.current
@@ -134,8 +169,10 @@ export default function HeroV2() {
 
       let cancelled = false
       let releaseTimer = 0
+      let moltenMountTimer = 0
       let settleTween: gsap.core.Tween | null = null
       let fadeTween: gsap.core.Tween | null = null
+      let moltenOutTween: gsap.core.Tween | null = null
 
       const video = root.querySelector('video')
       root.style.setProperty('--cs-hero-blur', `${BLUR_PX}px`)
@@ -148,6 +185,23 @@ export default function HeroV2() {
           autoAlpha: 1,
           duration: FADE_S,
           ease: 'power2.out',
+        })
+      }
+
+      const fadeMoltenOut = () => {
+        const el = moltenRef.current
+        if (!el) {
+          if (!cancelled) setMoltenLive(false)
+          return
+        }
+        moltenOutTween = gsap.to(el, {
+          autoAlpha: 0,
+          duration: MOLTEN_OUT_S,
+          ease: 'power2.in',
+          onComplete: () => {
+            moltenOutTween = null
+            if (!cancelled) setMoltenLive(false)
+          },
         })
       }
 
@@ -167,6 +221,11 @@ export default function HeroV2() {
           revealBrand()
         })
 
+        // PRIME settled → mount molten (WebGL starts here, not on first paint).
+        moltenMountTimer = window.setTimeout(() => {
+          if (!cancelled) setMoltenLive(true)
+        }, MOLTEN_MOUNT_AT * 1000)
+
         const { x: cx, y: cy } = diveCenter(targets[0])
         gsap.killTweensOf(targets)
         gsap.set(targets, { clearProps: 'transform' })
@@ -175,8 +234,11 @@ export default function HeroV2() {
         gsap.to(proxy, {
           s: DIVE_SCALE,
           duration: DIVE_S,
-          delay: REVEAL_S + HOLD_S,
+          delay: DIVE_AT,
           ease: 'power3.in',
+          onStart: () => {
+            if (!cancelled) fadeMoltenOut()
+          },
           onUpdate: () => {
             const t = `translate(${cx} ${cy}) scale(${proxy.s}) translate(${-cx} ${-cy})`
             for (const node of targets) node.setAttribute('transform', t)
@@ -212,7 +274,7 @@ export default function HeroV2() {
               if (!cancelled) setCopyReady(true)
             },
           })
-        }, (REVEAL_S + HOLD_S + DIVE_S) * 1000)
+        }, (DIVE_AT + DIVE_S) * 1000)
       }
 
       const kick = () => {
@@ -229,9 +291,12 @@ export default function HeroV2() {
       return () => {
         cancelled = true
         window.clearTimeout(releaseTimer)
+        window.clearTimeout(moltenMountTimer)
         fadeTween?.kill()
+        moltenOutTween?.kill()
         settleTween?.kill()
         video?.removeEventListener('loadeddata', kick)
+        setMoltenLive(false)
       }
     },
     { scope: rootRef, dependencies: [reduced, fontReady] },
@@ -254,7 +319,35 @@ export default function HeroV2() {
       style={{ '--cs-hero-blur': `${BLUR_PX}px` } as CSSProperties}
     >
       <style>{HERO_CSS}</style>
-      <div ref={brandRef} className="h-full invisible opacity-0">
+      {moltenLive ? (
+        <div
+          ref={moltenRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 opacity-0"
+        >
+          <MoltenMetal
+            color1={MOLTEN_GOLD.color1}
+            color2={MOLTEN_GOLD.color2}
+            color3={MOLTEN_GOLD.color3}
+            colorMode="ember"
+            speed={MOLTEN_GOLD.speed}
+            scale={3.4}
+            detail={2}
+            glow={1.45}
+            coreSize={0.12}
+            swirl={0.85}
+            brightness={1.15}
+            opacity={1}
+            mouseInteraction={false}
+            grain
+            grainIntensity={0.04}
+            renderScale={0.5}
+            maxDpr={1.25}
+            targetFps={30}
+          />
+        </div>
+      ) : null}
+      <div ref={brandRef} className="relative z-[1] h-full invisible opacity-0">
         {fontReady ? (
           <MaskedHeading
             id="cs-hero-v2-brand"
