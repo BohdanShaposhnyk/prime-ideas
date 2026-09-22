@@ -14,27 +14,27 @@ const ZOOM_IN_START = 0.6
 const INTRO_U0 = (ZOOM_OUT_END + ZOOM_IN_START) / 2
 const CARDS = [
   {
-    id: 'ice',
-    word: 'ICE',
-    alt: 'Bar still',
+    id: 'bar',
+    word: 'BAR',
+    alt: 'Bar',
     src: bottles,
   },
   {
-    id: 'charge',
-    word: 'CHARGE',
-    alt: 'Play still',
+    id: 'play',
+    word: 'PLAY ZONE',
+    alt: 'Play zone',
     src: controllerDark,
   },
   {
-    id: 'voltage',
-    word: 'VOLTAGE',
-    alt: 'Heat still',
+    id: 'hookah',
+    word: 'HOOKAH',
+    alt: 'Hookah',
     src: hookahCoal,
   },
   {
-    id: 'night',
-    word: 'NIGHT',
-    alt: 'Stage still',
+    id: 'karaoke',
+    word: 'KARAOKE',
+    alt: 'Karaoke',
     src: micGold,
   },
 ] as const
@@ -169,22 +169,38 @@ export default function SceneShowcase() {
       className="relative h-[520vh] bg-[var(--cs-pitch)]"
     >
       <div className="sticky top-0 h-dvh overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          {CARDS.map((card, i) => (
+            <div
+              key={card.id}
+              className="absolute inset-0 opacity-0 transition-opacity duration-[820ms] ease-linear motion-reduce:transition-none data-[active]:opacity-100"
+              data-active={i === wordIndex ? '' : undefined}
+            >
+              <img
+                src={card.src}
+                alt=""
+                className="absolute inset-[-22%] h-[144%] w-[144%] max-w-none scale-[1.48] object-cover blur-[42px]"
+              />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_58%,transparent)]" />
+        </div>
         <div
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]"
           style={{
-            background:
-              'radial-gradient(ellipse 70% 58% at 50% 42%, #071A52 0%, #05060c 48%, #000000 78%)',
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
+            backgroundSize: '180px 180px',
           }}
           aria-hidden
         />
 
         <h2 id="cs-showcase-title" className="sr-only">
-          Showcase
+          Bar. Play zone. Hookah. Karaoke.
         </h2>
         <p
           aria-live="polite"
           data-copy="caption"
-          className="pointer-events-none absolute bottom-[5%] left-[5%] z-10 font-[family-name:var(--cs-display)] text-[clamp(4.2rem,16vw,10.5rem)] leading-[0.78] uppercase sm:bottom-[6%] sm:left-[6%]"
+          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 font-[family-name:var(--cs-display)] text-[clamp(4.2rem,16vw,10.5rem)] leading-[0.78] uppercase sm:bottom-[6%] sm:left-[6%]"
           style={{
             color: 'transparent',
             WebkitTextStroke: '0.026em color-mix(in srgb, var(--cs-ice) 36%, transparent)',
@@ -204,10 +220,10 @@ export default function SceneShowcase() {
               animationMode="scroll"
               speed={0}
               direction="up"
-              radius={210}
+              radius={420}
               cardWidth={220}
               cardHeight={310}
-              verticalSpacing={82}
+              verticalSpacing={168}
               perspective={1280}
               cardsPerTurn={4}
               centerScale={1.42}
