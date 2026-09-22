@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 
 type Origin = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
@@ -48,71 +48,34 @@ const SideRays = ({
 }: SideRaysProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const uniformsRef = useRef<Record<string, { value: number | number[] }> | null>(null);
-  const rendererRef = useRef<Renderer | null>(null);
-  const animationIdRef = useRef<number | null>(null);
-  const meshRef = useRef<Mesh | null>(null);
-  const cleanupFunctionRef = useRef<(() => void) | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    observerRef.current = new IntersectionObserver(
-      entries => {
-        const entry = entries[0];
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    observerRef.current.observe(containerRef.current);
+    const renderer = new Renderer({
+      dpr: Math.min(window.devicePixelRatio, 2),
+      alpha: true,
+      premultipliedAlpha: false,
+    });
+    const gl = renderer.gl;
+    gl.clearColor(0, 0, 0, 0);
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+    gl.canvas.style.display = 'block';
+    // Hide until first paint so an empty buffer never flashes black.
+    gl.canvas.style.opacity = '0';
+    container.appendChild(gl.canvas);
 
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible || !containerRef.current) return;
-
-    if (cleanupFunctionRef.current) {
-      cleanupFunctionRef.current();
-      cleanupFunctionRef.current = null;
-    }
-
-    const initializeWebGL = async () => {
-      if (!containerRef.current) return;
-
-      await new Promise<void>(resolve => setTimeout(resolve, 10));
-
-      if (!containerRef.current) return;
-
-      const renderer = new Renderer({
-        dpr: Math.min(window.devicePixelRatio, 2),
-        alpha: true
-      });
-      rendererRef.current = renderer;
-
-      const gl = renderer.gl;
-      gl.canvas.style.width = '100%';
-      gl.canvas.style.height = '100%';
-
-      while (containerRef.current.firstChild) {
-        containerRef.current.removeChild(containerRef.current.firstChild);
-      }
-      containerRef.current.appendChild(gl.canvas);
-
-      const vert = `
+    const vert = `
 attribute vec2 position;
 void main() {
   gl_Position = vec4(position, 0.0, 1.0);
 }`;
 
-      const frag = `precision highp float;
+    const frag = `precision highp float;
 
 uniform float iTime;
 uniform vec2 iResolution;
@@ -173,84 +136,139 @@ void main() {
   gl_FragColor = color;
 }`;
 
-      const [flipX, flipY] = originToFlip(origin);
-      const uniforms = {
-        iTime: { value: 0 },
-        iResolution: { value: [1, 1] as number[] },
-        iSpeed: { value: speed },
-        iRayColor1: { value: hexToRgb(rayColor1) as number[] },
-        iRayColor2: { value: hexToRgb(rayColor2) as number[] },
-        iIntensity: { value: intensity },
-        iSpread: { value: spread },
-        iFlipX: { value: flipX },
-        iFlipY: { value: flipY },
-        iTilt: { value: tilt },
-        iSaturation: { value: saturation },
-        iBlend: { value: blend },
-        iFalloff: { value: falloff },
-        iOpacity: { value: opacity }
-      };
-      uniformsRef.current = uniforms;
+    const [flipX, flipY] = originToFlip(origin);
+    const uniforms = {
+      iTime: { value: 0 },
+      iResolution: { value: [1, 1] as number[] },
+      iSpeed: { value: speed },
+      iRayColor1: { value: hexToRgb(rayColor1) as number[] },
+      iRayColor2: { value: hexToRgb(rayColor2) as number[] },
+      iIntensity: { value: intensity },
+      iSpread: { value: spread },
+      iFlipX: { value: flipX },
+      iFlipY: { value: flipY },
+      iTilt: { value: tilt },
+      iSaturation: { value: saturation },
+      iBlend: { value: blend },
+      iFalloff: { value: falloff },
+      iOpacity: { value: opacity },
+    };
+    uniformsRef.current = uniforms;
 
-      const geometry = new Triangle(gl);
-      const program = new Program(gl, { vertex: vert, fragment: frag, uniforms });
-      const mesh = new Mesh(gl, { geometry, program });
-      meshRef.current = mesh;
+    const geometry = new Triangle(gl);
+    const program = new Program(gl, { vertex: vert, fragment: frag, uniforms });
+    const mesh = new Mesh(gl, { geometry, program });
 
-      const updateSize = () => {
-        if (!containerRef.current || !renderer) return;
-        renderer.dpr = Math.min(window.devicePixelRatio, 2);
-        const { clientWidth: w, clientHeight: h } = containerRef.current;
-        renderer.setSize(w, h);
-        uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
-      };
-
-      const loop = (t: number) => {
-        if (!rendererRef.current || !uniformsRef.current || !meshRef.current) return;
-        uniforms.iTime.value = t * 0.001;
-        try {
-          renderer.render({ scene: mesh });
-          animationIdRef.current = requestAnimationFrame(loop);
-        } catch {
-          return;
-        }
-      };
-
-      window.addEventListener('resize', updateSize);
-      updateSize();
-      animationIdRef.current = requestAnimationFrame(loop);
-
-      cleanupFunctionRef.current = () => {
-        if (animationIdRef.current) {
-          cancelAnimationFrame(animationIdRef.current);
-          animationIdRef.current = null;
-        }
-        window.removeEventListener('resize', updateSize);
-        if (renderer) {
-          try {
-            const loseCtx = renderer.gl.getExtension('WEBGL_lose_context');
-            if (loseCtx) loseCtx.loseContext();
-            const canvas = renderer.gl.canvas;
-            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
-          } catch {
-            /* ignore teardown errors */
-          }
-        }
-        rendererRef.current = null;
-        uniformsRef.current = null;
-        meshRef.current = null;
-      };
+    const updateSize = () => {
+      renderer.dpr = Math.min(window.devicePixelRatio, 2);
+      const { clientWidth: w, clientHeight: h } = container;
+      if (w === 0 || h === 0) return;
+      renderer.setSize(w, h);
+      uniforms.iResolution.value = [w * renderer.dpr, h * renderer.dpr];
     };
 
-    initializeWebGL();
+    let raf = 0;
+    let contextLost = false;
+    let inView = false;
+    let tabVisible = document.visibilityState !== 'hidden';
+    let painted = false;
 
-    return () => {
-      if (cleanupFunctionRef.current) {
-        cleanupFunctionRef.current();
-        cleanupFunctionRef.current = null;
+    const paint = (t: number) => {
+      uniforms.iTime.value = t * 0.001;
+      renderer.render({ scene: mesh });
+      if (!painted) {
+        painted = true;
+        gl.canvas.style.opacity = '1';
       }
     };
-  }, [isVisible, speed, rayColor1, rayColor2, intensity, spread, origin, tilt, saturation, blend, falloff, opacity]);
+
+    const loop = (t: number) => {
+      if (contextLost || !inView || !tabVisible) return;
+      try {
+        paint(t);
+        raf = requestAnimationFrame(loop);
+      } catch {
+        return;
+      }
+    };
+
+    const kick = () => {
+      if (contextLost || !inView || !tabVisible || prefersReducedMotion) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    };
+
+    const onContextLost = (e: Event) => {
+      e.preventDefault();
+      contextLost = true;
+      cancelAnimationFrame(raf);
+    };
+    const onContextRestored = () => {
+      contextLost = false;
+      painted = false;
+      gl.canvas.style.opacity = '0';
+      updateSize();
+      if (prefersReducedMotion) {
+        paint(0);
+      } else {
+        kick();
+      }
+    };
+
+    gl.canvas.addEventListener('webglcontextlost', onContextLost);
+    gl.canvas.addEventListener('webglcontextrestored', onContextRestored);
+    window.addEventListener('resize', updateSize);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const wasInView = inView;
+        inView = Boolean(entry?.isIntersecting);
+        if (inView && !wasInView) {
+          updateSize();
+          if (prefersReducedMotion) {
+            paint(performance.now());
+          } else {
+            kick();
+          }
+        } else if (!inView) {
+          cancelAnimationFrame(raf);
+        }
+      },
+      { threshold: 0 },
+    );
+    io.observe(container);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      if (tabVisible) kick();
+      else cancelAnimationFrame(raf);
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    updateSize();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      window.removeEventListener('resize', updateSize);
+      document.removeEventListener('visibilitychange', onVisibility);
+      gl.canvas.removeEventListener('webglcontextlost', onContextLost);
+      gl.canvas.removeEventListener('webglcontextrestored', onContextRestored);
+      uniformsRef.current = null;
+      try {
+        if (gl.canvas.parentNode === container) container.removeChild(gl.canvas);
+      } catch {
+        /* already detached */
+      }
+      try {
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      } catch {
+        /* ignore teardown errors */
+      }
+    };
+    // Init once; prop updates flow through the uniforms effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!uniformsRef.current) return;

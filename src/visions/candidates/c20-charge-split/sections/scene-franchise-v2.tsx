@@ -52,7 +52,7 @@ function proofImage(title: string): string {
     .join('')
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="720" viewBox="0 0 480 720">
-  <rect width="480" height="720" fill="#1c1c1c"/>
+  <rect width="480" height="720" fill="#0a0a0a"/>
   <g transform="translate(240 360) rotate(-90) translate(0 ${-blockH / 2})">
     ${titleNodes}
   </g>
