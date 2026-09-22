@@ -127,7 +127,7 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
           <span data-cs-word className={WORD_CLASS}>
             Your
           </span>
-          <span className="relative mt-[0.08em] inline-flex items-center justify-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[0.78] uppercase sm:mt-0 sm:items-baseline sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[0.8]">
+          <span className="relative mt-[0.08em] inline-flex items-center justify-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] uppercase sm:mt-0 sm:items-baseline sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[var(--cs-lead-display)]">
             <span className="invisible" aria-hidden>
               PRIME
             </span>
@@ -151,9 +151,9 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
                   mode="entrance"
                   duration={780}
                   ease="snappy"
-                  className="leading-[0.78] tracking-normal sm:leading-[0.8]"
+                  className="leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)]"
                   style={{
-                    lineHeight: 0.78,
+                    lineHeight: 0.82,
                     textShadow: `0 0 36px color-mix(in srgb, ${VIOLET} 60%, transparent)`,
                   }}
                 />

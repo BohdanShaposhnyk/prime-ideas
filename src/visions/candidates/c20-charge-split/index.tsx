@@ -26,6 +26,12 @@ const tokens = {
   '--cs-well': '#161A24',
   '--cs-display': '"Bebas Neue", sans-serif',
   '--cs-body': '"Barlow", sans-serif',
+  '--cs-track-display': '0.02em',
+  '--cs-track-micro': '0.24em',
+  '--cs-lead-display': '0.82',
+  '--cs-text-cta': '0.72rem',
+  '--cs-radius-media': '14px',
+  '--cs-radius-panel': '1.35rem',
 } as CSSProperties
 
 /**
@@ -73,13 +79,13 @@ export default function ChargeSplitPage() {
       className="bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
       style={{
         ...tokens,
-        fontFamily: '"Barlow", sans-serif',
+        fontFamily: 'var(--cs-body)',
       }}
     >
       <style>{SNAP_CSS}</style>
       <Link
         to="/lab"
-        className="fixed top-4 right-4 z-50 font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[0.22em] text-[color-mix(in_srgb,var(--cs-ice)_70%,transparent)] uppercase underline-offset-4 hover:text-[var(--cs-ice)] hover:underline focus-visible:text-[var(--cs-ice)] focus-visible:underline focus-visible:outline-none sm:right-6"
+        className="fixed top-4 right-4 z-50 font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[var(--cs-track-micro)] text-[color-mix(in_srgb,var(--cs-ice)_70%,transparent)] uppercase underline-offset-4 hover:text-[var(--cs-ice)] hover:underline focus-visible:text-[var(--cs-ice)] focus-visible:underline focus-visible:outline-none sm:right-6"
       >
         Hub
       </Link>

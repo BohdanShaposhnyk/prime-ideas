@@ -142,11 +142,11 @@ export default function SceneApp() {
         <div className="grid h-auto w-full grid-cols-2 items-stretch gap-12 self-center lg:gap-16">
           <div className="flex min-w-0 flex-col justify-center gap-10 lg:gap-12">
             <div>
-              <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[0.86] tracking-[0.02em] text-[var(--cs-ice)] uppercase">
+              <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
                 <span className="block">Ready when</span>
                 <span className="block">you are</span>
               </h2>
-              <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[0.02em] text-[var(--cs-caption)] sm:mt-5">
+              <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)] sm:mt-5">
                 Book ahead, check availability and keep Prime with you.
               </p>
             </div>
@@ -167,11 +167,11 @@ export default function SceneApp() {
       {/* Mobile — padded copy, full-bleed mockup on bottom edge */}
       <div className="relative z-10 flex h-full flex-col md:hidden">
         <div className="shrink-0 px-5 pt-10 sm:px-8">
-          <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[0.86] tracking-[0.02em] text-[var(--cs-ice)] uppercase">
+          <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
             <span className="block">Ready when</span>
             <span className="block">you are</span>
           </h2>
-          <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[0.02em] text-[var(--cs-caption)]">
+          <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)]">
             Book ahead, check availability and keep Prime with you.
           </p>
           <div className="mt-6">

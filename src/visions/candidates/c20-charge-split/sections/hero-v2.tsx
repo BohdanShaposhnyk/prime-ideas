@@ -294,7 +294,7 @@ export default function HeroV2() {
             align="center"
             weight={400}
             tracking={0.02}
-            lineHeight={0.8}
+            lineHeight={0.82}
             className="flex h-full items-center justify-center font-[family-name:var(--cs-display)] uppercase"
           />
         ) : null}
@@ -342,7 +342,7 @@ function HeroCopy() {
         to={{ opacity: 1, y: 0 }}
         threshold={0}
         rootMargin="0px"
-        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[0.88] tracking-[0.02em] text-white uppercase [&_.split-word:last-child]:!text-[#CFB53B]"
+        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase [&_.split-word:last-child]:!text-[#CFB53B]"
       />
       <div
         ref={ctaRef}
@@ -359,7 +359,7 @@ function HeroCopy() {
           baseColor="#3a3420"
           intensity={1.15}
           autoAnimate
-          className="font-[family-name:var(--cs-body)] text-[0.72rem] tracking-[0.24em] uppercase sm:text-[0.78rem]"
+          className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
           onClick={() => {
             window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
           }}

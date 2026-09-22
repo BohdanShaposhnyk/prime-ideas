@@ -200,7 +200,7 @@ export default function SceneShowcase() {
         <p
           aria-live="polite"
           data-copy="caption"
-          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 font-[family-name:var(--cs-display)] text-[clamp(4.2rem,16vw,10.5rem)] leading-[0.78] uppercase sm:bottom-[6%] sm:left-[6%]"
+          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 font-[family-name:var(--cs-display)] text-[clamp(4.2rem,16vw,10.5rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] uppercase sm:bottom-[6%] sm:left-[6%]"
           style={{
             color: 'transparent',
             WebkitTextStroke: '0.026em color-mix(in srgb, var(--cs-ice) 36%, transparent)',

@@ -15,13 +15,13 @@ const PROOFS = [
 ] as const
 
 const proofLabelClass =
-  'font-[family-name:var(--cs-body)] text-[0.58rem] font-semibold tracking-[0.28em] text-white/70 uppercase sm:text-[0.68rem]'
+  'font-[family-name:var(--cs-body)] text-[0.62rem] font-semibold tracking-[var(--cs-track-micro)] text-white/70 uppercase sm:text-[0.68rem]'
 const proofTitleClass =
-  'font-[family-name:var(--cs-display)] text-[clamp(1.15rem,4vw,2.05rem)] leading-[0.92] tracking-[0.04em] text-white uppercase'
+  'font-[family-name:var(--cs-display)] text-[clamp(1.15rem,4vw,2.05rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase'
 
 function ProofCard() {
   return (
-    <ul className="w-full rounded-[1.35rem] bg-[#333333]/60 px-4 py-3.5 text-white sm:px-6 sm:py-5 md:px-7 md:py-6">
+    <ul className="w-full rounded-[var(--cs-radius-panel)] bg-[#333333]/60 px-4 py-3.5 text-white sm:px-6 sm:py-5 md:px-7 md:py-6">
       {PROOFS.map((proof, i) => (
         <li
           key={proof.n}
@@ -74,7 +74,7 @@ function MobileProofCard() {
   return (
     <div
       ref={rootRef}
-      className="w-full rounded-[1.35rem] bg-[#333333]/60 px-4 py-3.5 text-white"
+      className="w-full rounded-[var(--cs-radius-panel)] bg-[#333333]/60 px-4 py-3.5 text-white"
       role="status"
       aria-live="polite"
       aria-atomic="true"
@@ -129,7 +129,7 @@ export default function SceneFranchise() {
           <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-between">
             <h2
               id="cs-franchise-title"
-              className="font-[family-name:var(--cs-display)] text-[clamp(3.2rem,15.5dvh,6.2rem)] leading-[0.82] tracking-[0.02em] text-[#1a1a1a] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
+              className="font-[family-name:var(--cs-display)] text-[clamp(3.2rem,15.5dvh,6.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[#1a1a1a] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
             >
               <span className="block">Make</span>
               <span className="block">Prime</span>
@@ -137,12 +137,12 @@ export default function SceneFranchise() {
             </h2>
 
             <div className="flex w-full flex-col items-start">
-              <p className="max-w-[28rem] font-[family-name:var(--cs-body)] text-[clamp(1.05rem,2.4vw,1.35rem)] font-medium leading-snug tracking-[0.02em] text-[#333333]">
+              <p className="max-w-[28rem] font-[family-name:var(--cs-body)] text-[clamp(1.05rem,2.4vw,1.35rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-[#333333]">
                 Bring the Prime experience to your city.
               </p>
               <a
                 href={FRANCHISE_MAIL}
-                className="mt-4 inline-flex items-center gap-3 rounded-md bg-[#333333] px-6 py-3 font-[family-name:var(--cs-body)] text-[0.78rem] font-semibold tracking-[0.18em] text-white uppercase transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#333333] focus-visible:ring-offset-2 focus-visible:ring-offset-[#d5beae] sm:px-7 sm:py-4 md:mt-8 md:px-9 md:py-5 md:text-[0.88rem] md:tracking-[0.2em]"
+                className="mt-4 inline-flex items-center gap-3 rounded-full bg-[#333333] px-7 py-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-semibold tracking-[var(--cs-track-micro)] text-white uppercase transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#333333] focus-visible:ring-offset-2 focus-visible:ring-offset-[#d5beae] sm:px-8 sm:py-3.5 sm:text-[0.78rem] md:mt-8"
               >
                 Open Prime
                 <ArrowRight className="size-5 shrink-0 sm:size-6" aria-hidden />

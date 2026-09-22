@@ -42,7 +42,7 @@ function slotOf(cardIndex: number, current: number) {
 }
 
 function useOverviewFrame() {
-  const [frame, setFrame] = useState({ width: 28, height: 40, radius: 11 })
+  const [frame, setFrame] = useState({ width: 28, height: 40, radius: 14 })
 
   useEffect(() => {
     const read = () => {
@@ -55,7 +55,7 @@ function useOverviewFrame() {
       setFrame({
         width: (w / Math.max(vw, 1)) * 100,
         height: (h / Math.max(vh, 1)) * 100,
-        radius: 0.7 * rem,
+        radius: 14,
       })
     }
     read()
@@ -363,7 +363,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
               data-skip={skip ? '' : undefined}
               className="cs-overview-card absolute"
             >
-              <div className="cs-overview-plate overflow-hidden rounded-[0.7rem] bg-[var(--cs-void)]">
+              <div className="cs-overview-plate overflow-hidden rounded-[var(--cs-radius-media)] bg-[var(--cs-void)]">
                 <img
                   src={card.image}
                   alt=""
@@ -423,7 +423,7 @@ function TypeBelt({ cycle }: { cycle: Cycle }) {
       className="cs-overview-type-wrap pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden"
       aria-hidden
     >
-      <div className="cs-overview-type flex w-max items-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,8vw,6.1rem)] leading-none tracking-[0.02em] text-[var(--cs-ice)] uppercase">
+      <div className="cs-overview-type flex w-max items-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,8vw,6.1rem)] leading-none tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
         {[...TYPE_LOOP, ...TYPE_LOOP].map((phrase, i) => (
           <span key={i} className="flex shrink-0 items-center">
             {phrase}

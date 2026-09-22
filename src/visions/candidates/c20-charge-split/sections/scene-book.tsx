@@ -62,16 +62,16 @@ export default function SceneBook() {
       <div className="pointer-events-none relative z-20 flex max-w-[22rem] flex-col items-center text-center sm:max-w-[28rem]">
         <p
           data-copy="kicker"
-          className="font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[0.34em] text-[var(--cs-caption)] uppercase sm:text-[0.68rem]"
+          className="font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[var(--cs-track-micro)] text-[var(--cs-caption)] uppercase sm:text-[0.68rem]"
         >
           The floor is live
         </p>
         <h2
           id="cs-book-title"
           data-copy="caption"
-          className="mt-5 font-[family-name:var(--cs-display)] text-[clamp(2.55rem,10vw,5rem)] leading-[0.82] text-[var(--cs-ice)] uppercase"
+          className="mt-5 font-[family-name:var(--cs-display)] text-[clamp(2.55rem,10vw,5rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase"
         >
-          <span className="mb-[0.22em] block font-[family-name:var(--cs-body)] text-[clamp(1.05rem,3.4vw,1.45rem)] font-medium tracking-[0.04em] text-[var(--cs-ice)] normal-case">
+          <span className="mb-[0.22em] block font-[family-name:var(--cs-body)] text-[clamp(1.05rem,3.4vw,1.45rem)] font-medium tracking-[var(--cs-track-display)] text-[var(--cs-ice)] normal-case">
             Book a
           </span>
           PC
@@ -81,7 +81,7 @@ export default function SceneBook() {
           href={BOOKING_URL}
           target="_blank"
           rel="noreferrer"
-          className="pointer-events-auto mt-8 inline-flex rounded-full border border-[color-mix(in_srgb,var(--cs-caption)_50%,transparent)] px-7 py-2.5 font-[family-name:var(--cs-body)] text-[0.68rem] tracking-[0.24em] text-[var(--cs-ice)] uppercase hover:border-[var(--cs-ice)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--cs-ice)]"
+          className="pointer-events-auto mt-8 inline-flex rounded-full border border-[color-mix(in_srgb,var(--cs-caption)_50%,transparent)] px-7 py-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] text-[var(--cs-ice)] uppercase hover:border-[var(--cs-ice)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] sm:text-[0.78rem]"
           style={{
             boxShadow: '0 0 28px color-mix(in srgb, #d5beae 35%, transparent)',
           }}
