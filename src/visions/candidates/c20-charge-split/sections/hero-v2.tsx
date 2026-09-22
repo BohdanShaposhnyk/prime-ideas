@@ -1,46 +1,82 @@
-import { useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import MaskedHeading from '@/shared/bits/MaskedHeading'
+import SpecularButton from '@/shared/bits/SpecularButton'
+import SplitText from '@/shared/bits/SplitText'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import nightReel from '@/assets/8128213-hd_1920_1080_25fps.mp4'
+import { BOOKING_URL } from '../booking'
 
+const FADE_S = 0.85
 const REVEAL_S = 1.1
 const HOLD_S = 0.8
 const DIVE_S = 1.6
 const DIVE_SCALE = 22
 const CRISP_S = 1.5
-const BLUR_PX = 10
+const BLUR_PX = 5.5
 
-type Vignette = { edge: number; band: number }
+/** MaskedHeading measures SVG glyphs from DOM boxes — wrong until Bebas is live. */
+async function waitForDisplayFont() {
+  if (typeof document === 'undefined' || !document.fonts) return
+  try {
+    await document.fonts.load('400 120px "Bebas Neue"')
+    await document.fonts.ready
+  } catch {
+    /* proceed with whatever is available */
+  }
+}
+
+function afterPaint(cb: () => void) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(cb)
+  })
+}
+
+type Vignette = { edge: number; band: number; edgeB: number; bandB: number }
 
 /** Perimeter open, nothing tinted — the frame before the fade drifts in. */
-const VIGNETTE_FROM: Vignette = { edge: 0, band: 0 }
+const VIGNETTE_FROM: Vignette = { edge: 0, band: 0, edgeB: 0, bandB: 0 }
 
-/** Settled frame — every edge sits near black, center stays clear. */
-const VIGNETTE_TO: Vignette = { edge: 0.97, band: 46 }
+/** Settled frame — sides/top hold; bottom runs 1.5× deeper and denser. */
+const VIGNETTE_TO: Vignette = { edge: 0.97, band: 46, edgeB: 1, bandB: 69 }
 
 const vignetteVars = (v: Vignette): CSSProperties =>
   ({
     '--v-edge': String(v.edge),
     '--v-band': `${v.band}%`,
+    '--v-edge-b': String(v.edgeB),
+    '--v-band-b': `${v.bandB}%`,
   }) as CSSProperties
 
 const applyVignette = (el: HTMLElement, v: Vignette) => {
   el.style.setProperty('--v-edge', String(v.edge))
   el.style.setProperty('--v-band', `${v.band}%`)
+  el.style.setProperty('--v-edge-b', String(v.edgeB))
+  el.style.setProperty('--v-band-b', `${v.bandB}%`)
 }
 
 /**
  * Front-loaded ramp: most of the black lands in the outer third, then the tail
  * runs long and thin so a wide band never tints the middle of the frame.
  */
-const sideFade = (to: string, reach: string) =>
+const sideFade = (to: string, reach: string, edgeVar = 'var(--v-edge)') =>
   [
     `linear-gradient(to ${to}`,
-    'rgb(0 0 0 / var(--v-edge)) 0%',
-    `rgb(0 0 0 / calc(var(--v-edge) * 0.8)) calc(${reach} * 0.22)`,
-    `rgb(0 0 0 / calc(var(--v-edge) * 0.35)) calc(${reach} * 0.55)`,
-    `rgb(0 0 0 / calc(var(--v-edge) * 0.1)) calc(${reach} * 0.78)`,
+    `rgb(0 0 0 / ${edgeVar}) 0%`,
+    `rgb(0 0 0 / calc(${edgeVar} * 0.8)) calc(${reach} * 0.22)`,
+    `rgb(0 0 0 / calc(${edgeVar} * 0.35)) calc(${reach} * 0.55)`,
+    `rgb(0 0 0 / calc(${edgeVar} * 0.1)) calc(${reach} * 0.78)`,
+    `transparent ${reach})`,
+  ].join(', ')
+
+/** Heavier bottom ramp — black holds longer before easing out. */
+const bottomFade = (reach: string) =>
+  [
+    'linear-gradient(to top',
+    'rgb(0 0 0 / var(--v-edge-b)) 0%',
+    `rgb(0 0 0 / calc(var(--v-edge-b) * 0.92)) calc(${reach} * 0.28)`,
+    `rgb(0 0 0 / calc(var(--v-edge-b) * 0.55)) calc(${reach} * 0.58)`,
+    `rgb(0 0 0 / calc(var(--v-edge-b) * 0.22)) calc(${reach} * 0.84)`,
     `transparent ${reach})`,
   ].join(', ')
 
@@ -49,42 +85,87 @@ const VIGNETTE_BG = [
   sideFade('right', 'min(var(--v-band), var(--v-cap-x))'),
   sideFade('left', 'min(var(--v-band), var(--v-cap-x))'),
   sideFade('bottom', 'min(var(--v-band), var(--v-cap-y))'),
-  sideFade('top', 'min(var(--v-band), var(--v-cap-y))'),
+  bottomFade('min(var(--v-band-b), var(--v-cap-b))'),
 ].join(', ')
 
 /** A portrait frame is narrow, so the desktop reach would swallow the subject. */
 const HERO_CSS = `
-  [data-hero-vignette] { --v-cap-x: 100%; --v-cap-y: 100%; }
+  [data-hero-vignette] {
+    --v-cap-x: 100%;
+    --v-cap-y: 100%;
+    --v-cap-b: 100%;
+  }
   [data-hero-blur] [data-mh-media] { filter: blur(var(--cs-hero-blur)) !important; }
   @media (max-width: 640px) {
-    [data-hero-vignette] { --v-cap-x: 96px; --v-cap-y: 210px; }
+    [data-hero-vignette] {
+      --v-cap-x: 96px;
+      --v-cap-y: 210px;
+      --v-cap-b: 315px;
+    }
   }
 `
 
 export default function HeroV2() {
   const rootRef = useRef<HTMLElement>(null)
+  const brandRef = useRef<HTMLDivElement>(null)
   const vignetteRef = useRef<HTMLDivElement>(null)
   const reduced = prefersReducedMotion()
+  /** Don't mount MaskedHeading until display font is live — avoids glyph teleport. */
+  const [fontReady, setFontReady] = useState(reduced)
+  const [copyReady, setCopyReady] = useState(reduced)
+
+  useEffect(() => {
+    if (reduced) return
+    let cancelled = false
+    void waitForDisplayFont().then(() => {
+      if (!cancelled) setFontReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [reduced])
 
   useGSAP(
     () => {
-      if (reduced) return
+      if (reduced || !fontReady) return
       const root = rootRef.current
-      if (!root) return
+      const brand = brandRef.current
+      if (!root || !brand) return
 
       let cancelled = false
       let releaseTimer = 0
       let settleTween: gsap.core.Tween | null = null
+      let fadeTween: gsap.core.Tween | null = null
 
       const video = root.querySelector('video')
       root.style.setProperty('--cs-hero-blur', `${BLUR_PX}px`)
+      // Stay invisible through MaskedHeading's first measure/sync frames.
+      gsap.set(brand, { autoAlpha: 0 })
+
+      const revealBrand = () => {
+        if (cancelled) return
+        fadeTween = gsap.to(brand, {
+          autoAlpha: 1,
+          duration: FADE_S,
+          ease: 'power2.out',
+        })
+      }
 
       const start = () => {
         if (cancelled) return
         const targets = gsap.utils.toArray<SVGTextElement>(
           root.querySelectorAll('[data-mh-glyphs] text'),
         )
-        if (!targets.length) return
+        if (!targets.length) {
+          afterPaint(start)
+          return
+        }
+
+        // One more paint so sync() has written final glyph boxes, then fade.
+        afterPaint(() => {
+          if (cancelled) return
+          revealBrand()
+        })
 
         const { x: cx, y: cy } = diveCenter(targets[0])
         gsap.killTweensOf(targets)
@@ -128,6 +209,7 @@ export default function HeroV2() {
               root.style.setProperty('--cs-hero-blur', '0px')
               if (vig) applyVignette(vig, VIGNETTE_TO)
               settleTween = null
+              if (!cancelled) setCopyReady(true)
             },
           })
         }, (REVEAL_S + HOLD_S + DIVE_S) * 1000)
@@ -135,9 +217,7 @@ export default function HeroV2() {
 
       const kick = () => {
         if (cancelled) return
-        void document.fonts?.ready.then(() => {
-          if (!cancelled) requestAnimationFrame(start)
-        })
+        afterPaint(start)
       }
 
       if (video && video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
@@ -149,11 +229,12 @@ export default function HeroV2() {
       return () => {
         cancelled = true
         window.clearTimeout(releaseTimer)
+        fadeTween?.kill()
         settleTween?.kill()
         video?.removeEventListener('loadeddata', kick)
       }
     },
-    { scope: rootRef, dependencies: [reduced] },
+    { scope: rootRef, dependencies: [reduced, fontReady] },
   )
 
   if (reduced) {
@@ -179,6 +260,7 @@ export default function HeroV2() {
           className="pointer-events-none absolute inset-0"
           style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
         />
+        <HeroCopy />
       </section>
     )
   }
@@ -194,25 +276,29 @@ export default function HeroV2() {
       style={{ '--cs-hero-blur': `${BLUR_PX}px` } as CSSProperties}
     >
       <style>{HERO_CSS}</style>
-      <MaskedHeading
-        id="cs-hero-v2-brand"
-        text="PRIME"
-        tag="h1"
-        mediaType="video"
-        src={nightReel}
-        trigger="mount"
-        reveal="rise"
-        duration={REVEAL_S}
-        fillScale={1.25}
-        parallax={26}
-        drift={18}
-        textScale={0.26}
-        align="center"
-        weight={400}
-        tracking={0.02}
-        lineHeight={0.8}
-        className="flex h-full items-center justify-center font-[family-name:var(--cs-display)] uppercase"
-      />
+      <div ref={brandRef} className="h-full invisible opacity-0">
+        {fontReady ? (
+          <MaskedHeading
+            id="cs-hero-v2-brand"
+            text="PRIME"
+            tag="h1"
+            mediaType="video"
+            src={nightReel}
+            trigger="mount"
+            reveal="rise"
+            duration={REVEAL_S}
+            fillScale={1.25}
+            parallax={26}
+            drift={18}
+            textScale={0.26}
+            align="center"
+            weight={400}
+            tracking={0.02}
+            lineHeight={0.8}
+            className="flex h-full items-center justify-center font-[family-name:var(--cs-display)] uppercase"
+          />
+        ) : null}
+      </div>
       <div
         ref={vignetteRef}
         data-hero-vignette=""
@@ -220,7 +306,68 @@ export default function HeroV2() {
         className="pointer-events-none absolute inset-0 z-10"
         style={{ ...vignetteVars(VIGNETTE_FROM), background: VIGNETTE_BG }}
       />
+      {copyReady ? <HeroCopy /> : null}
     </section>
+  )
+}
+
+function HeroCopy() {
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const reduced = prefersReducedMotion()
+
+  useGSAP(
+    () => {
+      const cta = ctaRef.current
+      if (!cta || reduced) return
+      gsap.fromTo(
+        cta,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.7, delay: 0.35, ease: 'power3.out' },
+      )
+    },
+    { scope: ctaRef, dependencies: [reduced] },
+  )
+
+  return (
+    <div className="pointer-events-none absolute top-3/4 left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center">
+      <SplitText
+        text="enter your prime"
+        splitType="words"
+        tag="p"
+        textAlign="center"
+        delay={90}
+        duration={0.85}
+        ease="power3.out"
+        from={{ opacity: 0, y: 36 }}
+        to={{ opacity: 1, y: 0 }}
+        threshold={0}
+        rootMargin="0px"
+        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[0.88] tracking-[0.02em] text-white uppercase [&_.split-word:last-child]:!text-[#CFB53B]"
+      />
+      <div
+        ref={ctaRef}
+        className={`pointer-events-auto mt-6 sm:mt-8 ${reduced ? '' : 'opacity-0'}`}
+      >
+        <SpecularButton
+          size="md"
+          radius={999}
+          tint="#ffffff"
+          tintOpacity={0.06}
+          blur={10}
+          textColor="#F4F7FF"
+          lineColor="#CFB53B"
+          baseColor="#3a3420"
+          intensity={1.15}
+          autoAnimate
+          className="font-[family-name:var(--cs-body)] text-[0.72rem] tracking-[0.24em] uppercase sm:text-[0.78rem]"
+          onClick={() => {
+            window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
+          }}
+        >
+          book a night
+        </SpecularButton>
+      </div>
+    </div>
   )
 }
 

@@ -3,8 +3,8 @@ import AccordionGallery from '@/shared/bits/AccordionGallery'
 import barExt from '@/assets/c20/bar_ext.jpg'
 import danceNeon from '@/assets/c20/dance_neon.jpg'
 import barInterior from '@/assets/c20/bar_interior.jpg'
+import { BOOKING_URL } from '../booking'
 
-const BOOKING_URL = 'https://prime.booking.enes.tech/'
 const DEFAULT_INDEX = 1
 
 type Venue = {

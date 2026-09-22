@@ -1,5 +1,6 @@
 import CircularGallery from '@/shared/bits/CircularGallery'
 import Lightning from '@/shared/bits/Lightning'
+import { BOOKING_URL } from '../booking'
 import barParty from '../assets/bar/bar-party.jpg'
 import carsimGirl from '../assets/gaming/carsim-girl.jpg'
 import hookahGirl from '../assets/hookah/hookah-girl.jpg'
@@ -77,7 +78,9 @@ export default function SceneBook() {
         </h2>
         <a
           data-copy="cta"
-          href="https://www.instagram.com/prime_warsaw/"
+          href={BOOKING_URL}
+          target="_blank"
+          rel="noreferrer"
           className="pointer-events-auto mt-8 inline-flex rounded-full border border-[color-mix(in_srgb,var(--cs-caption)_50%,transparent)] px-7 py-2.5 font-[family-name:var(--cs-body)] text-[0.68rem] tracking-[0.24em] text-[var(--cs-ice)] uppercase hover:border-[var(--cs-ice)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--cs-ice)]"
           style={{
             boxShadow: '0 0 28px color-mix(in srgb, #d5beae 35%, transparent)',
