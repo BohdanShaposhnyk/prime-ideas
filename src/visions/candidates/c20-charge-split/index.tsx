@@ -14,6 +14,7 @@ import SceneOverview from './sections/scene-overview'
 import SceneScreen from './sections/scene-screen'
 import SceneShowcase from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
+import SceneApp from './sections/scene-app'
 import SceneFranchise from './sections/scene-franchise'
 
 const tokens = {
@@ -155,6 +156,7 @@ export default function ChargeSplitPage() {
       <SceneScreen />
       <SceneShowcase />
       <SceneLocations />
+      <SceneApp />
       <SceneFranchise />
     </main>
   )

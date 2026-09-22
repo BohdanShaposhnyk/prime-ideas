@@ -28,7 +28,8 @@ Full-viewport 50/50 vertical split for the charge cell. After it, a full-bleed l
 4. **Screen** — full-viewport masonry (2 / 3 / 2); black center lockup, cinema stills around it
 5. **Showcase** — almost-full-screen InfiniteSpiral of four stills; scroll snaps card to card; dark gradient + one big word
 6. **Locations** — full-viewport AccordionGallery as dimmed backdrop; venue title, map, and Book / Call / Telegram sit inside the active card
-7. **Franchise** — Silk field; left lockup MAKE PRIME YOURS + franchise CTA; right GlassSurface proof card
+7. **App** — almost-black; SideRays on the right; left caption + support + App Store / Play links for SENET ID; desktop phone mockup; mobile uses cropped top of portrait mockup at the bottom
+8. **Franchise** — Silk field; left lockup MAKE PRIME YOURS + franchise CTA; right GlassSurface proof card
 
 ## Motion signature
 1. Split-hold pin (GSAP) — 50/50 frame sticks while the right pane recuts
