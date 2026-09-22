@@ -1,9 +1,25 @@
 import { useState } from 'react'
+import { Phone } from 'lucide-react'
 import AccordionGallery from '@/shared/bits/AccordionGallery'
+import SpecularButton from '@/shared/bits/SpecularButton'
 import barExt from '@/assets/c20/bar_ext.jpg'
 import danceNeon from '@/assets/c20/dance_neon.jpg'
 import barInterior from '@/assets/c20/bar_interior.jpg'
 import { BOOKING_URL } from '../booking'
+
+function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+    </svg>
+  )
+}
 
 const DEFAULT_INDEX = 1
 
@@ -78,7 +94,10 @@ function mapEmbedSrc(venue: Venue, apple: boolean) {
 }
 
 const actionClass =
-  'font-[family-name:var(--cs-body)] text-[0.68rem] font-semibold tracking-[var(--cs-track-micro)] text-[var(--cs-ice)] uppercase underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:text-white focus-visible:underline focus-visible:outline-none sm:text-[0.72rem]'
+  'inline-flex items-center justify-center gap-2 font-[family-name:var(--cs-body)] font-semibold tracking-[var(--cs-track-micro)] text-[var(--cs-ice)] uppercase transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--cs-ice)_40%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:gap-2.5 sm:text-[0.85rem] sm:underline-offset-4 sm:hover:underline sm:focus-visible:underline'
+
+const iconBtnClass =
+  'h-[calc(20px+var(--cs-text-cta))] w-[calc(20px+var(--cs-text-cta))] shrink-0 rounded-full bg-[color-mix(in_srgb,var(--cs-void)_55%,transparent)] ring-1 ring-[color-mix(in_srgb,var(--cs-ice)_18%,transparent)] backdrop-blur-[2px] sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:ring-0 sm:backdrop-blur-none'
 
 function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) {
   return (
@@ -101,7 +120,7 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
           key={`${venue.id}-${appleMaps ? 'apple' : 'google'}`}
           title={`Map — ${venue.address}`}
           src={mapEmbedSrc(venue, appleMaps)}
-          className="h-full min-h-[140px] w-full border-0"
+          className="h-full min-h-[120px] w-full border-0"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           allowFullScreen
@@ -112,15 +131,42 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
         <p className="font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] sm:text-[0.85rem]">
           {venue.address}
         </p>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <a href={BOOKING_URL} target="_blank" rel="noreferrer" className={actionClass}>
+        <div className="flex flex-nowrap items-center gap-2.5 sm:gap-4">
+          <SpecularButton
+            size="sm"
+            radius={999}
+            tint="#ffffff"
+            tintOpacity={0.06}
+            blur={10}
+            textColor="#F4F7FF"
+            lineColor="#CFB53B"
+            baseColor="#3a3420"
+            intensity={1.15}
+            autoAnimate
+            className="shrink-0 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
+            onClick={() => {
+              window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
+            }}
+          >
             Book a PC
+          </SpecularButton>
+          <a
+            href={`tel:${venue.phone}`}
+            className={`${actionClass} ${iconBtnClass}`}
+            aria-label="Call"
+          >
+            <Phone className="size-[1.05em] shrink-0 text-[#34C759]" strokeWidth={2.25} aria-hidden />
+            <span className="sr-only sm:not-sr-only">Call</span>
           </a>
-          <a href={`tel:${venue.phone}`} className={actionClass}>
-            Call
-          </a>
-          <a href={venue.telegram} target="_blank" rel="noreferrer" className={actionClass}>
-            Telegram
+          <a
+            href={venue.telegram}
+            target="_blank"
+            rel="noreferrer"
+            className={`${actionClass} ${iconBtnClass}`}
+            aria-label="Telegram"
+          >
+            <TelegramIcon className="size-[1.1em] shrink-0 text-[#2AABEE]" />
+            <span className="sr-only sm:not-sr-only">Telegram</span>
           </a>
         </div>
       </div>

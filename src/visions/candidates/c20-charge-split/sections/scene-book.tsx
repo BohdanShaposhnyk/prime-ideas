@@ -1,5 +1,6 @@
 import CircularGallery from '@/shared/bits/CircularGallery'
 import Lightning from '@/shared/bits/Lightning'
+import SpecularButton from '@/shared/bits/SpecularButton'
 import { BOOKING_URL } from '../booking'
 import barParty from '../assets/bar/bar-party.jpg'
 import carsimGirl from '../assets/gaming/carsim-girl.jpg'
@@ -76,18 +77,26 @@ export default function SceneBook() {
           </span>
           PC
         </h2>
-        <a
-          data-copy="cta"
-          href={BOOKING_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="pointer-events-auto mt-8 inline-flex rounded-full border border-[color-mix(in_srgb,var(--cs-caption)_50%,transparent)] px-7 py-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] text-[var(--cs-ice)] uppercase hover:border-[var(--cs-ice)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] sm:text-[0.78rem]"
-          style={{
-            boxShadow: '0 0 28px color-mix(in srgb, #d5beae 35%, transparent)',
-          }}
-        >
-          Reserve
-        </a>
+        <div data-copy="cta" className="pointer-events-auto mt-8">
+          <SpecularButton
+            size="md"
+            radius={999}
+            tint="#ffffff"
+            tintOpacity={0.06}
+            blur={10}
+            textColor="#F4F7FF"
+            lineColor="#CFB53B"
+            baseColor="#3a3420"
+            intensity={1.15}
+            autoAnimate
+            className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
+            onClick={() => {
+              window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
+            }}
+          >
+            Reserve
+          </SpecularButton>
+        </div>
       </div>
     </section>
   )
