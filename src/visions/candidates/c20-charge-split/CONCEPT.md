@@ -24,7 +24,7 @@ Full-viewport 50/50 vertical split for the charge cell. After it, a full-bleed l
 ## Structure
 1. **Hero** — 50/50 charge cell + video pane
 2. **Book** — centered lockup in an open circular gallery (center card hidden); Book a PC
-3. **Play** — right pane recuts to the arena
+3. **Overview** — full-viewport room carousel (gaming, karaoke, bar, hookah) with a night-verb belt
 4. **Screen** — full-viewport masonry (2 / 3 / 2); black center lockup, cinema stills around it
 5. **Showcase** — almost-full-screen InfiniteSpiral of four stills; scroll snaps card to card; dark gradient + one big word
 6. **Locations** — full-viewport AccordionGallery as dimmed backdrop; venue title, map, and Book / Call / Telegram sit inside the active card

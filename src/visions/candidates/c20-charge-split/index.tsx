@@ -10,7 +10,7 @@ import { prefersReducedMotion } from '@/shared/lib/motion'
 // import Hero from './sections/hero'
 import HeroV2 from './sections/hero-v2'
 import SceneBook from './sections/scene-book'
-import ScenePlay from './sections/scene-play'
+import SceneOverview from './sections/scene-overview'
 import SceneScreen from './sections/scene-screen'
 import SceneShowcase from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
@@ -124,7 +124,7 @@ function useSectionSnap(rootRef: RefObject<HTMLElement | null>) {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, play carousel, screen masonry, showcase spiral.
+ * Charge Split — 50/50 charge cell, book lockup, overview carousel, screen masonry, showcase spiral.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {
@@ -149,7 +149,7 @@ export default function ChargeSplitPage() {
       {/* <Hero /> */}
       <HeroV2 />
       <SceneBook />
-      <ScenePlay />
+      <SceneOverview />
       <SceneScreen />
       <SceneShowcase />
       <SceneLocations />
