@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import ScrollExpand from '@/shared/bits/ScrollExpand'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import barPartyGirl from '../assets/bar/bar-party-girl.jpg'
-import pcParty from '../assets/gaming/pc-party.jpg'
 import smoking from '../assets/hookah/smoking.jpg'
 import micRay from '../assets/karaoke/mic-ray.jpg'
+import gamerGirl from '../assets/gaming/gamer-girl.jpg'
 
 const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'COME BACK'] as const
 const HOLD_MS = 2000
@@ -26,7 +26,7 @@ const ROLL_EASE = `linear(
 )`
 
 const CARDS = [
-  { id: 'floor', image: pcParty },
+  { id: 'floor', image: gamerGirl },
   { id: 'voice', image: micRay },
   { id: 'bar', image: barPartyGirl },
   { id: 'ember', image: smoking },
