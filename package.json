@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "tsc -b --pretty false",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:c20": "vite --config vite.c20.config.ts",
+    "build:c20": "tsc -b && vite build --config vite.c20.config.ts",
+    "preview:c20": "vite preview --config vite.c20.config.ts",
+    "assets:c20": "node scripts/compress-c20.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -65,7 +69,9 @@
     "eslint": "^10.10.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
+    "ffmpeg-static": "^5.3.0",
     "globals": "^17.12.0",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.70.0",

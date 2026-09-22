@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Phone } from 'lucide-react'
 import AccordionGallery from '@/shared/bits/AccordionGallery'
 import SpecularButton from '@/shared/bits/SpecularButton'
-import barExt from '@/assets/c20/bar_ext.jpg'
-import danceNeon from '@/assets/c20/dance_neon.jpg'
-import barInterior from '@/assets/c20/bar_interior.jpg'
+import barExt from '@/assets/c20/bar_ext.webp'
+import danceNeon from '@/assets/c20/dance_neon.webp'
+import barInterior from '@/assets/c20/bar_interior.webp'
 import { BOOKING_URL } from '../booking'
 
 function TelegramIcon({ className }: { className?: string }) {

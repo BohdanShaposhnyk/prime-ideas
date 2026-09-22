@@ -84,12 +84,15 @@ export default function ChargeSplitPage() {
       }}
     >
       <style>{SNAP_CSS}</style>
-      <Link
-        to="/lab"
-        className="fixed top-4 right-4 z-50 font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[var(--cs-track-micro)] text-[color-mix(in_srgb,var(--cs-ice)_70%,transparent)] uppercase underline-offset-4 hover:text-[var(--cs-ice)] hover:underline focus-visible:text-[var(--cs-ice)] focus-visible:underline focus-visible:outline-none sm:right-6"
-      >
-        Hub
-      </Link>
+      {/* Standalone build (`--mode c20`) has no router, so the hub link must not render. */}
+      {import.meta.env.MODE !== 'c20' && (
+        <Link
+          to="/lab"
+          className="fixed top-4 right-4 z-50 font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[var(--cs-track-micro)] text-[color-mix(in_srgb,var(--cs-ice)_70%,transparent)] uppercase underline-offset-4 hover:text-[var(--cs-ice)] hover:underline focus-visible:text-[var(--cs-ice)] focus-visible:underline focus-visible:outline-none sm:right-6"
+        >
+          Hub
+        </Link>
+      )}
       {/* <Hero /> */}
       <HeroV2 />
       <SceneOverview />

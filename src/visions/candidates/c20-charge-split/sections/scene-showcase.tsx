@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import InfiniteSpiral from '@/shared/bits/InfiniteSpiral'
-import bottles from '../assets/bar/bottles.jpg'
-import controllerDark from '../assets/gaming/controller-dark-purple.jpg'
-import hookahCoal from '../assets/hookah/hookah-coal.jpg'
-import micGold from '../assets/karaoke/mic-gold.jpg'
+import bottles from '../assets/bar/bottles.webp'
+import controllerDark from '../assets/gaming/controller-dark-purple.webp'
+import hookahCoal from '../assets/hookah/hookah-coal.webp'
+import micGold from '../assets/karaoke/mic-gold.webp'
 
 const LAND_SCALE = 1 / 0.75
 const REVEAL_SCALE = 1

@@ -2,10 +2,10 @@ import CircularGallery from '@/shared/bits/CircularGallery'
 import Lightning from '@/shared/bits/Lightning'
 import SpecularButton from '@/shared/bits/SpecularButton'
 import { BOOKING_URL } from '../booking'
-import barParty from '../assets/bar/bar-party.jpg'
-import carsimGirl from '../assets/gaming/carsim-girl.jpg'
-import hookahGirl from '../assets/hookah/hookah-girl.jpg'
-import micGold from '../assets/karaoke/mic-gold.jpg'
+import barParty from '../assets/bar/bar-party.webp'
+import carsimGirl from '../assets/gaming/carsim-girl.webp'
+import hookahGirl from '../assets/hookah/hookah-girl.webp'
+import micGold from '../assets/karaoke/mic-gold.webp'
 
 const ITEMS = [
   { image: barParty, text: '' },

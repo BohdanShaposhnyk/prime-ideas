@@ -1,8 +1,8 @@
 import SideRays from '@/shared/bits/SideRays'
 import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
-import mockupDesktop from '../assets/mockup-iphone-desktop.png'
-import mockupPortrait from '../assets/mockup-iphone-portrait.png'
+import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
+import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'

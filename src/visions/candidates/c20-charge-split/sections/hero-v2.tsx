@@ -5,7 +5,7 @@ import SpecularButton from '@/shared/bits/SpecularButton'
 import SplitText from '@/shared/bits/SplitText'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
-import nightReel from '@/assets/8128213-hd_1920_1080_25fps.mp4'
+import nightReel from '@/assets/c20/night-reel.mp4'
 import { BOOKING_URL } from '../booking'
 
 const FADE_S = 0.85

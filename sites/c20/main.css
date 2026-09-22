@@ -1,0 +1,5 @@
+@import "../../src/styles/index.css";
+
+/* Vite root is sites/c20, so Tailwind's auto-detection won't see src/ on its own. */
+@source "../../src/visions/candidates/c20-charge-split";
+@source "../../src/shared";
