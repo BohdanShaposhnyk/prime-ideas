@@ -135,11 +135,32 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     ro.observe(root);
     if (document.fonts?.ready) document.fonts.ready.then(sync).catch(() => {});
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0;
     let last = performance.now();
     let clock = 0;
+    let inView = true;
+    let tabVisible = document.visibilityState !== 'hidden';
+
+    const videoEl = () => mediaRef.current?.querySelector('video');
+
+    const syncMedia = () => {
+      const video = videoEl();
+      if (!video) return;
+      if (inView && tabVisible && !prefersReducedMotion) {
+        void video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+
+    const canRun = () => inView && tabVisible && !prefersReducedMotion;
 
     const frame = (now: number) => {
+      if (!canRun()) {
+        raf = 0;
+        return;
+      }
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       clock += dt;
@@ -157,6 +178,13 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       raf = requestAnimationFrame(frame);
     };
 
+    const kick = () => {
+      syncMedia();
+      if (!canRun() || raf) return;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    };
+
     const onMove = (e: PointerEvent) => {
       const s = settingsRef.current;
       if (s.parallax <= 0) return;
@@ -165,6 +193,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       const ny = ((e.clientY - r.top) / (r.height || 1)) * 2 - 1;
       offsetRef.current.tx = clamp(nx, -1, 1) * -s.parallax;
       offsetRef.current.ty = clamp(ny, -1, 1) * -s.parallax;
+      kick();
     };
 
     const onLeave = () => {
@@ -172,15 +201,43 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       offsetRef.current.ty = 0;
     };
 
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) kick();
+        else {
+          cancelAnimationFrame(raf);
+          raf = 0;
+          syncMedia();
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(root);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      if (tabVisible) kick();
+      else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        syncMedia();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
     root.addEventListener('pointermove', onMove);
     root.addEventListener('pointerleave', onLeave);
-    raf = requestAnimationFrame(frame);
+    kick();
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerleave', onLeave);
+      videoEl()?.pause();
     };
   }, [place, sync]);
 
@@ -350,6 +407,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
                 muted
                 loop
                 playsInline
+                preload="metadata"
               />
             ) : (
               <img className="block w-full h-full object-cover select-none" src={src} alt="" draggable={false} />

@@ -15,12 +15,19 @@ const Lightning: React.FC<LightningProps> = ({ hue = 230, xOffset = 0, speed = 1
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const resizeCanvas = () => {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (canvas.width === w && canvas.height === h) return;
+      canvas.width = w;
+      canvas.height = h;
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+    const ro = new ResizeObserver(resizeCanvas);
+    ro.observe(canvas);
 
     const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
     if (!gl) {
@@ -161,27 +168,74 @@ const Lightning: React.FC<LightningProps> = ({ hue = 230, xOffset = 0, speed = 1
     const uIntensityLocation = gl.getUniformLocation(program, 'uIntensity');
     const uSizeLocation = gl.getUniformLocation(program, 'uSize');
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
+    let inView = true;
+    let tabVisible = document.visibilityState !== 'hidden';
     const startTime = performance.now();
-    const render = () => {
-      resizeCanvas();
+
+    const drawFrame = (timeSec: number) => {
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(iResolutionLocation, canvas.width, canvas.height);
-      const currentTime = performance.now();
-      gl.uniform1f(iTimeLocation, (currentTime - startTime) / 1000.0);
+      gl.uniform1f(iTimeLocation, timeSec);
       gl.uniform1f(uHueLocation, hue);
       gl.uniform1f(uXOffsetLocation, xOffset);
       gl.uniform1f(uSpeedLocation, speed);
       gl.uniform1f(uIntensityLocation, intensity);
       gl.uniform1f(uSizeLocation, size);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
+    };
+
+    const canRun = () => inView && tabVisible && !prefersReducedMotion;
+
+    const render = () => {
+      if (!canRun()) {
+        animationFrameId = 0;
+        return;
+      }
+      drawFrame((performance.now() - startTime) / 1000.0);
       animationFrameId = requestAnimationFrame(render);
     };
-    animationFrameId = requestAnimationFrame(render);
+
+    const kick = () => {
+      if (!canRun() || animationFrameId) return;
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        if (inView) kick();
+        else {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = 0;
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(canvas);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      if (tabVisible) kick();
+      else {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    if (prefersReducedMotion) {
+      drawFrame(0);
+    } else {
+      animationFrameId = requestAnimationFrame(render);
+    }
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resizeCanvas);
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [hue, xOffset, speed, intensity, size]);
 

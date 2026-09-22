@@ -42,6 +42,9 @@ interface ShaderProps {
 }
 
 const PAD = 20;
+const SIZE_EPS = 0.5;
+const IDLE_EPS = 1e-4;
+const IDLE_FRAMES_BEFORE_SLEEP = 8;
 
 const SIZES: Record<ButtonSize, string> = {
   sm: 'text-[0.85rem] px-[22px] py-[10px]',
@@ -136,18 +139,46 @@ const SpecularButton = ({
 }: SpecularButtonProps) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const fxRef = useRef<HTMLSpanElement>(null);
-  const propsRef = useRef<ShaderProps>({} as ShaderProps);
+  const propsRef = useRef<ShaderProps>({
+    radius,
+    lineColor,
+    baseColor,
+    intensity,
+    shineSize,
+    shineFade,
+    thickness,
+    speed,
+    followMouse,
+    proximity,
+    autoAnimate
+  });
 
-  propsRef.current = { radius, lineColor, baseColor, intensity, shineSize, shineFade, thickness, speed, followMouse, proximity, autoAnimate };
+  useEffect(() => {
+    propsRef.current = {
+      radius,
+      lineColor,
+      baseColor,
+      intensity,
+      shineSize,
+      shineFade,
+      thickness,
+      speed,
+      followMouse,
+      proximity,
+      autoAnimate
+    };
+  });
 
   useEffect(() => {
     const btn = btnRef.current;
     const fx = fxRef.current;
     if (!btn || !fx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: true, dpr });
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: false, dpr });
     const gl = renderer.gl;
+    const canvas = gl.canvas as HTMLCanvasElement;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -170,81 +201,36 @@ const SpecularButton = ({
         uShineSize: { value: 0.17 },
         uShineFade: { value: 0.7 },
         uThickness: { value: 1 },
-
         uBaseWidth: { value: dpr }
       }
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    fx.appendChild(gl.canvas);
+    fx.appendChild(canvas);
 
     const sizeRef = { w: 1, h: 1 };
-    const resize = () => {
-      // Fractional size + explicit center keep the SDF pinned to the exact
-      // CSS border, instead of drifting up to a pixel from offsetWidth rounding.
-      const rect = btn.getBoundingClientRect();
-      const w = rect.width;
-      const h = rect.height;
-      sizeRef.w = w;
-      sizeRef.h = h;
-      renderer.setSize(w + PAD * 2, h + PAD * 2);
-      program.uniforms.uCenter.value = [(PAD + w / 2) * dpr, (PAD + h / 2) * dpr];
-      program.uniforms.uHalfSize.value = [(w / 2) * dpr, (h / 2) * dpr];
-    };
-    const ro = new ResizeObserver(resize);
-    ro.observe(btn);
-    resize();
-
-    // Light angle steers toward the pointer (anywhere on the page) and falls
-    // back to a slow sweep when the pointer hasn't moved yet.
+    let lastW = 0;
+    let lastH = 0;
     let pointerAngle: number | null = null;
     let proximityT = 0;
-    const onPointerMove = (e: PointerEvent) => {
-      const rect = btn.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = Math.max(rect.left - e.clientX, 0, e.clientX - rect.right);
-      const dy = Math.max(rect.top - e.clientY, 0, e.clientY - rect.bottom);
-      const dist = Math.hypot(dx, dy);
-      // Over the button itself the light settles on the diagonal (framing the
-      // corners) and gently sways with the cursor position within the button.
-      if (dist === 0) {
-        const nx = (e.clientX - cx) / (rect.width / 2);
-        const ny = (cy - e.clientY) / (rect.height / 2);
-        pointerAngle = Math.atan2(2 / rect.height, -2 / rect.width) + nx * 0.3 + ny * 0.15;
-      } else {
-        pointerAngle = Math.atan2(cy - e.clientY, e.clientX - cx);
-      }
-      const t = Math.max(0, 1 - dist / Math.max(propsRef.current.proximity, 1));
-      proximityT = t * t * (3 - 2 * t);
-    };
-    window.addEventListener('pointermove', onPointerMove);
-
+    let inView = true;
+    let tabVisible = document.visibilityState !== 'hidden';
+    let contextLost = false;
     let angle = 2.4;
     let idleAngle = 2.4;
-    let bright = 0;
+    let bright = prefersReducedMotion ? (autoAnimate ? 1 : 0) : 0;
     let last = performance.now();
     let raf = 0;
+    let idleFrames = 0;
+    let dirty = true;
 
     const lineC = new Color();
     const baseC = new Color();
 
-    const update = (now: number) => {
-      raf = requestAnimationFrame(update);
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
+    const canRun = () => !contextLost && inView && tabVisible && !prefersReducedMotion;
+
+    const paint = () => {
       const p = propsRef.current;
-
-      idleAngle += p.speed * dt;
-      const target =
-        p.followMouse && pointerAngle != null && (!p.autoAnimate || proximityT > 0) ? pointerAngle : idleAngle;
-      const diff = ((target - angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-      angle += diff * (1 - Math.exp(-dt * 7));
-
-      // Shine fades in with pointer proximity unless autoAnimate keeps it on
-      const brightTarget = p.autoAnimate ? 1 : proximityT;
-      bright += (brightTarget - bright) * (1 - Math.exp(-dt * 8));
-
       lineC.set(p.lineColor);
       baseC.set(p.baseColor);
       program.uniforms.uAngle.value = angle;
@@ -257,16 +243,185 @@ const SpecularButton = ({
       program.uniforms.uThickness.value = p.thickness * dpr;
       renderer.render({ scene: mesh });
     };
-    raf = requestAnimationFrame(update);
+
+    const update = (now: number) => {
+      if (!canRun()) {
+        raf = 0;
+        return;
+      }
+
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const p = propsRef.current;
+      const prevAngle = angle;
+      const prevBright = bright;
+
+      idleAngle += p.speed * dt;
+      const target =
+        p.followMouse && pointerAngle != null && (!p.autoAnimate || proximityT > 0) ? pointerAngle : idleAngle;
+      const diff = ((target - angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      angle += diff * (1 - Math.exp(-dt * 7));
+
+      const brightTarget = p.autoAnimate ? 1 : proximityT;
+      bright += (brightTarget - bright) * (1 - Math.exp(-dt * 8));
+
+      const moving =
+        Math.abs(angle - prevAngle) > IDLE_EPS ||
+        Math.abs(bright - prevBright) > IDLE_EPS ||
+        dirty ||
+        p.autoAnimate ||
+        (p.followMouse && proximityT > 0);
+
+      if (!p.autoAnimate && bright < IDLE_EPS && proximityT < IDLE_EPS) {
+        if (dirty || prevBright > IDLE_EPS) {
+          bright = 0;
+          paint();
+          dirty = false;
+        }
+        idleFrames += 1;
+        if (idleFrames >= IDLE_FRAMES_BEFORE_SLEEP) {
+          raf = 0;
+          return;
+        }
+        raf = requestAnimationFrame(update);
+        return;
+      }
+
+      if (moving) {
+        paint();
+        dirty = false;
+        idleFrames = 0;
+      } else {
+        idleFrames += 1;
+        if (idleFrames >= IDLE_FRAMES_BEFORE_SLEEP) {
+          raf = 0;
+          return;
+        }
+      }
+
+      raf = requestAnimationFrame(update);
+    };
+
+    const kick = () => {
+      dirty = true;
+      idleFrames = 0;
+      if (!canRun()) return;
+      if (!raf) {
+        last = performance.now();
+        raf = requestAnimationFrame(update);
+      }
+    };
+
+    let started = false;
+    const resize = () => {
+      // Round to avoid sub-pixel snap thrash from scroll-snap / font metrics.
+      const rect = btn.getBoundingClientRect();
+      const w = Math.round(rect.width * 100) / 100;
+      const h = Math.round(rect.height * 100) / 100;
+      if (Math.abs(w - lastW) < SIZE_EPS && Math.abs(h - lastH) < SIZE_EPS) return;
+      lastW = w;
+      lastH = h;
+      sizeRef.w = w;
+      sizeRef.h = h;
+      renderer.setSize(w + PAD * 2, h + PAD * 2);
+      program.uniforms.uCenter.value = [(PAD + w / 2) * dpr, (PAD + h / 2) * dpr];
+      program.uniforms.uHalfSize.value = [(w / 2) * dpr, (h / 2) * dpr];
+      if (started) {
+        if (prefersReducedMotion) paint();
+        else kick();
+      }
+    };
+    const ro = new ResizeObserver(resize);
+    ro.observe(btn);
+    resize();
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!inView || !tabVisible) return;
+      const rect = btn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = Math.max(rect.left - e.clientX, 0, e.clientX - rect.right);
+      const dy = Math.max(rect.top - e.clientY, 0, e.clientY - rect.bottom);
+      const dist = Math.hypot(dx, dy);
+      if (dist === 0) {
+        const nx = (e.clientX - cx) / (rect.width / 2);
+        const ny = (cy - e.clientY) / (rect.height / 2);
+        pointerAngle = Math.atan2(2 / rect.height, -2 / rect.width) + nx * 0.3 + ny * 0.15;
+      } else {
+        pointerAngle = Math.atan2(cy - e.clientY, e.clientX - cx);
+      }
+      const t = Math.max(0, 1 - dist / Math.max(propsRef.current.proximity, 1));
+      proximityT = t * t * (3 - 2 * t);
+      if (propsRef.current.followMouse || proximityT > 0) kick();
+    };
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+    const handleContextLost = (e: Event) => {
+      e.preventDefault();
+      contextLost = true;
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+    const handleContextRestored = () => {
+      contextLost = false;
+      lastW = 0;
+      lastH = 0;
+      resize();
+      if (prefersReducedMotion) {
+        bright = propsRef.current.autoAnimate ? 1 : 0;
+        paint();
+      } else {
+        kick();
+      }
+    };
+    canvas.addEventListener('webglcontextlost', handleContextLost);
+    canvas.addEventListener('webglcontextrestored', handleContextRestored);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const was = inView;
+        inView = Boolean(entry?.isIntersecting);
+        if (inView && !was) kick();
+        else if (!inView) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { threshold: 0 }
+    );
+    io.observe(btn);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      if (tabVisible) kick();
+      else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    if (prefersReducedMotion) {
+      bright = autoAnimate ? 1 : 0;
+      paint();
+      started = true;
+    } else {
+      started = true;
+      kick();
+    }
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
-      if (gl.canvas.parentNode === fx) fx.removeChild(gl.canvas);
+      document.removeEventListener('visibilitychange', onVisibility);
+      canvas.removeEventListener('webglcontextlost', handleContextLost);
+      canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+      if (canvas.parentNode === fx) fx.removeChild(canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- WebGL context is created once; props via propsRef
 
   return (
     <button

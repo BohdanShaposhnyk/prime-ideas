@@ -15,6 +15,7 @@ import SceneShowcase from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
 import SceneApp from './sections/scene-app'
 import SceneFranchise from './sections/scene-franchise'
+import SceneFranchiseV2 from './sections/scene-franchise-v2'
 
 const tokens = {
   '--cs-pitch': '#000000',
@@ -97,6 +98,7 @@ export default function ChargeSplitPage() {
       <SceneShowcase />
       <SceneLocations />
       <SceneApp />
+      <SceneFranchiseV2 />
       <SceneFranchise />
     </main>
   )

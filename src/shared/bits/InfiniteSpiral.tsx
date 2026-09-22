@@ -108,25 +108,13 @@ const InfiniteSpiral = ({
       bounds = root.getBoundingClientRect();
     });
     resizeObserver.observe(root);
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      visibleRef.current = entry.isIntersecting;
-    });
-    intersectionObserver.observe(root);
-
-    const handleScroll = () => {
-      const nextScrollY = window.scrollY;
-      const scrollDelta = nextScrollY - lastScrollY;
-      lastScrollY = nextScrollY;
-      if (!scrollEnabled || !visibleRef.current || scrollDelta === 0) return;
-      targetProgressRef.current += clamp(
-        (scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1),
-        -1.5,
-        1.5
-      );
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    let tabVisible = document.visibilityState !== 'hidden';
 
     const render = (time: number) => {
+      if (!visibleRef.current || !tabVisible) {
+        frameId = 0;
+        return;
+      }
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
       if (driven && drivenProgressRef) {
@@ -181,11 +169,52 @@ const InfiniteSpiral = ({
       frameId = requestAnimationFrame(render);
     };
 
+    const kick = () => {
+      if (!visibleRef.current || !tabVisible || frameId) return;
+      previousTime = performance.now();
+      frameId = requestAnimationFrame(render);
+    };
+
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      visibleRef.current = entry.isIntersecting;
+      if (visibleRef.current) kick();
+      else {
+        cancelAnimationFrame(frameId);
+        frameId = 0;
+      }
+    });
+    intersectionObserver.observe(root);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      if (tabVisible) kick();
+      else {
+        cancelAnimationFrame(frameId);
+        frameId = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    const handleScroll = () => {
+      const nextScrollY = window.scrollY;
+      const scrollDelta = nextScrollY - lastScrollY;
+      lastScrollY = nextScrollY;
+      if (!scrollEnabled || !visibleRef.current || scrollDelta === 0) return;
+      targetProgressRef.current += clamp(
+        (scrollDelta * scrollSpeedMultiplier) / Math.max(verticalSpacing * 2, 1),
+        -1.5,
+        1.5
+      );
+      kick();
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     frameId = requestAnimationFrame(render);
     return () => {
       cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('scroll', handleScroll);
     };
   }, [

@@ -239,29 +239,7 @@ export default function HeroV2() {
 
   if (reduced) {
     return (
-      <section
-        aria-label="PRIME"
-        data-scroll="split-hold"
-        data-scene="hero"
-        className="relative h-dvh overflow-hidden bg-black"
-      >
-        <video
-          className="absolute inset-0 size-full object-cover"
-          src={nightReel}
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
-        <style>{HERO_CSS}</style>
-        <div
-          data-hero-vignette=""
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
-        />
-        <HeroCopy />
-      </section>
+      <ReducedHeroVideo />
     )
   }
 
@@ -307,6 +285,76 @@ export default function HeroV2() {
         style={{ ...vignetteVars(VIGNETTE_FROM), background: VIGNETTE_BG }}
       />
       {copyReady ? <HeroCopy /> : null}
+    </section>
+  )
+}
+
+function ReducedHeroVideo() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const video = videoRef.current
+    if (!section || !video) return
+
+    let inView = true
+    let tabVisible = document.visibilityState !== 'hidden'
+
+    const sync = () => {
+      if (inView && tabVisible) void video.play().catch(() => {})
+      else video.pause()
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting)
+        sync()
+      },
+      { threshold: 0 },
+    )
+    io.observe(section)
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden'
+      sync()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    sync()
+
+    return () => {
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVisibility)
+      video.pause()
+    }
+  }, [])
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-label="PRIME"
+      data-scroll="split-hold"
+      data-scene="hero"
+      className="relative h-dvh overflow-hidden bg-black"
+    >
+      <video
+        ref={videoRef}
+        className="absolute inset-0 size-full object-cover"
+        src={nightReel}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+      <style>{HERO_CSS}</style>
+      <div
+        data-hero-vignette=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
+      />
+      <HeroCopy />
     </section>
   )
 }

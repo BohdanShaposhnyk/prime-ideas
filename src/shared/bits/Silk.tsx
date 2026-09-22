@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, useRef, useLayoutEffect, useEffect } from 'react';
+import React, { forwardRef, useMemo, useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree, type RootState } from '@react-three/fiber';
 import { Color, Mesh, ShaderMaterial } from 'three';
 import { type IUniform } from 'three';
@@ -100,10 +100,11 @@ if (uLightMode > 0.5) {
 
 interface SilkPlaneProps {
   uniforms: SilkUniforms;
+  active: boolean;
 }
 
-const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms }, ref) {
-  const { viewport } = useThree();
+const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms, active }, ref) {
+  const { viewport, invalidate } = useThree();
 
   useLayoutEffect(() => {
     const mesh = ref as React.MutableRefObject<Mesh | null>;
@@ -113,6 +114,7 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
   }, [ref, viewport]);
 
   useFrame((_state: RootState, delta: number) => {
+    if (!active) return;
     const mesh = ref as React.MutableRefObject<Mesh | null>;
     if (mesh.current) {
       const material = mesh.current.material as ShaderMaterial & {
@@ -121,6 +123,10 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
       material.uniforms.uTime.value += 0.1 * delta;
     }
   });
+
+  useEffect(() => {
+    if (active) invalidate();
+  }, [active, invalidate]);
 
   return (
     <mesh ref={ref}>
@@ -149,6 +155,8 @@ const Silk: React.FC<SilkProps> = ({
   lightMode = false
 }) => {
   const meshRef = useRef<Mesh>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(true);
 
   const uniforms = useMemo<SilkUniforms>(
     () => ({
@@ -176,20 +184,56 @@ const Silk: React.FC<SilkProps> = ({
     /* eslint-enable react-hooks/immutability */
   }, [speed, scale, noiseIntensity, color, rotation, lightMode, uniforms]);
 
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let inView = true;
+    let tabVisible = document.visibilityState !== 'hidden';
+
+    const sync = () => {
+      setActive(!prefersReducedMotion && inView && tabVisible);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = Boolean(entry?.isIntersecting);
+        sync();
+      },
+      { threshold: 0 }
+    );
+    io.observe(el);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState !== 'hidden';
+      sync();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    sync();
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
+
   return (
-    <Canvas
-      dpr={[1, 1.5]}
-      frameloop="always"
-      gl={{ alpha: true, antialias: false }}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'block',
-        background: 'transparent',
-      }}
-    >
-      <SilkPlane ref={meshRef} uniforms={uniforms} />
-    </Canvas>
+    <div ref={wrapRef} className="h-full w-full">
+      <Canvas
+        dpr={[1, 1.5]}
+        frameloop={active ? 'always' : 'never'}
+        gl={{ alpha: true, antialias: false }}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          background: 'transparent',
+        }}
+      >
+        <SilkPlane ref={meshRef} uniforms={uniforms} active={active} />
+      </Canvas>
+    </div>
   );
 };
 
