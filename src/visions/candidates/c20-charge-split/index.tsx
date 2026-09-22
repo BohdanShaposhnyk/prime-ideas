@@ -58,10 +58,12 @@ function useSectionSnap(rootRef: RefObject<HTMLElement | null>) {
       const y = window.scrollY
       const vh = window.innerHeight
       const scenes = targets()
-      const showcase = scenes.find((scene) => scene.name === 'showcase')
-      if (showcase) {
-        const freeFrom = showcase.top + vh * SPIRAL_FREE_PAD
-        const freeTo = showcase.top + showcase.height - vh * SPIRAL_FREE_PAD
+      const free = scenes.filter(
+        (scene) => scene.name === 'showcase' || scene.name === 'overview',
+      )
+      for (const scene of free) {
+        const freeFrom = scene.top + vh * SPIRAL_FREE_PAD
+        const freeTo = scene.top + scene.height - vh * SPIRAL_FREE_PAD
         if (y > freeFrom && y < freeTo) return
       }
 
@@ -148,8 +150,8 @@ export default function ChargeSplitPage() {
       </Link>
       {/* <Hero /> */}
       <HeroV2 />
-      <SceneBook />
       <SceneOverview />
+      <SceneBook />
       <SceneScreen />
       <SceneShowcase />
       <SceneLocations />
