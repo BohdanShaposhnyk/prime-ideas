@@ -114,14 +114,14 @@ export default function ChargeSplitPage() {
       {/* <Hero /> */}
       <HeroV2 />
       <SceneOverview />
-      <LazyScene>
-        <SceneBook />
+      <LazyScene minHeight="645vh">
+        <SceneShowcase />
       </LazyScene>
       <LazyScene>
         <SceneScreen />
       </LazyScene>
-      <LazyScene minHeight="645vh">
-        <SceneShowcase />
+      <LazyScene>
+        <SceneBook />
       </LazyScene>
       <LazyScene>
         <SceneLocations />
