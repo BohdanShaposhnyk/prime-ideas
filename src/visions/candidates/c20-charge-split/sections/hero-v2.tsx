@@ -9,6 +9,7 @@ import nightReel from '@/assets/c20/night-reel.mp4'
 import primeLogo from '../assets/01_prime-logo.png'
 import { BOOKING_URL } from '../booking'
 import { isCoarsePointer } from '../coarse'
+import { ctaClass, displayLeading, displayTracking, kickerClass, specularInk, supportClass } from '../palette'
 
 const FADE_S = 0.85
 const REVEAL_S = 1.1
@@ -317,7 +318,7 @@ export default function HeroV2() {
       data-scroll="split-hold"
       data-scene="hero"
       data-hero-blur=""
-      className="cs-scene relative isolate overflow-hidden bg-black"
+      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)]"
       style={{ '--cs-hero-blur': `${BLUR_PX}px` } as CSSProperties}
     >
       <style>{HERO_CSS}</style>
@@ -366,8 +367,8 @@ export default function HeroV2() {
             textScale={0.26}
             align="center"
             weight={400}
-            tracking={0.02}
-            lineHeight={0.82}
+            tracking={displayTracking}
+            lineHeight={displayLeading}
             className="flex h-full items-center justify-center font-[family-name:var(--cs-display)] uppercase"
           />
         ) : null}
@@ -431,7 +432,7 @@ function ReducedHeroVideo() {
       aria-label="PRIME"
       data-scroll="split-hold"
       data-scene="hero"
-      className="cs-scene relative overflow-hidden bg-black"
+      className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
     >
       <video
         ref={videoRef}
@@ -538,7 +539,7 @@ function HeroCopy() {
     >
       <p
         data-hero-extra=""
-        className={`mb-3 font-[family-name:var(--cs-body)] text-[0.68rem] tracking-[0.14em] text-[var(--cs-caption)] sm:mb-4 sm:text-[0.75rem] ${quiet}`}
+        className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
       >
         Official NAVI partner
       </p>
@@ -554,11 +555,11 @@ function HeroCopy() {
         to={{ opacity: 1, y: 0 }}
         threshold={0}
         rootMargin="0px"
-        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase [&_.split-word:last-child]:!text-[#CFB53B]"
+        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [&_.split-word:last-child]:!text-[var(--cs-gold)]"
       />
       <p
         data-hero-extra=""
-        className={`mt-3 max-w-[24rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.4vw,1.12rem)] font-normal leading-snug text-[var(--cs-caption)] sm:mt-4 ${quiet}`}
+        className={`mt-3 max-w-[24rem] sm:mt-4 ${supportClass} ${quiet}`}
       >
         One night. Five ways to make it yours.
       </p>
@@ -572,17 +573,15 @@ function HeroCopy() {
           tint="#ffffff"
           tintOpacity={0.06}
           blur={10}
-          textColor="#F4F7FF"
-          lineColor="#CFB53B"
-          baseColor="#3a3420"
+          {...specularInk}
           intensity={1.15}
           autoAnimate={!isCoarsePointer()}
-          className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
+          className={ctaClass}
           onClick={() => {
             window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
           }}
         >
-          book a night
+          Book a night
         </SpecularButton>
       </div>
     </div>

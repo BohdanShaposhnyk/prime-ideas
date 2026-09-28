@@ -4,6 +4,7 @@ import Masonry from '@/shared/bits/Masonry'
 import { gsap } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import { isCoarsePointer, useCoarsePointer } from '../coarse'
+import { palette } from '../palette'
 import barPartyHor from '../assets/bar/bar-party-hor.webp'
 import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
 import gamerGirlLightHor from '../assets/gaming/gamer-girl-light-hor.webp'
@@ -11,7 +12,7 @@ import keyboardHor from '../assets/gaming/keyboard-hor.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
 
 const GAP = 8
-const VIOLET = '#B794F6'
+const GOLD_TINT = '#F4E8B0'
 const COMPACT_MAX = 640
 const MASONRY_DURATION = 0.78
 const MASONRY_STAGGER = 0.1
@@ -102,13 +103,13 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
   return (
     <div
       ref={rootRef}
-      className="@container relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black px-[8%] text-center"
+      className="@container relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[var(--cs-pitch)] px-[8%] text-center"
     >
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 70% 55% at 50% 58%, #160c24 0%, #000000 72%)',
+            'radial-gradient(ellipse 70% 55% at 50% 58%, color-mix(in srgb, var(--cs-gold) 16%, #000) 0%, #000000 72%)',
         }}
         aria-hidden
       />
@@ -143,8 +144,8 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
                   text="PRIME"
                   fontSize="1em"
                   fontWeight={400}
-                  color={VIOLET}
-                  tint="#E9D5FF"
+                  color={palette.gold}
+                  tint={GOLD_TINT}
                   echoes={7}
                   offset={20}
                   lag={0.2}
@@ -157,7 +158,7 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
                   className="leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)]"
                   style={{
                     lineHeight: 0.82,
-                    textShadow: `0 0 36px color-mix(in srgb, ${VIOLET} 60%, transparent)`,
+                    textShadow: `0 0 36px color-mix(in srgb, ${palette.gold} 60%, transparent)`,
                   }}
                 />
               </span>

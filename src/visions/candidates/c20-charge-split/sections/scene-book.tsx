@@ -3,6 +3,7 @@ import Lightning from '@/shared/bits/Lightning'
 import SpecularButton from '@/shared/bits/SpecularButton'
 import { BOOKING_URL } from '../booking'
 import { isCoarsePointer } from '../coarse'
+import { ctaClass, kickerClass, palette, specularInk } from '../palette'
 import barParty from '../assets/bar/bar-party.webp'
 import carsimGirl from '../assets/gaming/carsim-girl.webp'
 import hookahGirl from '../assets/hookah/hookah-girl.webp'
@@ -27,7 +28,7 @@ export default function SceneBook() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 40% 92% at 50% 50%, color-mix(in srgb, #d5beae 12%, #000) 0%, color-mix(in srgb, #d5beae 5%, #000) 42%, color-mix(in srgb, #d5beae 1.5%, #000) 72%, #000000 100%)',
+            'radial-gradient(ellipse 40% 92% at 50% 50%, color-mix(in srgb, var(--cs-ice) 12%, var(--cs-pitch)) 0%, color-mix(in srgb, var(--cs-ice) 5%, var(--cs-pitch)) 42%, color-mix(in srgb, var(--cs-ice) 1.5%, var(--cs-pitch)) 72%, var(--cs-pitch) 100%)',
         }}
         aria-hidden
       />
@@ -44,7 +45,7 @@ export default function SceneBook() {
         className="pointer-events-none absolute inset-0 z-[1] opacity-[0.28] mix-blend-screen"
         aria-hidden
       >
-        <Lightning hue={28} speed={0.7} intensity={0.38} size={0.85} xOffset={0} />
+        <Lightning hue={220} speed={0.7} intensity={0.38} size={0.85} xOffset={0} />
       </div>
 
       <div className="absolute inset-x-0 top-1/2 z-10 h-[min(44dvh,20rem)] w-full -translate-y-1/2 sm:inset-0 sm:h-full sm:translate-y-0">
@@ -53,7 +54,7 @@ export default function SceneBook() {
           bend={2.4}
           borderRadius={0.08}
           hideCenter
-          textColor="#A9BBE0"
+          textColor={palette.caption}
           font="500 20px Barlow"
           scrollSpeed={2.2}
           scrollEase={0.06}
@@ -64,7 +65,7 @@ export default function SceneBook() {
       <div className="pointer-events-none relative z-20 flex max-w-[22rem] flex-col items-center text-center sm:max-w-[28rem]">
         <p
           data-copy="kicker"
-          className="font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[var(--cs-track-micro)] text-[var(--cs-caption)] uppercase sm:text-[0.68rem]"
+          className={kickerClass}
         >
           The floor is live
         </p>
@@ -73,7 +74,7 @@ export default function SceneBook() {
           data-copy="caption"
           className="mt-5 font-[family-name:var(--cs-display)] text-[clamp(2.55rem,10vw,5rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase"
         >
-          <span className="mb-[0.22em] block font-[family-name:var(--cs-body)] text-[clamp(1.05rem,3.4vw,1.45rem)] font-medium tracking-[var(--cs-track-display)] text-[var(--cs-ice)] normal-case">
+          <span className="mb-[0.22em] block font-[family-name:var(--cs-body)] text-[length:var(--cs-text-support)] font-medium leading-snug tracking-normal text-[var(--cs-ice)] normal-case">
             Book a
           </span>
           PC
@@ -85,17 +86,15 @@ export default function SceneBook() {
             tint="#ffffff"
             tintOpacity={0.06}
             blur={10}
-            textColor="#F4F7FF"
-            lineColor="#CFB53B"
-            baseColor="#3a3420"
+            {...specularInk}
             intensity={1.15}
             autoAnimate={!isCoarsePointer()}
-            className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
+            className={ctaClass}
             onClick={() => {
               window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
             }}
           >
-            Reserve
+            Book a night
           </SpecularButton>
         </div>
       </div>

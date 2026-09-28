@@ -14,10 +14,11 @@ import hookahGirl from '../assets/hookah/hookah-girl.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
+import { ctaClass, palette, supportClass } from '../palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 
-const PROOFS = ['Established concept', 'Full brand support', 'Your city. Your Prime.'] as const
+const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime'] as const
 
 const WALL_IMAGES = [
   { src: bottles, title: 'Bar' },
@@ -47,12 +48,12 @@ function proofImage(title: string): string {
   const titleNodes = lines
     .map(
       (line, i) =>
-        `<text x="0" y="${i * lineH + lineH * 0.72}" text-anchor="middle" fill="#ffffff" font-family="Bebas Neue, Impact, sans-serif" font-size="68" letter-spacing="1.5">${escapeXml(line)}</text>`,
+        `<text x="0" y="${i * lineH + lineH * 0.72}" text-anchor="middle" fill="${palette.ice}" font-family="Bebas Neue, Impact, sans-serif" font-size="68" letter-spacing="1.5">${escapeXml(line)}</text>`,
     )
     .join('')
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="720" viewBox="0 0 480 720">
-  <rect width="480" height="720" fill="#0a0a0a"/>
+  <rect width="480" height="720" fill="${palette.pitch}"/>
   <g transform="translate(240 360) rotate(-90) translate(0 ${-blockH / 2})">
     ${titleNodes}
   </g>
@@ -110,7 +111,7 @@ export default function SceneFranchiseV2() {
     <section
       aria-labelledby="cs-franchise-v2-title"
       data-scene="franchise-v2"
-      className="cs-scene relative isolate overflow-hidden bg-black text-white"
+      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
       <div data-placeholder="visual" className="absolute inset-0" aria-hidden>
         <DriftWall
@@ -152,20 +153,20 @@ export default function SceneFranchiseV2() {
           <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-between">
             <h2
               id="cs-franchise-v2-title"
-              className="font-[family-name:var(--cs-display)] text-[clamp(3.2rem,15.5dvh,6.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
+              className="font-[family-name:var(--cs-display)] text-[clamp(3.2rem,15.5dvh,6.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
             >
               <span className="block">Make</span>
-              <span className="block">Prime</span>
+              <span className="block text-[var(--cs-gold)]">Prime</span>
               <span className="block">yours</span>
             </h2>
 
             <div className="flex w-full flex-col items-start">
-              <p className="max-w-[28rem] font-[family-name:var(--cs-body)] text-[clamp(1.05rem,2.4vw,1.35rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-white/75">
+              <p className={`max-w-[28rem] ${supportClass}`}>
                 Bring the Prime experience to your city.
               </p>
               <a
                 href={FRANCHISE_MAIL}
-                className="mt-4 inline-flex items-center gap-3 rounded-full bg-white px-7 py-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-semibold tracking-[var(--cs-track-micro)] text-black uppercase transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black sm:px-8 sm:py-3.5 sm:text-[0.78rem] md:mt-8"
+                className={`mt-4 inline-flex items-center gap-3 rounded-full bg-[var(--cs-ice)] px-7 py-3 text-[var(--cs-pitch)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] sm:px-8 sm:py-3.5 md:mt-8 ${ctaClass}`}
               >
                 Open Prime
                 <ArrowRight className="size-5 shrink-0 sm:size-6" aria-hidden />

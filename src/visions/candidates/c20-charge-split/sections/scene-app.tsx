@@ -3,6 +3,7 @@ import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
 import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
+import { supportClass } from '../palette'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
@@ -10,7 +11,7 @@ const PLAY_STORE =
   'https://play.google.com/store/apps/details?id=com.enestech.senetid'
 
 const badgeLinkClass =
-  'inline-block transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black'
+  'inline-block transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)]'
 
 function StoreBadges() {
   return (
@@ -50,7 +51,7 @@ export default function SceneApp() {
     <section
       aria-label="Ready when you are"
       data-scene="app"
-      className="cs-scene relative isolate overflow-hidden bg-black text-[var(--cs-ice)]"
+      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
       <div data-placeholder="visual" className="pointer-events-none absolute inset-0" aria-hidden>
         <SideRays
@@ -77,7 +78,7 @@ export default function SceneApp() {
                 <span className="block">Ready when</span>
                 <span className="block">you are</span>
               </h2>
-              <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)] sm:mt-5">
+              <p className={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`}>
                 Book ahead, check availability and keep Prime with you.
               </p>
             </div>
@@ -104,7 +105,7 @@ export default function SceneApp() {
             <span className="block">Ready when</span>
             <span className="block">you are</span>
           </h2>
-          <p className="mt-4 max-w-[22rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.15rem)] font-medium leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)]">
+          <p className={`mt-4 max-w-[22rem] ${supportClass}`}>
             Book ahead, check availability and keep Prime with you.
           </p>
           <div className="mt-6">

@@ -7,6 +7,7 @@ import danceNeon from '@/assets/c20/dance_neon.webp'
 import barInterior from '@/assets/c20/bar_interior.webp'
 import { BOOKING_URL } from '../booking'
 import { isCoarsePointer } from '../coarse'
+import { ctaClass, palette, specularInk } from '../palette'
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -30,8 +31,8 @@ type Venue = {
   address: string
   phone: string
   telegram: string
-  lat: number
-  lng: number
+  lat?: number
+  lng?: number
   appleMaps: string
   image: string
 }
@@ -40,18 +41,16 @@ const VENUES: Venue[] = [
   {
     id: 'mennica',
     title: 'Prime Mennica',
-    address: 'Walicow 11, Warsaw',
+    address: 'Waliców 11, Warsaw',
     phone: '+48530811888',
     telegram: 'https://t.me/primewarsaw',
-    lat: 52.232368,
-    lng: 20.993642,
     appleMaps:
-      'https://maps.apple.com/?address=I%20L%20Pereca%2014,%2000-849%20Warsaw,%20Poland&auid=2852888507565351073&ll=52.232368,20.993642&lsp=9902&q=Prime%20Cyber%20Lounge&t=m',
+      'https://maps.apple.com/?address=Walic%C3%B3w%2011,%20Warsaw,%20Poland&q=Prime%20Cyber%20Lounge&t=m',
     image: barExt,
   },
   {
     id: 'mokotow',
-    title: 'Prime Mokotow',
+    title: 'Prime Mokotów',
     address: 'Wincentego Rzymowskiego 53, Warsaw',
     phone: '+48530822888',
     telegram: 'https://t.me/primemokotow',
@@ -63,14 +62,14 @@ const VENUES: Venue[] = [
   },
   {
     id: 'wroclaw',
-    title: 'Prime Wroclaw',
-    address: 'Plac Teatralny 6-8, Wroclaw',
+    title: 'Prime Wrocław',
+    address: 'Plac Teatralny 6-8, Wrocław',
     phone: '+48530881888',
     telegram: 'https://t.me/primewroclaw',
     lat: 51.1057,
     lng: 17.0324,
     appleMaps:
-      'https://maps.apple.com/?address=pl%20Teatralny%206,%2050-051%20Wroc%C5%82aw,%20Poland&auid=18407165116370831884&ll=51.105700,17.032400&lsp=9902&q=PRIME%20CYBER%20LOUNGE&t=m',
+      'https://maps.apple.com/?address=Plac%20Teatralny%206-8,%2050-051%20Wroc%C5%82aw,%20Poland&ll=51.105700,17.032400&q=PRIME%20CYBER%20LOUNGE&t=m',
     image: barInterior,
   },
 ]
@@ -91,11 +90,13 @@ function prefersAppleMaps() {
 
 function mapEmbedSrc(venue: Venue, apple: boolean) {
   if (apple) return venue.appleMaps
-  return `https://www.google.com/maps?q=${venue.lat},${venue.lng}&z=16&output=embed`
+  const query =
+    venue.lat != null && venue.lng != null ? `${venue.lat},${venue.lng}` : venue.address
+  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=16&output=embed`
 }
 
 const actionClass =
-  'inline-flex items-center justify-center gap-2 font-[family-name:var(--cs-body)] font-semibold tracking-[var(--cs-track-micro)] text-[var(--cs-ice)] uppercase transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--cs-ice)_40%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:gap-2.5 sm:text-[0.85rem] sm:underline-offset-4 sm:hover:underline sm:focus-visible:underline'
+  `${ctaClass} inline-flex items-center justify-center gap-2 text-[var(--cs-ice)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--cs-ice)_40%,transparent)] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent sm:gap-2.5 sm:underline-offset-4 sm:hover:underline sm:focus-visible:underline`
 
 const iconBtnClass =
   'h-[calc(20px+var(--cs-text-cta))] w-[calc(20px+var(--cs-text-cta))] shrink-0 rounded-full bg-[color-mix(in_srgb,var(--cs-void)_55%,transparent)] ring-1 ring-[color-mix(in_srgb,var(--cs-ice)_18%,transparent)] backdrop-blur-[2px] sm:h-auto sm:w-auto sm:rounded-none sm:bg-transparent sm:ring-0 sm:backdrop-blur-none'
@@ -107,11 +108,11 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
         <span
           className="h-6 w-[3px] flex-none rounded-[3px] bg-[var(--cs-ice)]"
           style={{
-            boxShadow: '0 0 12px color-mix(in srgb, #F4F7FF 55%, transparent)',
+            boxShadow: `0 0 12px color-mix(in srgb, ${palette.ice} 55%, transparent)`,
           }}
           aria-hidden
         />
-        <h2 className="truncate font-[family-name:var(--cs-display)] text-[clamp(1.45rem,2.6vw,2.2rem)] leading-none tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
+        <h2 className="truncate font-[family-name:var(--cs-display)] text-[clamp(1.45rem,2.6vw,2.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
           {venue.title}
         </h2>
       </div>
@@ -129,7 +130,7 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
       </div>
 
       <div className="flex shrink-0 flex-col gap-3">
-        <p className="font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug tracking-[var(--cs-track-display)] text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] sm:text-[0.85rem]">
+        <p className="font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] sm:text-[0.85rem]">
           {venue.address}
         </p>
         <div className="flex flex-nowrap items-center gap-2.5 sm:gap-4">
@@ -139,17 +140,15 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
             tint="#ffffff"
             tintOpacity={0.06}
             blur={10}
-            textColor="#F4F7FF"
-            lineColor="#CFB53B"
-            baseColor="#3a3420"
+            {...specularInk}
             intensity={1.15}
             autoAnimate={!isCoarsePointer()}
-            className="shrink-0 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
+            className={`shrink-0 ${ctaClass}`}
             onClick={() => {
               window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
             }}
           >
-            Book a PC
+            Book a night
           </SpecularButton>
           <a
             href={`tel:${venue.phone}`}
@@ -193,9 +192,9 @@ export default function SceneLocations() {
         expandRatio={0.7}
         gap={8}
         radius={14}
-        accentColor="#F4F7FF"
-        overlayColor="#000000"
-        textColor="#F4F7FF"
+        accentColor={palette.ice}
+        overlayColor={palette.pitch}
+        textColor={palette.ice}
         grayscale
         showLabels={false}
         activeDim={0.28}
