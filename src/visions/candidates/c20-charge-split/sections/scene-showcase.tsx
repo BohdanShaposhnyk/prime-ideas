@@ -12,30 +12,35 @@ const CARDS = [
   {
     id: 'bar',
     word: 'BAR',
+    line: 'Eat well. Drink better.',
     alt: 'Bar',
     src: bottles,
   },
   {
     id: 'play',
     word: 'PLAY ZONE',
+    line: 'Built for serious play.',
     alt: 'Play zone',
     src: controllerDark,
   },
   {
     id: 'hookah',
     word: 'HOOKAH',
+    line: 'Your late-night ritual.',
     alt: 'Hookah',
     src: hookahCoal,
   },
   {
     id: 'karaoke',
     word: 'KARAOKE',
+    line: 'No stage fright allowed.',
     alt: 'Karaoke',
     src: micGold,
   },
   {
     id: 'cinema',
     word: 'CINEMA',
+    line: 'Your private screen time.',
     alt: 'Cinema',
     src: seats,
   },
@@ -129,7 +134,7 @@ export default function SceneShowcase() {
     }
   }, [])
 
-  const word = CARDS[wordIndex].word
+  const card = CARDS[wordIndex]
 
   return (
     <section
@@ -155,7 +160,7 @@ export default function SceneShowcase() {
               />
             </div>
           ))}
-          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_76%,transparent)]" />
+          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_84%,transparent)]" />
         </div>
         <div
           className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]"
@@ -169,17 +174,23 @@ export default function SceneShowcase() {
         <h2 id="cs-showcase-title" className="sr-only">
           Bar. Play zone. Hookah. Karaoke. Cinema.
         </h2>
-        <p
+        <div
           aria-live="polite"
-          data-copy="caption"
-          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 font-[family-name:var(--cs-display)] text-[clamp(4.2rem,16vw,10.5rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] uppercase sm:bottom-[6%] sm:left-[6%]"
-          style={{
-            color: 'transparent',
-            WebkitTextStroke: '0.026em color-mix(in srgb, var(--cs-ice) 36%, transparent)',
-          }}
+          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 max-w-[min(88vw,36rem)] sm:bottom-[6%] sm:left-[6%]"
         >
-          {word}
-        </p>
+          <p
+            data-copy="caption"
+            className="font-[family-name:var(--cs-display)] text-[clamp(3.55rem,13.5vw,8.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]"
+          >
+            {card.word}
+          </p>
+          <p
+            data-copy="support"
+            className="-mt-0.5 font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.2vw,1.2rem)] font-medium leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_12px_rgba(0,0,0,0.55)]"
+          >
+            {card.line}
+          </p>
+        </div>
 
         <div className="absolute inset-0 z-20">
           <InfiniteSpiral

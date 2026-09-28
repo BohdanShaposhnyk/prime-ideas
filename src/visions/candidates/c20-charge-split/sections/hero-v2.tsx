@@ -6,6 +6,7 @@ import SplitText from '@/shared/bits/SplitText'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import nightReel from '@/assets/c20/night-reel.mp4'
+import primeLogo from '../assets/01_prime-logo.png'
 import { BOOKING_URL } from '../booking'
 import { isCoarsePointer } from '../coarse'
 
@@ -23,11 +24,11 @@ const MOLTEN_OUT_S = 0.5
 const MOLTEN_MOUNT_AT = REVEAL_S
 const DIVE_AT = MOLTEN_MOUNT_AT + MOLTEN_IN_S + MOLTEN_HOLD_S
 
-/** Gold molten — matches hero CTA / “prime” accent. */
-const MOLTEN_GOLD = {
-  color1: '#2A1806',
-  color2: '#CFB53B',
-  color3: '#FFF1B8',
+/** Colder violet — blue-shifted from the screen caption’s warmer lilac. */
+const MOLTEN_VIOLET = {
+  color1: '#0E1228',
+  color2: '#8E7CFF',
+  color3: '#D5E0FF',
   speed: 0.42,
 } as const
 
@@ -327,11 +328,11 @@ export default function HeroV2() {
           className="pointer-events-none absolute inset-0 z-0 opacity-0"
         >
           <MoltenMetal
-            color1={MOLTEN_GOLD.color1}
-            color2={MOLTEN_GOLD.color2}
-            color3={MOLTEN_GOLD.color3}
+            color1={MOLTEN_VIOLET.color1}
+            color2={MOLTEN_VIOLET.color2}
+            color3={MOLTEN_VIOLET.color3}
             colorMode="ember"
-            speed={MOLTEN_GOLD.speed}
+            speed={MOLTEN_VIOLET.speed}
             scale={3.4}
             detail={2}
             glow={1.45}
@@ -378,6 +379,7 @@ export default function HeroV2() {
         className="pointer-events-none absolute inset-0 z-10"
         style={{ ...vignetteVars(VIGNETTE_FROM), background: VIGNETTE_BG }}
       />
+      <HeroMark visible={copyReady} />
       {copyReady ? <HeroCopy /> : null}
     </section>
   )
@@ -448,30 +450,98 @@ function ReducedHeroVideo() {
         className="pointer-events-none absolute inset-0"
         style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
       />
+      <HeroMark visible />
       <HeroCopy />
     </section>
   )
 }
 
+/** Wordmark bounds inside the 1290×790 black plate. */
+const MARK = { x: 229, y: 268, w: 832, h: 192 } as const
+
+/**
+ * Crop to the wordmark and lift the black plate so the letters sit on the video.
+ */
+function HeroMark({ visible }: { visible: boolean }) {
+  const [src, setSrc] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const img = new Image()
+    img.onload = () => {
+      if (cancelled) return
+      const canvas = document.createElement('canvas')
+      canvas.width = MARK.w
+      canvas.height = MARK.h
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
+      if (!ctx) return
+      ctx.drawImage(img, MARK.x, MARK.y, MARK.w, MARK.h, 0, 0, MARK.w, MARK.h)
+      const frame = ctx.getImageData(0, 0, MARK.w, MARK.h)
+      const px = frame.data
+      const cut = 18
+      for (let i = 0; i < px.length; i += 4) {
+        const max = Math.max(px[i] ?? 0, px[i + 1] ?? 0, px[i + 2] ?? 0)
+        px[i + 3] = max <= cut ? 0 : Math.min(255, Math.round(((max - cut) * 255) / (255 - cut)))
+      }
+      ctx.putImageData(frame, 0, 0)
+      setSrc(canvas.toDataURL('image/png'))
+    }
+    img.src = primeLogo
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!src || !visible) return null
+
+  return (
+    <img
+      src={src}
+      alt="Prime"
+      className="pointer-events-none absolute top-4 left-4 z-30 h-5 w-auto sm:top-5 sm:left-6 sm:h-6"
+    />
+  )
+}
+
 function HeroCopy() {
-  const ctaRef = useRef<HTMLDivElement>(null)
+  const copyRef = useRef<HTMLDivElement>(null)
   const reduced = prefersReducedMotion()
 
   useGSAP(
     () => {
-      const cta = ctaRef.current
-      if (!cta || reduced) return
+      const root = copyRef.current
+      if (!root || reduced) return
+      const extras = root.querySelectorAll<HTMLElement>('[data-hero-extra]')
+      if (!extras.length) return
       gsap.fromTo(
-        cta,
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 0.7, delay: 0.35, ease: 'power3.out' },
+        extras,
+        { opacity: 0, y: 14 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          delay: 0.18,
+          stagger: 0.14,
+          ease: 'power3.out',
+        },
       )
     },
-    { scope: ctaRef, dependencies: [reduced] },
+    { scope: copyRef, dependencies: [reduced] },
   )
 
+  const quiet = reduced ? '' : 'opacity-0'
+
   return (
-    <div className="pointer-events-none absolute top-3/4 left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center">
+    <div
+      ref={copyRef}
+      className="pointer-events-none absolute top-[72%] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center"
+    >
+      <p
+        data-hero-extra=""
+        className={`mb-3 font-[family-name:var(--cs-body)] text-[0.68rem] tracking-[0.14em] text-[var(--cs-caption)] sm:mb-4 sm:text-[0.75rem] ${quiet}`}
+      >
+        Official NAVI partner
+      </p>
       <SplitText
         text="enter your prime"
         splitType="words"
@@ -486,9 +556,15 @@ function HeroCopy() {
         rootMargin="0px"
         className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-white uppercase [&_.split-word:last-child]:!text-[#CFB53B]"
       />
+      <p
+        data-hero-extra=""
+        className={`mt-3 max-w-[24rem] font-[family-name:var(--cs-body)] text-[clamp(0.95rem,2.4vw,1.12rem)] font-normal leading-snug text-[var(--cs-caption)] sm:mt-4 ${quiet}`}
+      >
+        One night. Five ways to make it yours.
+      </p>
       <div
-        ref={ctaRef}
-        className={`pointer-events-auto mt-6 sm:mt-8 ${reduced ? '' : 'opacity-0'}`}
+        data-hero-extra=""
+        className={`pointer-events-auto mt-6 sm:mt-8 ${quiet}`}
       >
         <SpecularButton
           size="md"
