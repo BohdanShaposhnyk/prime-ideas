@@ -9,7 +9,7 @@ import nightReel from '@/assets/c20/night-reel.mp4'
 import primeLogo from '../assets/01_prime-logo.png'
 import { BOOKING_URL } from '../booking'
 import { isCoarsePointer } from '../coarse'
-import { ctaClass, displayLeading, displayTracking, kickerClass, specularInk, supportClass } from '../palette'
+import { ctaClass, displayLeading, displayTracking, kickerClass, lockupClass, specularInk, supportClass } from '../palette'
 
 const FADE_S = 0.85
 const REVEAL_S = 1.1
@@ -535,7 +535,7 @@ function HeroCopy() {
   return (
     <div
       ref={copyRef}
-      className="pointer-events-none absolute top-[72%] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center px-4 text-center"
+      className="pointer-events-none absolute bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 flex-col items-center px-4 text-center"
     >
       <p
         data-hero-extra=""
@@ -555,7 +555,7 @@ function HeroCopy() {
         to={{ opacity: 1, y: 0 }}
         threshold={0}
         rootMargin="0px"
-        className="font-[family-name:var(--cs-display)] text-[clamp(2.4rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [&_.split-word:last-child]:!text-[var(--cs-gold)]"
+        className={`${lockupClass} [&_.split-word:last-child]:!text-[var(--cs-gold)]`}
       />
       <p
         data-hero-extra=""

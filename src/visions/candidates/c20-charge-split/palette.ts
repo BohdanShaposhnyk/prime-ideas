@@ -18,7 +18,11 @@ export const specularInk = {
 } as const
 
 export const kickerClass =
-  'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[var(--cs-track-micro)] text-[var(--cs-caption)] uppercase'
+  'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]'
+
+/** Scene lockup. Phone floor is 2.35rem; from ~960px the 9vw term hits the 5.4rem desktop ceiling. */
+export const lockupClass =
+  'font-[family-name:var(--cs-display)] text-[clamp(2.35rem,9vw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase'
 
 export const supportClass =
   'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-support)] font-medium leading-snug text-[var(--cs-caption)]'

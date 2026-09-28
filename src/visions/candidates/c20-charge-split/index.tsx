@@ -8,14 +8,17 @@ import { Link } from '@tanstack/react-router'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 // import Hero from './sections/hero'
 import HeroV2 from './sections/hero-v2'
-import SceneBook from './sections/scene-book'
+// import SceneBook from './sections/scene-book'
 import SceneOverview from './sections/scene-overview'
+// import SceneExperience from './sections/scene-experience'
+import SceneExperienceV2 from './sections/scene-experience-v2'
 import SceneScreen from './sections/scene-screen'
 import SceneShowcase from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
 import SceneApp from './sections/scene-app'
 // import SceneFranchise from './sections/scene-franchise'
 import SceneFranchiseV2 from './sections/scene-franchise-v2'
+import SceneBasement from './sections/scene-basement'
 import LazyScene from './lazy-scene'
 import { displayLeading, displayTracking, palette } from './palette'
 
@@ -87,7 +90,7 @@ function useDocumentSnap() {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, overview carousel, screen masonry, showcase spiral.
+ * Charge Split — 50/50 charge cell, book lockup, overview carousel, experience split, screen masonry, showcase spiral.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {
@@ -114,15 +117,21 @@ export default function ChargeSplitPage() {
       {/* <Hero /> */}
       <HeroV2 />
       <SceneOverview />
+      {/* <LazyScene>
+        <SceneExperience />
+      </LazyScene> */}
+      <LazyScene>
+        <SceneExperienceV2 />
+      </LazyScene>
       <LazyScene minHeight="645vh">
         <SceneShowcase />
       </LazyScene>
       <LazyScene>
         <SceneScreen />
       </LazyScene>
-      <LazyScene>
+      {/* <LazyScene>
         <SceneBook />
-      </LazyScene>
+      </LazyScene> */}
       <LazyScene>
         <SceneLocations />
       </LazyScene>
@@ -131,6 +140,9 @@ export default function ChargeSplitPage() {
       </LazyScene>
       <LazyScene>
         <SceneFranchiseV2 />
+      </LazyScene>
+      <LazyScene>
+        <SceneBasement />
       </LazyScene>
       {/* <LazyScene>
         <SceneFranchise />

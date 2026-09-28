@@ -3,7 +3,7 @@ import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
 import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
-import { supportClass } from '../palette'
+import { lockupClass, supportClass } from '../palette'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
@@ -74,7 +74,7 @@ export default function SceneApp() {
         <div className="grid h-auto w-full grid-cols-2 items-stretch gap-12 self-center lg:gap-16">
           <div className="flex min-w-0 flex-col justify-center gap-10 lg:gap-12">
             <div>
-              <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
+              <h2 className={lockupClass}>
                 <span className="block">Ready when</span>
                 <span className="block">you are</span>
               </h2>
@@ -101,7 +101,7 @@ export default function SceneApp() {
       {/* Mobile — padded copy, full-bleed mockup on bottom edge */}
       <div className="relative z-10 flex h-full flex-col md:hidden">
         <div className="shrink-0 px-5 pt-10 sm:px-8">
-          <h2 className="font-[family-name:var(--cs-display)] text-[clamp(2.8rem,12vw,5.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
+          <h2 className={lockupClass}>
             <span className="block">Ready when</span>
             <span className="block">you are</span>
           </h2>

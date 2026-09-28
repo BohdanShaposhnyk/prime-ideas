@@ -104,7 +104,7 @@ const iconBtnClass =
 function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col gap-3 sm:gap-4">
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="order-1 flex shrink-0 items-center gap-3">
         <span
           className="h-6 w-[3px] flex-none rounded-[3px] bg-[var(--cs-ice)]"
           style={{
@@ -112,12 +112,12 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
           }}
           aria-hidden
         />
-        <h2 className="truncate font-[family-name:var(--cs-display)] text-[clamp(1.45rem,2.6vw,2.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
+        <h2 className="min-w-0 font-[family-name:var(--cs-display)] text-[clamp(1.35rem,6.5vw,2.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
           {venue.title}
         </h2>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-hidden rounded-[var(--cs-radius-media)] bg-[color-mix(in_srgb,var(--cs-void)_72%,transparent)] ring-1 ring-[color-mix(in_srgb,var(--cs-ice)_14%,transparent)] backdrop-blur-[2px]">
+      <div className="order-3 min-h-0 flex-1 overflow-hidden rounded-[var(--cs-radius-media)] bg-[color-mix(in_srgb,var(--cs-void)_72%,transparent)] ring-1 ring-[color-mix(in_srgb,var(--cs-ice)_14%,transparent)] backdrop-blur-[2px] sm:order-2">
         <iframe
           key={`${venue.id}-${appleMaps ? 'apple' : 'google'}`}
           title={`Map — ${venue.address}`}
@@ -129,7 +129,7 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
         />
       </div>
 
-      <div className="flex shrink-0 flex-col gap-3">
+      <div className="order-2 flex shrink-0 flex-col gap-3 sm:order-3">
         <p className="font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] sm:text-[0.85rem]">
           {venue.address}
         </p>

@@ -1,0 +1,181 @@
+import { useEffect, useRef, useState } from 'react'
+import BorderGlow from '@/shared/bits/BorderGlow'
+import MicroSlats from '@/shared/bits/MicroSlats'
+import SpecularButton from '@/shared/bits/SpecularButton'
+import { prefersReducedMotion } from '@/shared/lib/motion'
+import { BOOKING_URL } from '../booking'
+import { isCoarsePointer } from '../coarse'
+import { ctaClass, kickerClass, lockupClass, specularInk, supportClass } from '../palette'
+
+const OFFERS = [
+  {
+    id: 'welcome',
+    kicker: 'New guests',
+    amount: '50',
+    lead: 'On your account,',
+    rest: 'or your first hour free.',
+    note: 'For every new guest.',
+  },
+  {
+    id: 'birthday',
+    kicker: 'Birthday',
+    amount: '300',
+    lead: 'On your account,',
+    rest: 'the day you celebrate.',
+    note: 'Bring an ID.',
+  },
+] as const
+
+const amountClass =
+  'font-[family-name:var(--cs-display)] text-[clamp(1.9rem,8.5vw,4.8rem)] leading-none tracking-[var(--cs-track-display)] text-[var(--cs-ice)] md:text-[clamp(3.2rem,6.4vw,4.8rem)]'
+
+const lineClass =
+  'font-[family-name:var(--cs-body)] text-[0.92rem] leading-snug font-normal text-[var(--cs-ice)] sm:text-[1.08rem]'
+
+const noteClass =
+  'font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)]'
+
+/** Same violet / ice pair as the hero MoltenMetal accents, on a near-black field. */
+const SLAT_BG = '#07060C'
+const SLAT_ACCENT = '#8E7CFF'
+const SLAT_GLINT = '#D5E0FF'
+
+const GLOW = {
+  glowColor: '248 100 74',
+  colors: [SLAT_ACCENT, SLAT_GLINT, '#0E1228'],
+} as const
+
+const glassClass =
+  'backdrop-blur-[18px] backdrop-brightness-75 backdrop-saturate-[0.6] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
+
+function ExperienceCopy() {
+  return (
+    <div className="flex min-w-0 shrink-0 flex-col justify-center py-3 pl-5 pr-5 sm:py-6 sm:pl-8 sm:pr-8 md:h-full md:py-8 md:pr-6 lg:pl-12 lg:pr-10">
+      <h2 id="cs-experience-offers-title" className={lockupClass}>
+        <span className="block">
+          The <span className="text-[var(--cs-gold)]">prime</span>
+        </span>
+        <span className="block">experience</span>
+      </h2>
+      <p className={`mt-2 max-w-[20rem] sm:mt-4 ${supportClass}`}>One place. Your kind of night.</p>
+      <p className="mt-2 max-w-[26rem] font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mt-4 sm:text-[1.02rem]">
+        Everything a good night out needs, brought together under one roof.
+      </p>
+      <div className="mt-4 sm:mt-8">
+        <SpecularButton
+          size="md"
+          radius={999}
+          tint="#ffffff"
+          tintOpacity={0.06}
+          blur={10}
+          {...specularInk}
+          intensity={1.15}
+          autoAnimate={!isCoarsePointer()}
+          className={ctaClass}
+          onClick={() => {
+            window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
+          }}
+        >
+          Book a night
+        </SpecularButton>
+      </div>
+    </div>
+  )
+}
+
+function OfferCard({
+  offer,
+  animated,
+}: {
+  offer: (typeof OFFERS)[number]
+  animated: boolean
+}) {
+  return (
+    <BorderGlow
+      className={`h-full min-h-0 w-full ${glassClass}`}
+      edgeSensitivity={46}
+      glowColor={GLOW.glowColor}
+      backgroundColor="rgba(10, 8, 18, 0.28)"
+      borderRadius={22}
+      glowRadius={12}
+      glowIntensity={0.55}
+      coneSpread={8}
+      animated={animated}
+      colors={[...GLOW.colors]}
+      fillOpacity={0}
+    >
+      <div className="flex h-full min-h-0 flex-col justify-start px-3 py-2.5 text-left sm:justify-center sm:px-5 sm:py-6 md:px-8 lg:px-9">
+        <p className={kickerClass}>{offer.kicker}</p>
+        <p className="mt-1.5 flex items-end gap-[0.3em] sm:mt-3">
+          <span className={amountClass}>{offer.amount}</span>
+          <span className="mb-[0.08em] font-[family-name:var(--cs-body)] text-[clamp(1.15rem,2vw,1.4rem)] leading-none font-medium text-[var(--cs-gold)]">
+            zł
+          </span>
+        </p>
+        <p className={`mt-2 sm:mt-3 ${lineClass}`}>
+          <span className="block">{offer.lead}</span>
+          <span className="block">{offer.rest}</span>
+        </p>
+        <p className={`mt-1.5 ${noteClass}`}>{offer.note}</p>
+      </div>
+    </BorderGlow>
+  )
+}
+
+export default function SceneExperienceV2() {
+  const rootRef = useRef<HTMLElement>(null)
+  const [sweep, setSweep] = useState(false)
+  const reduced = prefersReducedMotion()
+
+  useEffect(() => {
+    if (reduced) return
+    const el = rootRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return
+        setSweep(true)
+        io.disconnect()
+      },
+      { threshold: 0.45 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [reduced])
+
+  return (
+    <section
+      ref={rootRef}
+      aria-labelledby="cs-experience-offers-title"
+      data-scene="experience-offers"
+      className="cs-scene relative isolate overflow-hidden text-[var(--cs-ice)]"
+      style={{ backgroundColor: SLAT_BG }}
+    >
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <MicroSlats
+          preset="tide"
+          color="#241C3A"
+          glintColor={SLAT_ACCENT}
+          backgroundColor={SLAT_BG}
+          speed={0.32}
+          contrast={1.7}
+          fog={0.22}
+          glint={1.2}
+          gap={4}
+          interactive={false}
+          intro={!reduced}
+        />
+      </div>
+      <div className="relative z-10 flex h-full min-h-0 flex-col md:grid md:grid-cols-2">
+        <ExperienceCopy />
+        <ul className="flex min-h-0 flex-1 flex-row gap-2 px-4 pb-3 sm:gap-3 md:h-full md:flex-col md:gap-4 md:py-6 md:pr-7 md:pl-6 lg:py-8 lg:pr-10 lg:pl-8">
+          {OFFERS.map((offer) => (
+            <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <OfferCard offer={offer} animated={sweep} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

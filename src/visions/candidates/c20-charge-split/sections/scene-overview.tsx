@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ScrollExpand from '@/shared/bits/ScrollExpand'
 import { prefersReducedMotion } from '@/shared/lib/motion'
+import { lockupClass } from '../palette'
 import barPartyGirl from '../assets/bar/bar-party-girl.webp'
 import cinemaGirl from '../assets/cinema/cinema-girl.webp'
 import smoking from '../assets/hookah/smoking.webp'
@@ -454,7 +455,7 @@ function TypeBelt({ cycle }: { cycle: Cycle }) {
       className="cs-overview-type-wrap pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 overflow-hidden"
       aria-hidden
     >
-      <div className="cs-overview-type flex w-max items-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,8vw,6.1rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase">
+      <div className={`cs-overview-type flex w-max items-center sm:text-[clamp(2.6rem,8vw,6.1rem)] ${lockupClass}`}>
         {[...TYPE_LOOP, ...TYPE_LOOP].map((phrase, i) => (
           <span key={i} className="flex shrink-0 items-center">
             {phrase}

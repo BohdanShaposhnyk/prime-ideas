@@ -177,11 +177,11 @@ export default function SceneShowcase() {
         </h2>
         <div
           aria-live="polite"
-          className="pointer-events-none absolute bottom-[5%] left-[5%] z-30 max-w-[min(88vw,36rem)] sm:bottom-[6%] sm:left-[6%]"
+          className="pointer-events-none absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[6%] sm:left-[6%] sm:w-[min(88vw,36rem)]"
         >
           <p
             data-copy="caption"
-            className="font-[family-name:var(--cs-display)] text-[clamp(3.55rem,13.5vw,8.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]"
+            className="font-[family-name:var(--cs-display)] text-[clamp(2.6rem,11vw,8.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]"
           >
             {card.word}
           </p>

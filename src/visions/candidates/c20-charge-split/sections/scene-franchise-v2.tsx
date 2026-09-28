@@ -150,10 +150,10 @@ export default function SceneFranchiseV2() {
 
       <div className="relative z-10 mx-auto flex h-full max-w-[88rem] px-5 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
         <div className="grid h-full w-full grid-cols-1 items-start gap-6 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-between">
+          <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-start gap-8 md:justify-between md:gap-0">
             <h2
               id="cs-franchise-v2-title"
-              className="font-[family-name:var(--cs-display)] text-[clamp(3.2rem,15.5dvh,6.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
+              className="font-[family-name:var(--cs-display)] text-[clamp(2.6rem,11vw,3.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
             >
               <span className="block">Make</span>
               <span className="block text-[var(--cs-gold)]">Prime</span>
