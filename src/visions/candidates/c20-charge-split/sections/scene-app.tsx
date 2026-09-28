@@ -50,7 +50,7 @@ export default function SceneApp() {
     <section
       aria-label="Ready when you are"
       data-scene="app"
-      className="relative isolate h-dvh overflow-hidden bg-black text-[var(--cs-ice)]"
+      className="cs-scene relative isolate overflow-hidden bg-black text-[var(--cs-ice)]"
     >
       <div data-placeholder="visual" className="pointer-events-none absolute inset-0" aria-hidden>
         <SideRays
@@ -89,6 +89,8 @@ export default function SceneApp() {
               src={mockupDesktop}
               alt="SENET ID login on iPhone"
               className="absolute top-0 right-0 h-[160%] w-auto max-w-none select-none"
+              decoding="async"
+              loading="lazy"
               draggable={false}
             />
           </div>
@@ -116,6 +118,8 @@ export default function SceneApp() {
             alt="SENET ID on iPhone"
             className="block h-auto w-full max-w-none select-none"
             style={{ marginBottom: '-48%' }}
+            decoding="async"
+            loading="lazy"
             draggable={false}
           />
         </div>

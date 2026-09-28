@@ -7,6 +7,7 @@ import { gsap, useGSAP } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import nightReel from '@/assets/c20/night-reel.mp4'
 import { BOOKING_URL } from '../booking'
+import { isCoarsePointer } from '../coarse'
 
 const FADE_S = 0.85
 const REVEAL_S = 1.1
@@ -315,7 +316,7 @@ export default function HeroV2() {
       data-scroll="split-hold"
       data-scene="hero"
       data-hero-blur=""
-      className="relative isolate h-dvh overflow-hidden bg-black"
+      className="cs-scene relative isolate overflow-hidden bg-black"
       style={{ '--cs-hero-blur': `${BLUR_PX}px` } as CSSProperties}
     >
       <style>{HERO_CSS}</style>
@@ -428,7 +429,7 @@ function ReducedHeroVideo() {
       aria-label="PRIME"
       data-scroll="split-hold"
       data-scene="hero"
-      className="relative h-dvh overflow-hidden bg-black"
+      className="cs-scene relative overflow-hidden bg-black"
     >
       <video
         ref={videoRef}
@@ -499,7 +500,7 @@ function HeroCopy() {
           lineColor="#CFB53B"
           baseColor="#3a3420"
           intensity={1.15}
-          autoAnimate
+          autoAnimate={!isCoarsePointer()}
           className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
           onClick={() => {
             window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')

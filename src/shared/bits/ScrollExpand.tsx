@@ -178,9 +178,15 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const measure = () => {
       const c = propsRef.current;
-      stageH = c.useWindowScroll ? window.innerHeight : root.clientHeight;
-      if (stageH <= 0) return;
-      stage.style.height = `${stageH}px`;
+      if (c.useWindowScroll) {
+        // 100lvh — never shorter than the iOS chrome-hidden screen (innerHeight tracks the toolbar).
+        stage.style.height = '100lvh';
+        stageH = stage.getBoundingClientRect().height || window.innerHeight;
+      } else {
+        stageH = root.clientHeight;
+        if (stageH <= 0) return;
+        stage.style.height = `${stageH}px`;
+      }
       track.style.height = `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`;
 
       const w = root.clientWidth || stageH;
@@ -241,6 +247,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const scroller = useWindowScroll ? window : root;
     scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
+    const vv = window.visualViewport;
+    vv?.addEventListener('resize', onResize);
     const ro = new ResizeObserver(onResize);
     ro.observe(root);
 
@@ -248,6 +256,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       if (raf) cancelAnimationFrame(raf);
       scroller.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      vv?.removeEventListener('resize', onResize);
       ro.disconnect();
     };
   }, [applyProgress, useWindowScroll, startWidth, startHeight, startRadius, enabled, scrollDistance, holdDistance]);
@@ -289,7 +298,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       {...rest}
     >
       <div ref={trackRef} className="relative w-full">
-        <div ref={stageRef} className="sticky top-0 h-dvh w-full overflow-hidden bg-black [--se-title-size:4rem]">
+        <div ref={stageRef} className="sticky top-0 h-[100lvh] w-full overflow-hidden bg-black [--se-title-size:4rem]">
           <div
             ref={frameRef}
             className="absolute inset-0 [will-change:clip-path]"

@@ -2,16 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import ScrollExpand from '@/shared/bits/ScrollExpand'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import barPartyGirl from '../assets/bar/bar-party-girl.webp'
+import cinemaGirl from '../assets/cinema/cinema-girl.webp'
 import smoking from '../assets/hookah/smoking.webp'
 import micRay from '../assets/karaoke/mic-ray.webp'
 import gamerGirl from '../assets/gaming/gamer-girl.webp'
 
-const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'COME BACK'] as const
+const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'STAY LATE'] as const
 const HOLD_MS = 2000
 const TENSION_MS = 280
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
-const OFFSETS = [-2, -1, 0, 1] as const
+const OFFSETS = [-2, -1, 0, 1, 2] as const
 const ROLL_EASE = `linear(
   0,
   0.018 14%,
@@ -30,6 +31,7 @@ const CARDS = [
   { id: 'voice', image: micRay },
   { id: 'bar', image: barPartyGirl },
   { id: 'ember', image: smoking },
+  { id: 'cinema', image: cinemaGirl },
 ]
 
 const TYPE_LOOP = Array.from({ length: 4 }, () => LINE).flat()
@@ -75,7 +77,7 @@ type Cycle = {
 }
 
 /** Hold → tension → snap loop shared by the card deck and the type belt. */
-function useOverviewCycle(): Cycle {
+function useOverviewCycle(active: boolean): Cycle {
   const [index, setIndex] = useState(0)
   const [fromIndex, setFromIndex] = useState(0)
   const [front, setFront] = useState(0)
@@ -89,7 +91,7 @@ function useOverviewCycle(): Cycle {
   }, [])
 
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    if (!active || prefersReducedMotion()) return
 
     let cancelled = false
     let timer = 0
@@ -128,22 +130,36 @@ function useOverviewCycle(): Cycle {
       window.clearTimeout(timer)
       window.clearTimeout(frontTimer)
     }
-  }, [])
+  }, [active])
 
   return { index, fromIndex, front, phase, ready }
 }
 
 export default function SceneOverview() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const [inView, setInView] = useState(false)
   const frame = useOverviewFrame()
-  const cycle = useOverviewCycle()
+  const cycle = useOverviewCycle(inView)
   const reduced = prefersReducedMotion()
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(Boolean(entry?.isIntersecting)),
+      { threshold: 0 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="cs-overview-title"
       data-scene="overview"
       data-scroll="overview-recut"
-      className="relative bg-[var(--cs-pitch)]"
+      className={`relative bg-[var(--cs-pitch)]${inView ? ' cs-overview-live' : ''}`}
     >
       <ScrollExpand
         useWindowScroll
@@ -243,7 +259,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
           z-index: 30;
         }
         .cs-overview-card img {
-          filter: blur(6px);
+          filter: blur(2px);
         }
         .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
           transition: filter ${SNAP_MS}ms ${ROLL_EASE};
@@ -251,12 +267,25 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         .cs-overview-card[data-front] img {
           filter: none;
         }
+        @media (pointer: coarse) {
+          .cs-overview-card img,
+          .cs-overview-card[data-front] img {
+            filter: none;
+          }
+          .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
+            transition: none;
+          }
+        }
         .cs-overview-card[data-front] .cs-overview-plate {
           box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
         }
         .cs-overview-type {
-          animation: cs-overview-type 16s linear infinite;
+          animation: cs-overview-type 22s linear infinite;
+          animation-play-state: paused;
           will-change: transform;
+        }
+        .cs-overview-live .cs-overview-type {
+          animation-play-state: running;
         }
         @keyframes cs-overview-type {
           from { transform: translate3d(0, 0, 0); }
@@ -297,8 +326,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
           transition: opacity 820ms ease;
         }
         .cs-overview-bg img {
-          transform: scale(1.48);
-          filter: blur(42px);
+          transform: scale(1.12);
         }
         @media (prefers-reduced-motion: reduce) {
           .cs-overview-stage[data-ready="true"] .cs-overview-card,
@@ -327,11 +355,12 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
             <img
               src={card.image}
               alt=""
-              className="absolute inset-[-22%] h-[144%] w-[144%] max-w-none object-cover"
+              decoding="async"
+              className="absolute inset-[-8%] h-[116%] w-[116%] max-w-none object-cover"
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_58%,transparent)]" />
+        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_76%,transparent)]" />
       </div>
       <div
         className="cs-overview-grain pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light"
@@ -343,7 +372,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
       />
 
       <h2 id="cs-overview-title" className="sr-only">
-        Show up. Link up. Game on. Hang out. Lose track. Come back.
+        Show up. Link up. Game on. Hang out. Lose track. Stay late.
       </h2>
 
       <div
@@ -367,6 +396,8 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
                 <img
                   src={card.image}
                   alt=""
+                  decoding="async"
+                  fetchPriority={cardIndex === 0 ? 'high' : 'low'}
                   className="block aspect-[3/4] w-full object-cover"
                 />
               </div>
