@@ -257,7 +257,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
           z-index: 30;
         }
         .cs-overview-card img {
-          filter: blur(6px);
+          filter: blur(2px);
         }
         .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
           transition: filter ${SNAP_MS}ms ${ROLL_EASE};
@@ -278,7 +278,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
           box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
         }
         .cs-overview-type {
-          animation: cs-overview-type 16s linear infinite;
+          animation: cs-overview-type 22s linear infinite;
           animation-play-state: paused;
           will-change: transform;
         }
@@ -358,7 +358,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
             />
           </div>
         ))}
-        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_58%,transparent)]" />
+        <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_76%,transparent)]" />
       </div>
       <div
         className="cs-overview-grain pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light"
