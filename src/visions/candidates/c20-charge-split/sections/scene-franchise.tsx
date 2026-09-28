@@ -110,7 +110,7 @@ export default function SceneFranchise() {
     <section
       aria-labelledby="cs-franchise-title"
       data-scene="franchise"
-      className="relative isolate h-dvh overflow-hidden bg-[#d5beae] text-[#1a1a1a]"
+      className="cs-scene relative isolate overflow-hidden bg-[#d5beae] text-[#1a1a1a]"
     >
       {/* swap: silk partnership field */}
       <div data-placeholder="visual" className="absolute inset-0" aria-hidden>

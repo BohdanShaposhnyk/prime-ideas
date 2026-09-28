@@ -2,6 +2,7 @@ import CircularGallery from '@/shared/bits/CircularGallery'
 import Lightning from '@/shared/bits/Lightning'
 import SpecularButton from '@/shared/bits/SpecularButton'
 import { BOOKING_URL } from '../booking'
+import { isCoarsePointer } from '../coarse'
 import barParty from '../assets/bar/bar-party.webp'
 import carsimGirl from '../assets/gaming/carsim-girl.webp'
 import hookahGirl from '../assets/hookah/hookah-girl.webp'
@@ -20,7 +21,7 @@ export default function SceneBook() {
       aria-labelledby="cs-book-title"
       data-scene="book"
       data-scroll="book-lockup"
-      className="relative isolate flex h-dvh flex-col items-center justify-center overflow-hidden bg-[var(--cs-pitch)] px-5 py-24"
+      className="cs-scene relative isolate flex flex-col items-center justify-center overflow-hidden bg-[var(--cs-pitch)] px-5 py-24"
     >
       <div
         className="pointer-events-none absolute inset-0"
@@ -88,7 +89,7 @@ export default function SceneBook() {
             lineColor="#CFB53B"
             baseColor="#3a3420"
             intensity={1.15}
-            autoAnimate
+            autoAnimate={!isCoarsePointer()}
             className="font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
             onClick={() => {
               window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')

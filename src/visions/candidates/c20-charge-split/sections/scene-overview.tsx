@@ -75,7 +75,7 @@ type Cycle = {
 }
 
 /** Hold → tension → snap loop shared by the card deck and the type belt. */
-function useOverviewCycle(): Cycle {
+function useOverviewCycle(active: boolean): Cycle {
   const [index, setIndex] = useState(0)
   const [fromIndex, setFromIndex] = useState(0)
   const [front, setFront] = useState(0)
@@ -89,7 +89,7 @@ function useOverviewCycle(): Cycle {
   }, [])
 
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    if (!active || prefersReducedMotion()) return
 
     let cancelled = false
     let timer = 0
@@ -128,22 +128,36 @@ function useOverviewCycle(): Cycle {
       window.clearTimeout(timer)
       window.clearTimeout(frontTimer)
     }
-  }, [])
+  }, [active])
 
   return { index, fromIndex, front, phase, ready }
 }
 
 export default function SceneOverview() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const [inView, setInView] = useState(false)
   const frame = useOverviewFrame()
-  const cycle = useOverviewCycle()
+  const cycle = useOverviewCycle(inView)
   const reduced = prefersReducedMotion()
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(Boolean(entry?.isIntersecting)),
+      { threshold: 0 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="cs-overview-title"
       data-scene="overview"
       data-scroll="overview-recut"
-      className="relative bg-[var(--cs-pitch)]"
+      className={`relative bg-[var(--cs-pitch)]${inView ? ' cs-overview-live' : ''}`}
     >
       <ScrollExpand
         useWindowScroll
@@ -251,12 +265,25 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         .cs-overview-card[data-front] img {
           filter: none;
         }
+        @media (pointer: coarse) {
+          .cs-overview-card img,
+          .cs-overview-card[data-front] img {
+            filter: none;
+          }
+          .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
+            transition: none;
+          }
+        }
         .cs-overview-card[data-front] .cs-overview-plate {
           box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
         }
         .cs-overview-type {
           animation: cs-overview-type 16s linear infinite;
+          animation-play-state: paused;
           will-change: transform;
+        }
+        .cs-overview-live .cs-overview-type {
+          animation-play-state: running;
         }
         @keyframes cs-overview-type {
           from { transform: translate3d(0, 0, 0); }
@@ -297,8 +324,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
           transition: opacity 820ms ease;
         }
         .cs-overview-bg img {
-          transform: scale(1.48);
-          filter: blur(42px);
+          transform: scale(1.12);
         }
         @media (prefers-reduced-motion: reduce) {
           .cs-overview-stage[data-ready="true"] .cs-overview-card,
@@ -327,7 +353,8 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
             <img
               src={card.image}
               alt=""
-              className="absolute inset-[-22%] h-[144%] w-[144%] max-w-none object-cover"
+              decoding="async"
+              className="absolute inset-[-8%] h-[116%] w-[116%] max-w-none object-cover"
             />
           </div>
         ))}
@@ -367,6 +394,8 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
                 <img
                   src={card.image}
                   alt=""
+                  decoding="async"
+                  fetchPriority={cardIndex === 0 ? 'high' : 'low'}
                   className="block aspect-[3/4] w-full object-cover"
                 />
               </div>

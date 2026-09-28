@@ -14,8 +14,9 @@ import SceneScreen from './sections/scene-screen'
 import SceneShowcase from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
 import SceneApp from './sections/scene-app'
-import SceneFranchise from './sections/scene-franchise'
+// import SceneFranchise from './sections/scene-franchise'
 import SceneFranchiseV2 from './sections/scene-franchise-v2'
+import LazyScene from './lazy-scene'
 
 const tokens = {
   '--cs-pitch': '#000000',
@@ -39,16 +40,28 @@ const tokens = {
  * Document scrollport snap for this candidate only.
  * Tall scenes (overview / showcase) keep align-start so the UA can free-scroll
  * inside oversized snap areas; 1vh scenes use scroll-snap-stop: always.
+ * Coarse / iOS: snap off — WebKit undershoots 100dvh scenes by the URL-bar delta.
  */
-const SNAP_CSS = `
+const PAGE_CSS = `
+.cs-scene {
+  height: 100vh;
+  min-height: 100svh;
+  height: 100lvh;
+}
 html.cs-snap {
   scroll-snap-type: y mandatory;
+  overscroll-behavior-y: none;
 }
 html.cs-snap [data-scene] {
   scroll-snap-align: start;
 }
 html.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
   scroll-snap-stop: always;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.cs-snap {
+    scroll-snap-type: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html.cs-snap {
@@ -83,7 +96,7 @@ export default function ChargeSplitPage() {
         fontFamily: 'var(--cs-body)',
       }}
     >
-      <style>{SNAP_CSS}</style>
+      <style>{PAGE_CSS}</style>
       {/* Standalone build (`--mode c20`) has no router, so the hub link must not render. */}
       {import.meta.env.MODE !== 'c20' && (
         <Link
@@ -96,13 +109,27 @@ export default function ChargeSplitPage() {
       {/* <Hero /> */}
       <HeroV2 />
       <SceneOverview />
-      <SceneBook />
-      <SceneScreen />
-      <SceneShowcase />
-      <SceneLocations />
-      <SceneApp />
-      <SceneFranchiseV2 />
-      <SceneFranchise />
+      <LazyScene>
+        <SceneBook />
+      </LazyScene>
+      <LazyScene>
+        <SceneScreen />
+      </LazyScene>
+      <LazyScene minHeight="520vh">
+        <SceneShowcase />
+      </LazyScene>
+      <LazyScene>
+        <SceneLocations />
+      </LazyScene>
+      <LazyScene>
+        <SceneApp />
+      </LazyScene>
+      <LazyScene>
+        <SceneFranchiseV2 />
+      </LazyScene>
+      {/* <LazyScene>
+        <SceneFranchise />
+      </LazyScene> */}
     </main>
   )
 }

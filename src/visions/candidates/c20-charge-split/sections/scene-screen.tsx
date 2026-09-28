@@ -3,6 +3,7 @@ import EchoText from '@/shared/bits/EchoText'
 import Masonry from '@/shared/bits/Masonry'
 import { gsap } from '@/shared/lib/gsap'
 import { prefersReducedMotion } from '@/shared/lib/motion'
+import { isCoarsePointer, useCoarsePointer } from '../coarse'
 import barPartyHor from '../assets/bar/bar-party-hor.webp'
 import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
 import gamerGirlLightHor from '../assets/gaming/gamer-girl-light-hor.webp'
@@ -48,7 +49,7 @@ const TILES_COMPACT: Tile[] = [
 ]
 
 const WORD_CLASS =
-  'inline-block opacity-0 will-change-[opacity,filter] font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]'
+  'inline-block opacity-0 will-change-[opacity] font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]'
 
 function Lockup({ play, delay }: { play: boolean; delay: number }) {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -61,26 +62,28 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
     if (words.length === 0) return
 
     const reduced = prefersReducedMotion()
+    const coarse = isCoarsePointer()
+    const useBlur = !reduced && !coarse
 
     if (!play) {
       queueMicrotask(() => setShowPrime(false))
       gsap.killTweensOf(words)
-      gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
+      gsap.set(words, { opacity: 0, filter: 'none' })
       return
     }
 
-    if (reduced) {
-      gsap.set(words, { opacity: 1, filter: 'blur(0px)' })
+    if (reduced || coarse) {
+      gsap.set(words, { opacity: 1, filter: 'none' })
       queueMicrotask(() => setShowPrime(true))
       return
     }
 
-    gsap.set(words, { opacity: 0, filter: 'blur(10px)' })
+    gsap.set(words, { opacity: 0, filter: useBlur ? 'blur(10px)' : 'none' })
     queueMicrotask(() => setShowPrime(false))
 
     const tween = gsap.to(words, {
       opacity: 1,
-      filter: 'blur(0px)',
+      ...(useBlur ? { filter: 'blur(0px)' } : {}),
       duration: WORD_DURATION,
       stagger: WORD_STAGGER,
       ease: 'power2.out',
@@ -258,6 +261,7 @@ export default function SceneScreen() {
   }, [])
 
   const compact = stage.w > 0 && stage.w < COMPACT_MAX
+  const coarse = useCoarsePointer()
   const tiles = compact ? TILES_COMPACT : TILES_DESKTOP
   const colFracs = compact ? COL_FR_COMPACT : COL_FR_DESKTOP
   const lockupAspect = compact ? LOCKUP_ASPECT_COMPACT : LOCKUP_ASPECT_DESKTOP
@@ -291,7 +295,7 @@ export default function SceneScreen() {
       data-scene="screen"
       data-scroll="screen-masonry"
       data-masonry-active={active ? '1' : '0'}
-      className="relative h-dvh overflow-hidden bg-[var(--cs-pitch)]"
+      className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
     >
       <div ref={stageRef} className="absolute inset-1.5 sm:inset-2.5">
         {items.length > 0 ? (
@@ -304,7 +308,7 @@ export default function SceneScreen() {
             active={active}
             animateFrom="bottom"
             travelRatio={0.62}
-            blurToFocus
+            blurToFocus={!coarse}
             scaleOnHover
             hoverScale={0.98}
             duration={MASONRY_DURATION}

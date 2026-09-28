@@ -109,23 +109,26 @@ function rollState(from: number, u: number, landWord: number) {
 
 export default function SceneShowcase() {
   const sectionRef = useRef<HTMLElement>(null)
+  const stickyRef = useRef<HTMLDivElement>(null)
   const cameraRef = useRef<HTMLDivElement>(null)
   const drivenProgressRef = useRef(-1 + easeRoll(INTRO_U0))
   const [wordIndex, setWordIndex] = useState(0)
 
   useEffect(() => {
     const section = sectionRef.current
+    const sticky = stickyRef.current
     const camera = cameraRef.current
-    if (!section || !camera) return
+    if (!section || !sticky || !camera) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
     let frame = 0
     let lastIndex = -1
-    let visible = true
+    let visible = false
 
     const update = () => {
       const rect = section.getBoundingClientRect()
-      const total = Math.max(section.offsetHeight - window.innerHeight, 1)
+      const vh = sticky.clientHeight || window.innerHeight
+      const total = Math.max(section.offsetHeight - vh, 1)
       const t = clamp(-rect.top / total, 0, 1)
       const motion = motionAt(t)
       const scale = reduced.matches ? LAND_SCALE : motion.scale
@@ -148,8 +151,7 @@ export default function SceneShowcase() {
       visible = entry.isIntersecting
       if (visible && !frame) loop()
     })
-    io.observe(section)
-    loop()
+    io.observe(sticky)
 
     return () => {
       visible = false
@@ -168,7 +170,7 @@ export default function SceneShowcase() {
       data-scroll="showcase-spiral"
       className="relative h-[520vh] bg-[var(--cs-pitch)]"
     >
-      <div className="sticky top-0 h-dvh overflow-hidden">
+      <div ref={stickyRef} className="cs-scene sticky top-0 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           {CARDS.map((card, i) => (
             <div
@@ -179,7 +181,8 @@ export default function SceneShowcase() {
               <img
                 src={card.src}
                 alt=""
-                className="absolute inset-[-22%] h-[144%] w-[144%] max-w-none scale-[1.48] object-cover blur-[42px]"
+                decoding="async"
+                className="absolute inset-[-8%] h-[116%] w-[116%] max-w-none scale-[1.12] object-cover"
               />
             </div>
           ))}
@@ -228,7 +231,7 @@ export default function SceneShowcase() {
               cardsPerTurn={4}
               centerScale={1.42}
               edgeFade={0.34}
-              edgeBlur={8}
+              edgeBlur={0}
               cardRadius={14}
               cardTilt={4}
               pauseOnHover={false}

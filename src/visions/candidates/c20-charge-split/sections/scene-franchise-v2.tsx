@@ -110,7 +110,7 @@ export default function SceneFranchiseV2() {
     <section
       aria-labelledby="cs-franchise-v2-title"
       data-scene="franchise-v2"
-      className="relative isolate h-dvh overflow-hidden bg-black text-white"
+      className="cs-scene relative isolate overflow-hidden bg-black text-white"
     >
       <div data-placeholder="visual" className="absolute inset-0" aria-hidden>
         <DriftWall

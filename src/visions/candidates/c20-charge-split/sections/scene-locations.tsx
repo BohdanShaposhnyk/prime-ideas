@@ -6,6 +6,7 @@ import barExt from '@/assets/c20/bar_ext.webp'
 import danceNeon from '@/assets/c20/dance_neon.webp'
 import barInterior from '@/assets/c20/bar_interior.webp'
 import { BOOKING_URL } from '../booking'
+import { isCoarsePointer } from '../coarse'
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -142,7 +143,7 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
             lineColor="#CFB53B"
             baseColor="#3a3420"
             intensity={1.15}
-            autoAnimate
+            autoAnimate={!isCoarsePointer()}
             className="shrink-0 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase sm:text-[0.78rem]"
             onClick={() => {
               window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
@@ -181,7 +182,7 @@ export default function SceneLocations() {
     <section
       aria-label="Locations"
       data-scene="locations"
-      className="relative isolate h-dvh overflow-hidden bg-[var(--cs-pitch)]"
+      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)]"
     >
       <AccordionGallery
         items={GALLERY_ITEMS}
