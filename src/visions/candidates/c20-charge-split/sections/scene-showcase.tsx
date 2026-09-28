@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import InfiniteSpiral from '@/shared/bits/InfiniteSpiral'
 import bottles from '../assets/bar/bottles.webp'
+import seats from '../assets/cinema/seats.webp'
 import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
@@ -31,6 +32,12 @@ const CARDS = [
     word: 'KARAOKE',
     alt: 'Karaoke',
     src: micGold,
+  },
+  {
+    id: 'cinema',
+    word: 'CINEMA',
+    alt: 'Cinema',
+    src: seats,
   },
 ] as const
 
@@ -130,7 +137,7 @@ export default function SceneShowcase() {
       aria-labelledby="cs-showcase-title"
       data-scene="showcase"
       data-scroll="showcase-spiral"
-      className="relative h-[520vh] bg-[var(--cs-pitch)]"
+      className="relative h-[645vh] bg-[var(--cs-pitch)]"
     >
       <div ref={stickyRef} className="cs-scene sticky top-0 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -160,7 +167,7 @@ export default function SceneShowcase() {
         />
 
         <h2 id="cs-showcase-title" className="sr-only">
-          Bar. Play zone. Hookah. Karaoke.
+          Bar. Play zone. Hookah. Karaoke. Cinema.
         </h2>
         <p
           aria-live="polite"

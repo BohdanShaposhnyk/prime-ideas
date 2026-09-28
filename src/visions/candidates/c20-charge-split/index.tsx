@@ -115,7 +115,7 @@ export default function ChargeSplitPage() {
       <LazyScene>
         <SceneScreen />
       </LazyScene>
-      <LazyScene minHeight="520vh">
+      <LazyScene minHeight="645vh">
         <SceneShowcase />
       </LazyScene>
       <LazyScene>

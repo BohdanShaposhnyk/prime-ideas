@@ -2,16 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import ScrollExpand from '@/shared/bits/ScrollExpand'
 import { prefersReducedMotion } from '@/shared/lib/motion'
 import barPartyGirl from '../assets/bar/bar-party-girl.webp'
+import cinemaGirl from '../assets/cinema/cinema-girl.webp'
 import smoking from '../assets/hookah/smoking.webp'
 import micRay from '../assets/karaoke/mic-ray.webp'
 import gamerGirl from '../assets/gaming/gamer-girl.webp'
 
-const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'COME BACK'] as const
+const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'STAY LATE'] as const
 const HOLD_MS = 2000
 const TENSION_MS = 280
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
-const OFFSETS = [-2, -1, 0, 1] as const
+const OFFSETS = [-2, -1, 0, 1, 2] as const
 const ROLL_EASE = `linear(
   0,
   0.018 14%,
@@ -30,6 +31,7 @@ const CARDS = [
   { id: 'voice', image: micRay },
   { id: 'bar', image: barPartyGirl },
   { id: 'ember', image: smoking },
+  { id: 'cinema', image: cinemaGirl },
 ]
 
 const TYPE_LOOP = Array.from({ length: 4 }, () => LINE).flat()
@@ -370,7 +372,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
       />
 
       <h2 id="cs-overview-title" className="sr-only">
-        Show up. Link up. Game on. Hang out. Lose track. Come back.
+        Show up. Link up. Game on. Hang out. Lose track. Stay late.
       </h2>
 
       <div
