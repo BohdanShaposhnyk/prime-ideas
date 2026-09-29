@@ -73,7 +73,7 @@ function OfferCard({
 }) {
   return (
     <BorderGlow
-      className={`w-full md:h-full md:min-h-0 ${glassClass}`}
+      className={`h-full min-h-0 w-full flex-1 ${glassClass}`}
       edgeSensitivity={46}
       glowColor={GLOW.glowColor}
       backgroundColor="rgba(10, 8, 18, 0.28)"
