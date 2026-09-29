@@ -273,31 +273,33 @@ export default function SceneLocations() {
             target,
           )
         : null}
-      <AccordionGallery
-        items={GALLERY_ITEMS}
-        defaultIndex={DEFAULT_INDEX}
-        trigger="click"
-        orientation="horizontal"
-        fillParent
-        expandRatio={expandRatio}
-        duration={CARD_OPEN_S}
-        gap={8}
-        radius={14}
-        accentColor={palette.ice}
-        overlayColor={palette.pitch}
-        textColor={palette.ice}
-        grayscale
-        showLabels={false}
-        activeDim={0.28}
-        inactiveDim={0.62}
-        tilt={5}
-        className="absolute inset-2 sm:inset-3"
-        renderPanelContent={(index) => {
-          const venue = VENUES[index]
-          if (!venue) return null
-          return <VenuePanel venue={venue} slotRef={setSlot} />
-        }}
-      />
+      <div className="absolute inset-2 sm:inset-3">
+        <AccordionGallery
+          items={GALLERY_ITEMS}
+          defaultIndex={DEFAULT_INDEX}
+          trigger="click"
+          orientation="horizontal"
+          fillParent
+          expandRatio={expandRatio}
+          duration={CARD_OPEN_S}
+          gap={8}
+          radius={14}
+          accentColor={palette.ice}
+          overlayColor={palette.pitch}
+          textColor={palette.ice}
+          grayscale
+          showLabels={false}
+          activeDim={0.7}
+          inactiveDim={0.82}
+          tilt={5}
+          className="h-full"
+          renderPanelContent={(index) => {
+            const venue = VENUES[index]
+            if (!venue) return null
+            return <VenuePanel venue={venue} slotRef={setSlot} />
+          }}
+        />
+      </div>
     </section>
   )
 }
