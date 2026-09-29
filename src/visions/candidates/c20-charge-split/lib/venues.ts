@@ -10,8 +10,8 @@ export type Venue = {
   phone: string
   phoneLabel: string
   telegram: string
-  lat?: number
-  lng?: number
+  lat: number
+  lng: number
   appleMaps: string
   image: string
 }
@@ -25,6 +25,8 @@ export const VENUES: Venue[] = [
     phone: '+48530811888',
     phoneLabel: '+48 530 811 888',
     telegram: 'https://t.me/primewarsaw',
+    lat: 52.2341,
+    lng: 20.9927,
     appleMaps:
       'https://maps.apple.com/?address=Walic%C3%B3w%2011,%20Warsaw,%20Poland&q=Prime%20Cyber%20Lounge&t=m',
     image: barExt,

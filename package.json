@@ -51,6 +51,7 @@
     "lucide-react": "^1.45.0",
     "motion": "^12.43.0",
     "ogl": "^1.0.11",
+    "pigeon-maps": "^0.22.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "shadcn": "^4.21.0",

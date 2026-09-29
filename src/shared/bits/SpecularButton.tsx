@@ -206,6 +206,8 @@ const SpecularButton = ({
     });
 
     const mesh = new Mesh(gl, { geometry, program });
+    // A fresh WebGL buffer composites as an opaque white rect until the first draw.
+    canvas.style.opacity = '0';
     fx.appendChild(canvas);
 
     const sizeRef = { w: 1, h: 1 };
@@ -221,6 +223,7 @@ const SpecularButton = ({
     let bright = prefersReducedMotion ? (autoAnimate ? 1 : 0) : 0;
     let last = performance.now();
     let raf = 0;
+    let revealRaf = 0;
     let idleFrames = 0;
     let dirty = true;
 
@@ -313,23 +316,31 @@ const SpecularButton = ({
     };
 
     let started = false;
+    const revealCanvas = () => {
+      cancelAnimationFrame(revealRaf);
+      // Show on the next frame, after the cleared buffer has been replaced.
+      revealRaf = requestAnimationFrame(() => {
+        canvas.style.opacity = '1';
+      });
+    };
     const resize = () => {
-      // Round to avoid sub-pixel snap thrash from scroll-snap / font metrics.
-      const rect = btn.getBoundingClientRect();
-      const w = Math.round(rect.width * 100) / 100;
-      const h = Math.round(rect.height * 100) / 100;
+      // Layout size, not getBoundingClientRect. A parent rotate (card switch)
+      // changes the visual box every frame and would clear the canvas to white.
+      const w = btn.offsetWidth;
+      const h = btn.offsetHeight;
+      if (w < 1 || h < 1) return;
       if (Math.abs(w - lastW) < SIZE_EPS && Math.abs(h - lastH) < SIZE_EPS) return;
       lastW = w;
       lastH = h;
       sizeRef.w = w;
       sizeRef.h = h;
+      canvas.style.opacity = '0';
       renderer.setSize(w + PAD * 2, h + PAD * 2);
       program.uniforms.uCenter.value = [(PAD + w / 2) * dpr, (PAD + h / 2) * dpr];
       program.uniforms.uHalfSize.value = [(w / 2) * dpr, (h / 2) * dpr];
-      if (started) {
-        if (prefersReducedMotion) paint();
-        else kick();
-      }
+      paint();
+      revealCanvas();
+      if (started && !prefersReducedMotion) kick();
     };
     const ro = new ResizeObserver(resize);
     ro.observe(btn);
@@ -412,6 +423,7 @@ const SpecularButton = ({
 
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(revealRaf);
       ro.disconnect();
       io.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
