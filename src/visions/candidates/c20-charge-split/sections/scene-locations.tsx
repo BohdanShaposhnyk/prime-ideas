@@ -6,7 +6,7 @@ import AccordionGallery from '@/shared/bits/AccordionGallery'
 import { BookNightButton } from '../components/book-night'
 import { TelegramIcon } from '../components/icons'
 import { useCoarsePointer, usePrefersReducedMotion } from '../hooks/media'
-import { ctaClass, palette } from '../lib/palette'
+import { cardTitleClass, ctaClass, palette } from '../lib/palette'
 import { VENUES, type Venue } from '../lib/venues'
 
 const DEFAULT_INDEX = 1
@@ -110,9 +110,9 @@ function VenuePanel({
           }}
           aria-hidden
         />
-        <h2 className="min-w-0 font-[family-name:var(--cs-display)] text-[clamp(1.35rem,6.5vw,2.2rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
+        <h3 className={`min-w-0 [text-shadow:0_2px_18px_rgba(0,0,0,0.55)] ${cardTitleClass}`}>
           {venue.title}
-        </h2>
+        </h3>
       </div>
 
       <div
