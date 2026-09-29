@@ -3,6 +3,7 @@ import { gsap, useGSAP } from '@/shared/lib/gsap'
 import { InstagramIcon, TelegramIcon } from '../components/icons'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
+import { lockupClass } from '../lib/palette'
 import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.jpg'
 
@@ -101,7 +102,7 @@ export default function SceneBasement() {
       <div className="absolute inset-x-0 top-0 z-[1] flex h-3/4 items-center justify-center px-5">
         <h2
           id="cs-basement-title"
-          className="text-center font-[family-name:var(--cs-display)] text-[clamp(3.2rem,13vw,8.5rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase"
+          className={`text-center ${lockupClass}`}
         >
           Stay <span className="text-[var(--cs-gold)]">Prime</span>
         </h2>

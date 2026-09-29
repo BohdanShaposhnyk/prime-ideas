@@ -6,7 +6,7 @@ import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
 import { FilmGrain } from '../components/grain'
-import { supportClass } from '../lib/palette'
+import { lockupClass, supportClass } from '../lib/palette'
 
 const HOLD_W = 1
 const ROLL_W = 1.85
@@ -179,7 +179,7 @@ export default function SceneShowcase() {
         >
           <p
             data-copy="caption"
-            className="font-[family-name:var(--cs-display)] text-[clamp(2.6rem,11vw,8.6rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]"
+            className={`${lockupClass} [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]`}
           >
             {card.word}
           </p>

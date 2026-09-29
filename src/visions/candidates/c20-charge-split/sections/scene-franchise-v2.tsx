@@ -15,7 +15,7 @@ import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
 import { useMediaQuery } from '../hooks/media'
-import { ctaClass, palette, supportClass } from '../lib/palette'
+import { ctaClass, lockupClass, palette, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 
@@ -157,7 +157,7 @@ export default function SceneFranchiseV2() {
           <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-end gap-6 md:justify-between md:gap-0">
             <h2
               id="cs-franchise-v2-title"
-              className="font-[family-name:var(--cs-display)] text-[clamp(2.6rem,11vw,3.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
+              className={lockupClass}
             >
               <span className="block">Make</span>
               <span className="block text-[var(--cs-gold)]">Prime</span>
