@@ -4,7 +4,7 @@ import '@fontsource/barlow/500.css'
 import '@fontsource/barlow/600.css'
 import './styles/charge-split.css'
 
-import { useEffect, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
 import { Link } from '@tanstack/react-router'
 import HeroV2 from './sections/hero'
 import SceneOverview from './sections/scene-overview'
@@ -30,22 +30,39 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
 ]
 
 /**
- * Document scrollport snap for this candidate only.
+ * Snap lives on a viewport-sized port, not the document.
  * Tall scenes (overview / showcase) keep align-start so the UA can free-scroll
- * inside oversized snap areas; 1vh scenes use scroll-snap-stop: always.
- * Coarse / iOS: snap off — WebKit undershoots 100dvh scenes by the URL-bar delta.
+ * inside oversized snap areas; 1-screen scenes use scroll-snap-stop: always.
+ * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
  */
-function useDocumentSnap() {
+function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
 
-  useEffect(() => {
-    if (reduced) return
-    const root = document.documentElement
-    root.classList.add('cs-snap')
-    return () => {
-      root.classList.remove('cs-snap')
+  useLayoutEffect(() => {
+    const html = document.documentElement
+    const port = portRef.current
+    html.classList.add('cs-snap-root')
+    if (port && !reduced) port.classList.add('cs-snap')
+    else port?.classList.remove('cs-snap')
+
+    const measure = () => {
+      const el = portRef.current
+      if (!el) return
+      const h = el.clientHeight
+      if (h > 0) el.style.setProperty('--cs-h', `${Math.round(h)}px`)
     }
-  }, [reduced])
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (port) ro.observe(port)
+    window.addEventListener('orientationchange', measure)
+
+    return () => {
+      html.classList.remove('cs-snap-root')
+      port?.classList.remove('cs-snap')
+      ro.disconnect()
+      window.removeEventListener('orientationchange', measure)
+    }
+  }, [reduced, portRef])
 }
 
 /**
@@ -53,7 +70,8 @@ function useDocumentSnap() {
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {
-  useDocumentSnap()
+  const portRef = useRef<HTMLDivElement>(null)
+  useSnapPort(portRef)
 
   return (
     <main
@@ -63,6 +81,15 @@ export default function ChargeSplitPage() {
         fontFamily: 'var(--cs-body)',
       }}
     >
+      <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
+        <HeroV2 />
+        <SceneOverview />
+        {scenes.map((scene) => (
+          <LazyScene key={scene.key} minHeight={scene.minHeight}>
+            {scene.node}
+          </LazyScene>
+        ))}
+      </div>
       {/* Standalone build (`--mode c20`) has no router, so the hub link must not render. */}
       {import.meta.env.MODE !== 'c20' && (
         <Link
@@ -72,13 +99,6 @@ export default function ChargeSplitPage() {
           Hub
         </Link>
       )}
-      <HeroV2 />
-      <SceneOverview />
-      {scenes.map((scene) => (
-        <LazyScene key={scene.key} minHeight={scene.minHeight}>
-          {scene.node}
-        </LazyScene>
-      ))}
     </main>
   )
 }

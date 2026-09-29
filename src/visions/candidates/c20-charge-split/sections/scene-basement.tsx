@@ -55,6 +55,7 @@ export default function SceneBasement() {
         gsap.set(veil, { opacity: 0 })
         return
       }
+      const port = section.closest<HTMLElement>('[data-cs-scroll]')
       gsap.fromTo(
         veil,
         { opacity: 1 },
@@ -63,6 +64,7 @@ export default function SceneBasement() {
           ease: 'none',
           scrollTrigger: {
             trigger: section,
+            ...(port ? { scroller: port } : {}),
             start: 'top bottom',
             end: 'top top',
             scrub: true,

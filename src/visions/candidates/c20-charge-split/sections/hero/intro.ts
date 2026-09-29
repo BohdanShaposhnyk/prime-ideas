@@ -133,18 +133,27 @@ export function useHeroIntro({
       let riseSettled = false
       let targets: SVGTextElement[] = []
 
-      const html = document.documentElement
+      const port = root.closest<HTMLElement>('[data-cs-scroll]')
+      const lockEl = port ?? document.documentElement
+      const scrollTarget: EventTarget = port ?? window
+
+      const scrollPos = () => (port ? port.scrollTop : window.scrollY)
+
+      const scrollToTop = () => {
+        if (port) port.scrollTo(0, 0)
+        else window.scrollTo(0, 0)
+      }
 
       const detach = () => {
         window.clearTimeout(quietTimer)
         window.clearTimeout(armTimer)
         window.clearTimeout(failsafe)
-        window.removeEventListener('scroll', onScrollPin)
+        scrollTarget.removeEventListener('scroll', onScrollPin)
         window.removeEventListener('wheel', onWheel, { capture: true })
         window.removeEventListener('touchstart', onTouchStart)
         window.removeEventListener('touchmove', onTouchMove)
-        html.classList.remove('cs-hero-lock')
-        html.classList.remove('cs-snap-pause')
+        lockEl.classList.remove('cs-hero-lock')
+        lockEl.classList.remove('cs-snap-pause')
       }
 
       const scheduleArm = () => {
@@ -155,14 +164,14 @@ export function useHeroIntro({
       /** Snap comes back only after the page has sat still at the hero. */
       const arm = () => {
         if (armed || cancelled) return
-        if (window.scrollY !== 0) {
-          window.scrollTo(0, 0)
+        if (scrollPos() !== 0) {
+          scrollToTop()
           scheduleArm()
           return
         }
-        if (html.classList.contains('cs-hero-lock') || html.classList.contains('cs-snap-pause')) {
-          html.classList.remove('cs-hero-lock')
-          html.classList.remove('cs-snap-pause')
+        if (lockEl.classList.contains('cs-hero-lock') || lockEl.classList.contains('cs-snap-pause')) {
+          lockEl.classList.remove('cs-hero-lock')
+          lockEl.classList.remove('cs-snap-pause')
           scheduleArm()
           return
         }
@@ -173,16 +182,16 @@ export function useHeroIntro({
       const beginUnlock = () => {
         if (armed || cancelled || !diveDone) return
         opening = true
-        window.scrollTo(0, 0)
-        html.classList.remove('cs-hero-lock')
-        html.classList.add('cs-snap-pause')
+        scrollToTop()
+        lockEl.classList.remove('cs-hero-lock')
+        lockEl.classList.add('cs-snap-pause')
         scheduleArm()
       }
 
       const onScrollPin = () => {
-        if (armed || pinning || window.scrollY === 0) return
+        if (armed || pinning || scrollPos() === 0) return
         pinning = true
-        window.scrollTo(0, 0)
+        scrollToTop()
         pinning = false
         if (opening) scheduleArm()
       }
@@ -191,8 +200,8 @@ export function useHeroIntro({
         lastInput = performance.now()
         if (!diveDone) return
         opening = false
-        html.classList.add('cs-hero-lock')
-        html.classList.remove('cs-snap-pause')
+        lockEl.classList.add('cs-hero-lock')
+        lockEl.classList.remove('cs-snap-pause')
         window.clearTimeout(armTimer)
         window.clearTimeout(quietTimer)
         quietTimer = window.setTimeout(beginUnlock, BOOST_QUIET_MS)
@@ -251,9 +260,9 @@ export function useHeroIntro({
         if (!diveDone && dy > BOOST_MIN_PX) boost(dy)
       }
 
-      html.classList.add('cs-hero-lock')
-      if (window.scrollY !== 0) window.scrollTo(0, 0)
-      window.addEventListener('scroll', onScrollPin, { passive: true })
+      lockEl.classList.add('cs-hero-lock')
+      if (scrollPos() !== 0) scrollToTop()
+      scrollTarget.addEventListener('scroll', onScrollPin, { passive: true })
       window.addEventListener('wheel', onWheel, { passive: false, capture: true })
       window.addEventListener('touchstart', onTouchStart, { passive: true })
       window.addEventListener('touchmove', onTouchMove, { passive: false })

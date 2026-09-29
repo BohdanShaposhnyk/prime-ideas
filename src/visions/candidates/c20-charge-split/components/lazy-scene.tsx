@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
  */
 export default function LazyScene({
   children,
-  minHeight = '100lvh',
+  minHeight = 'var(--cs-h, 100svh)',
 }: {
   children: ReactNode
   minHeight?: string
@@ -17,13 +17,16 @@ export default function LazyScene({
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // The port clips overflow, so a viewport observer never sees scenes that
+    // are still below it — and mandatory snap then refuses to scroll there.
+    const root = el.closest<Element>('[data-cs-scroll]')
     const io = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return
         setShow(true)
         io.disconnect()
       },
-      { rootMargin: '120% 0px' },
+      { root, rootMargin: '120% 0px' },
     )
     io.observe(el)
     return () => io.disconnect()

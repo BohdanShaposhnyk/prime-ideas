@@ -3,6 +3,19 @@ import type { CSSProperties, ReactNode } from 'react';
 
 const clamp = (v: number, a: number, b: number): number => (v < a ? a : v > b ? b : v);
 
+/** Page scroller for window-scroll mode. An overflow ancestor (c20 snap port) wins; otherwise the document. */
+function pageScroller(node: HTMLElement, useWindow: boolean): HTMLElement | Window {
+  if (!useWindow) return node;
+  let el = node.parentElement;
+  while (el) {
+    if (el === document.body || el === document.documentElement) return window;
+    const oy = getComputedStyle(el).overflowY;
+    if (oy === 'auto' || oy === 'scroll' || oy === 'overlay') return el;
+    el = el.parentElement;
+  }
+  return window;
+}
+
 const smoothstep = (edge0: number, edge1: number, x: number): number => {
   const t = clamp((x - edge0) / (edge1 - edge0 || 1e-6), 0, 1);
   return t * t * (3 - 2 * t);
@@ -178,14 +191,16 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
     const measure = () => {
       const c = propsRef.current;
-      if (c.useWindowScroll) {
+      const scroller = pageScroller(root, c.useWindowScroll);
+      if (scroller instanceof HTMLElement) {
+        const h = c.useWindowScroll ? scroller.clientHeight : root.clientHeight;
+        if (h <= 0) return;
+        stage.style.height = `${h}px`;
+        stageH = h;
+      } else {
         // 100lvh — never shorter than the iOS chrome-hidden screen (innerHeight tracks the toolbar).
         stage.style.height = '100lvh';
         stageH = stage.getBoundingClientRect().height || window.innerHeight;
-      } else {
-        stageH = root.clientHeight;
-        if (stageH <= 0) return;
-        stage.style.height = `${stageH}px`;
       }
       track.style.height = `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`;
 
@@ -244,13 +259,14 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     current = target;
     applyProgress(current);
 
-    const scroller = useWindowScroll ? window : root;
+    const scroller = pageScroller(root, useWindowScroll);
     scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     const vv = window.visualViewport;
     vv?.addEventListener('resize', onResize);
     const ro = new ResizeObserver(onResize);
-    ro.observe(root);
+    if (scroller instanceof HTMLElement) ro.observe(scroller);
+    if (scroller !== root) ro.observe(root);
 
     return () => {
       if (raf) cancelAnimationFrame(raf);

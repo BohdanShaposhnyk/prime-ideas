@@ -161,12 +161,14 @@ export default function SceneScreen() {
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
+    const port = el.closest<HTMLElement>('[data-cs-scroll]')
+    const scroller: EventTarget = port ?? window
 
     let raf = 0
     const update = () => {
       raf = 0
       const rect = el.getBoundingClientRect()
-      const vh = window.innerHeight || 1
+      const vh = port?.clientHeight || window.innerHeight || 1
       const t = rect.top / vh
       setActive(t > -0.06 && t < 0.38)
     }
@@ -175,10 +177,10 @@ export default function SceneScreen() {
     }
 
     update()
-    window.addEventListener('scroll', bump, { passive: true })
+    scroller.addEventListener('scroll', bump, { passive: true })
     window.addEventListener('resize', bump)
     return () => {
-      window.removeEventListener('scroll', bump)
+      scroller.removeEventListener('scroll', bump)
       window.removeEventListener('resize', bump)
       if (raf) cancelAnimationFrame(raf)
     }

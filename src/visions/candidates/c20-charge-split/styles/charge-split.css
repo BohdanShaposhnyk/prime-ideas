@@ -1,40 +1,46 @@
-.cs-scene {
-  height: 100vh;
-  min-height: 100svh;
-  height: 100lvh;
+/* Document stays still. The port is the only scroller, and every full-screen
+   scene is exactly one port tall, so iOS snap is not short by the URL bar. */
+html.cs-snap-root,
+html.cs-snap-root body {
+  overflow: hidden;
+  height: 100%;
+  background: #000000;
 }
-html.cs-snap {
-  scroll-snap-type: y mandatory;
+.cs-snap-port {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow-y: auto;
   overscroll-behavior-y: none;
+  background: var(--cs-pitch, #000000);
+  --cs-h: 100svh;
 }
-html.cs-snap [data-scene] {
+.cs-snap-port.cs-snap {
+  scroll-snap-type: y mandatory;
+}
+.cs-scene {
+  height: var(--cs-h, 100svh);
+}
+.cs-snap-port.cs-snap [data-scene] {
   scroll-snap-align: start;
 }
-html.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
+.cs-snap-port.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
   scroll-snap-stop: always;
 }
-@media (hover: none) and (pointer: coarse) {
-  html.cs-snap {
-    scroll-snap-type: none;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  html.cs-snap {
+  .cs-snap-port.cs-snap {
     scroll-snap-type: none;
   }
 }
 /* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
    flick would otherwise carry the page into the next scene. */
-html.cs-hero-lock,
-html.cs-hero-lock body {
+.cs-snap-port.cs-hero-lock {
   overflow: hidden !important;
-}
-html.cs-hero-lock,
-html.cs-snap-pause {
   scroll-snap-type: none !important;
-}
-html.cs-hero-lock {
   touch-action: none;
+}
+.cs-snap-port.cs-snap-pause {
+  scroll-snap-type: none !important;
 }
 
 [data-hero-vignette] {
