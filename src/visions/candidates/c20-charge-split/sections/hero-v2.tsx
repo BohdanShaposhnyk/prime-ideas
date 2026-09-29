@@ -22,8 +22,6 @@ const BLUR_PX = 5.5
 const MOLTEN_IN_S = 0.75
 const MOLTEN_HOLD_S = 2
 const MOLTEN_OUT_S = 0.5
-const MOLTEN_MOUNT_AT = REVEAL_S
-const DIVE_AT = MOLTEN_MOUNT_AT + MOLTEN_IN_S + MOLTEN_HOLD_S
 
 /** Colder violet — blue-shifted from the screen caption’s warmer lilac. */
 const MOLTEN_VIOLET = {
@@ -51,6 +49,9 @@ function afterPaint(cb: () => void) {
 }
 
 type Vignette = { edge: number; band: number; edgeB: number; bandB: number }
+
+/** Everything the intro tweens that is not a CSS prop on a real node. */
+type Look = Vignette & { molten: number; scale: number; blur: number }
 
 /** Perimeter open, nothing tinted — the frame before the fade drifts in. */
 const VIGNETTE_FROM: Vignette = { edge: 0, band: 0, edgeB: 0, bandB: 0 }
@@ -128,6 +129,12 @@ export default function HeroV2() {
   const brandRef = useRef<HTMLDivElement>(null)
   const vignetteRef = useRef<HTMLDivElement>(null)
   const moltenRef = useRef<HTMLDivElement>(null)
+  /**
+   * Intro playhead. A later scroll boost seeks forward with
+   * `tl.time(Math.min(tl.labels.release, tl.time() + seconds))`.
+   * `labels.release` is the end of the dive.
+   */
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const reduced = prefersReducedMotion()
   /** Don't mount MaskedHeading until display font is live — avoids glyph teleport. */
   const [fontReady, setFontReady] = useState(reduced)
@@ -148,64 +155,46 @@ export default function HeroV2() {
 
   useGSAP(
     () => {
-      if (!moltenLive) return
-      const el = moltenRef.current
-      if (!el) return
-      gsap.fromTo(
-        el,
-        { autoAlpha: 0 },
-        { autoAlpha: 1, duration: MOLTEN_IN_S, ease: 'power2.out' },
-      )
-      return () => {
-        gsap.killTweensOf(el)
-      }
-    },
-    { dependencies: [moltenLive] },
-  )
-
-  useGSAP(
-    () => {
       if (reduced || !fontReady) return
       const root = rootRef.current
       const brand = brandRef.current
       if (!root || !brand) return
 
       let cancelled = false
-      let releaseTimer = 0
-      let moltenMountTimer = 0
-      let settleTween: gsap.core.Tween | null = null
-      let fadeTween: gsap.core.Tween | null = null
-      let moltenOutTween: gsap.core.Tween | null = null
 
       const video = root.querySelector('video')
       root.style.setProperty('--cs-hero-blur', `${BLUR_PX}px`)
       // Stay invisible through MaskedHeading's first measure/sync frames.
       gsap.set(brand, { autoAlpha: 0 })
 
-      const revealBrand = () => {
-        if (cancelled) return
-        fadeTween = gsap.to(brand, {
-          autoAlpha: 1,
-          duration: FADE_S,
-          ease: 'power2.out',
-        })
+      const look: Look = { molten: 0, scale: 1, blur: BLUR_PX, ...VIGNETTE_FROM }
+
+      const paint = (tl: gsap.core.Timeline, targets: SVGTextElement[], origin: { x: number; y: number }) => {
+        root.style.setProperty('--cs-hero-blur', `${look.blur}px`)
+        const vig = vignetteRef.current
+        if (vig) applyVignette(vig, look)
+
+        // MaskedHeading owns glyph y until the dive. Writing the attribute earlier cancels the rise.
+        if (tl.time() >= tl.labels.dive) {
+          const t = `translate(${origin.x} ${origin.y}) scale(${look.scale}) translate(${-origin.x} ${-origin.y})`
+          for (const node of targets) node.setAttribute('transform', t)
+        }
+
+        const moltenEl = moltenRef.current
+        if (moltenEl) {
+          moltenEl.style.opacity = String(look.molten)
+          moltenEl.style.visibility = look.molten > 0 ? 'visible' : 'hidden'
+        }
       }
 
-      const fadeMoltenOut = () => {
-        const el = moltenRef.current
-        if (!el) {
-          if (!cancelled) setMoltenLive(false)
-          return
+      const releaseClip = () => {
+        const mediaClip = root.querySelector<HTMLElement>('[data-mh-clip]')
+        const media = root.querySelector<HTMLElement>('[data-mh-media]')
+        if (mediaClip) mediaClip.style.clipPath = 'none'
+        if (media) {
+          media.style.transform = 'none'
+          media.style.filter = 'none'
         }
-        moltenOutTween = gsap.to(el, {
-          autoAlpha: 0,
-          duration: MOLTEN_OUT_S,
-          ease: 'power2.in',
-          onComplete: () => {
-            moltenOutTween = null
-            if (!cancelled) setMoltenLive(false)
-          },
-        })
       }
 
       const start = () => {
@@ -218,66 +207,73 @@ export default function HeroV2() {
           return
         }
 
-        // One more paint so sync() has written final glyph boxes, then fade.
+        // One more paint so sync() has written final glyph boxes, then the intro clock starts.
         afterPaint(() => {
           if (cancelled) return
-          revealBrand()
-        })
+          const origin = diveCenter(targets[0])
+          const tl = gsap.timeline({ onUpdate: () => paint(tl, targets, origin) })
+          timelineRef.current = tl
 
-        // PRIME settled → mount molten (WebGL starts here, not on first paint).
-        moltenMountTimer = window.setTimeout(() => {
-          if (!cancelled) setMoltenLive(true)
-        }, MOLTEN_MOUNT_AT * 1000)
+          tl.addLabel('fade', 0)
+          tl.to(brand, { autoAlpha: 1, duration: FADE_S, ease: 'power2.out' }, 'fade')
 
-        const { x: cx, y: cy } = diveCenter(targets[0])
-        gsap.killTweensOf(targets)
-        gsap.set(targets, { clearProps: 'transform' })
-
-        const proxy = { s: 1 }
-        gsap.to(proxy, {
-          s: DIVE_SCALE,
-          duration: DIVE_S,
-          delay: DIVE_AT,
-          ease: 'power3.in',
-          onStart: () => {
-            if (!cancelled) fadeMoltenOut()
-          },
-          onUpdate: () => {
-            const t = `translate(${cx} ${cy}) scale(${proxy.s}) translate(${-cx} ${-cy})`
-            for (const node of targets) node.setAttribute('transform', t)
-          },
-        })
-
-        releaseTimer = window.setTimeout(() => {
-          if (cancelled) return
-          const mediaClip = root.querySelector<HTMLElement>('[data-mh-clip]')
-          const media = root.querySelector<HTMLElement>('[data-mh-media]')
-          if (mediaClip) mediaClip.style.clipPath = 'none'
-          if (media) {
-            media.style.transform = 'none'
-            media.style.filter = 'none'
-          }
-
-          const vig = vignetteRef.current
-          const state = { blur: BLUR_PX, ...VIGNETTE_FROM }
-
-          settleTween = gsap.to(state, {
-            blur: 0,
-            ...VIGNETTE_TO,
-            duration: CRISP_S,
-            ease: 'power2.out',
-            onUpdate: () => {
-              root.style.setProperty('--cs-hero-blur', `${state.blur}px`)
-              if (vig) applyVignette(vig, state)
+          tl.addLabel('molten', REVEAL_S)
+          tl.to(
+            look,
+            {
+              molten: 1,
+              duration: MOLTEN_IN_S,
+              ease: 'power2.out',
+              onStart: () => {
+                if (cancelled) return
+                // A seek that has already left the molten window must not boot WebGL.
+                if (tl.time() >= tl.labels.dive + MOLTEN_OUT_S) return
+                setMoltenLive(true)
+              },
             },
-            onComplete: () => {
-              root.style.setProperty('--cs-hero-blur', '0px')
-              if (vig) applyVignette(vig, VIGNETTE_TO)
-              settleTween = null
-              if (!cancelled) setCopyReady(true)
+            'molten',
+          )
+
+          // Hold is the gap after molten-in. Dive lines up with the old DIVE_AT.
+          tl.addLabel('dive', `+=${MOLTEN_HOLD_S}`)
+          tl.call(() => {
+            gsap.killTweensOf(targets)
+            gsap.set(targets, { clearProps: 'transform' })
+          }, undefined, 'dive')
+          tl.to(
+            look,
+            {
+              molten: 0,
+              duration: MOLTEN_OUT_S,
+              ease: 'power2.in',
+              onComplete: () => {
+                if (!cancelled) setMoltenLive(false)
+              },
             },
-          })
-        }, (DIVE_AT + DIVE_S) * 1000)
+            'dive',
+          )
+          tl.to(look, { scale: DIVE_SCALE, duration: DIVE_S, ease: 'power3.in' }, 'dive')
+
+          // End of the dive. Later scroll boost clamps here.
+          tl.addLabel('release', `dive+=${DIVE_S}`)
+          tl.call(releaseClip, undefined, 'release')
+          tl.to(
+            look,
+            {
+              blur: 0,
+              ...VIGNETTE_TO,
+              duration: CRISP_S,
+              ease: 'power2.out',
+              onComplete: () => {
+                root.style.setProperty('--cs-hero-blur', '0px')
+                const vig = vignetteRef.current
+                if (vig) applyVignette(vig, VIGNETTE_TO)
+                if (!cancelled) setCopyReady(true)
+              },
+            },
+            'release',
+          )
+        })
       }
 
       const kick = () => {
@@ -293,11 +289,7 @@ export default function HeroV2() {
 
       return () => {
         cancelled = true
-        window.clearTimeout(releaseTimer)
-        window.clearTimeout(moltenMountTimer)
-        fadeTween?.kill()
-        moltenOutTween?.kill()
-        settleTween?.kill()
+        timelineRef.current = null
         video?.removeEventListener('loadeddata', kick)
         setMoltenLive(false)
       }
