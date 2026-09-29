@@ -5,10 +5,14 @@ import seats from '../assets/cinema/seats.webp'
 import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
+import { FilmGrain } from '../grain'
 import { supportClass } from '../palette'
 
 const HOLD_W = 1
 const ROLL_W = 1.85
+
+/** Shared with the page's lazy placeholder so the snap area does not jump. */
+export const SHOWCASE_MIN_HEIGHT = '645vh'
 const CARDS = [
   {
     id: 'bar',
@@ -143,7 +147,8 @@ export default function SceneShowcase() {
       aria-labelledby="cs-showcase-title"
       data-scene="showcase"
       data-scroll="showcase-spiral"
-      className="relative h-[645vh] bg-[var(--cs-pitch)]"
+      className="relative bg-[var(--cs-pitch)]"
+      style={{ height: SHOWCASE_MIN_HEIGHT }}
     >
       <div ref={stickyRef} className="cs-scene sticky top-0 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -163,14 +168,7 @@ export default function SceneShowcase() {
           ))}
           <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_84%,transparent)]" />
         </div>
-        <div
-          className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
-            backgroundSize: '180px 180px',
-          }}
-          aria-hidden
-        />
+        <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
 
         <h2 id="cs-showcase-title" className="sr-only">
           Bar. Play zone. Hookah. Karaoke. Cinema.

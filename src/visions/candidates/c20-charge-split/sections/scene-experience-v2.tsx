@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
 import BorderGlow from '@/shared/bits/BorderGlow'
 import MicroSlats from '@/shared/bits/MicroSlats'
-import SpecularButton from '@/shared/bits/SpecularButton'
-import { prefersReducedMotion } from '@/shared/lib/motion'
-import { BOOKING_URL } from '../booking'
-import { isCoarsePointer } from '../coarse'
-import { ctaClass, kickerClass, lockupClass, specularInk, supportClass } from '../palette'
+import { BookNightButton } from '../book-night'
+import { useInView } from '../in-view'
+import { usePrefersReducedMotion } from '../media'
+import { kickerClass, lockupClass, supportClass, violet } from '../palette'
 
 const OFFERS = [
   {
@@ -37,12 +35,10 @@ const noteClass =
 
 /** Same violet / ice pair as the hero MoltenMetal accents, on a near-black field. */
 const SLAT_BG = '#07060C'
-const SLAT_ACCENT = '#8E7CFF'
-const SLAT_GLINT = '#D5E0FF'
 
 const GLOW = {
   glowColor: '248 100 74',
-  colors: [SLAT_ACCENT, SLAT_GLINT, '#0E1228'],
+  colors: [violet.accent, violet.glint, violet.void],
 } as const
 
 const glassClass =
@@ -62,22 +58,7 @@ function ExperienceCopy() {
         Everything a good night out needs, brought together under one roof.
       </p>
       <div className="mt-4 sm:mt-8">
-        <SpecularButton
-          size="md"
-          radius={999}
-          tint="#ffffff"
-          tintOpacity={0.06}
-          blur={10}
-          {...specularInk}
-          intensity={1.15}
-          autoAnimate={!isCoarsePointer()}
-          className={ctaClass}
-          onClick={() => {
-            window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
-          }}
-        >
-          Book a night
-        </SpecularButton>
+        <BookNightButton />
       </div>
     </div>
   )
@@ -123,25 +104,9 @@ function OfferCard({
 }
 
 export default function SceneExperienceV2() {
-  const rootRef = useRef<HTMLElement>(null)
-  const [sweep, setSweep] = useState(false)
-  const reduced = prefersReducedMotion()
-
-  useEffect(() => {
-    if (reduced) return
-    const el = rootRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return
-        setSweep(true)
-        io.disconnect()
-      },
-      { threshold: 0.45 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [reduced])
+  const reduced = usePrefersReducedMotion()
+  const [rootRef, seen] = useInView<HTMLElement>({ once: true, threshold: 0.45 })
+  const sweep = seen && !reduced
 
   return (
     <section
@@ -155,7 +120,7 @@ export default function SceneExperienceV2() {
         <MicroSlats
           preset="tide"
           color="#241C3A"
-          glintColor={SLAT_ACCENT}
+          glintColor={violet.accent}
           backgroundColor={SLAT_BG}
           speed={0.32}
           contrast={1.7}

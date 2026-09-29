@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
-import { prefersReducedMotion } from '@/shared/lib/motion'
-import primeLogo from '../assets/01_prime-logo.png'
+import { InstagramIcon, TelegramIcon } from '../icons'
+import { usePrefersReducedMotion } from '../media'
+import { useWordmark, wordmarkAspect } from '../wordmark'
+import { VENUES } from '../venues'
 import space from '../assets/stars/space.jpg'
-
-/** Wordmark bounds inside the 1290×790 black plate. */
-const MARK = { x: 229, y: 268, w: 832, h: 192 } as const
 
 const SOCIALS = [
   {
@@ -20,78 +19,11 @@ const SOCIALS = [
   },
 ] as const
 
-const CONTACTS = [
-  { name: 'Mennica', phone: '+48530811888', label: '+48 530 811 888' },
-  { name: 'Mokotów', phone: '+48530822888', label: '+48 530 822 888' },
-  { name: 'Wrocław', phone: '+48530881888', label: '+48 530 818 888' },
-] as const
-
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
 
-function InstagramIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  )
-}
-
-function TelegramIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-    </svg>
-  )
-}
-
 function Logo() {
-  const [src, setSrc] = useState<string | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    const img = new Image()
-    img.onload = () => {
-      if (cancelled) return
-      const canvas = document.createElement('canvas')
-      canvas.width = MARK.w
-      canvas.height = MARK.h
-      const ctx = canvas.getContext('2d', { willReadFrequently: true })
-      if (!ctx) return
-      ctx.drawImage(img, MARK.x, MARK.y, MARK.w, MARK.h, 0, 0, MARK.w, MARK.h)
-      const frame = ctx.getImageData(0, 0, MARK.w, MARK.h)
-      const px = frame.data
-      const cut = 18
-      for (let i = 0; i < px.length; i += 4) {
-        const max = Math.max(px[i] ?? 0, px[i + 1] ?? 0, px[i + 2] ?? 0)
-        px[i + 3] = max <= cut ? 0 : Math.min(255, Math.round(((max - cut) * 255) / (255 - cut)))
-      }
-      ctx.putImageData(frame, 0, 0)
-      setSrc(canvas.toDataURL('image/png'))
-    }
-    img.src = primeLogo
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const src = useWordmark()
 
   return (
     <img
@@ -99,7 +31,7 @@ function Logo() {
       alt="Prime"
       draggable={false}
       className="h-[clamp(1.55rem,4.6vh,2.7rem)] w-auto shrink-0"
-      style={{ aspectRatio: `${MARK.w} / ${MARK.h}`, visibility: src ? 'visible' : 'hidden' }}
+      style={{ aspectRatio: wordmarkAspect, visibility: src ? 'visible' : 'hidden' }}
     />
   )
 }
@@ -111,13 +43,14 @@ function Logo() {
 export default function SceneBasement() {
   const sectionRef = useRef<HTMLElement>(null)
   const veilRef = useRef<HTMLDivElement>(null)
+  const reduced = usePrefersReducedMotion()
 
   useGSAP(
     () => {
       const veil = veilRef.current
       const section = sectionRef.current
       if (!veil || !section) return
-      if (prefersReducedMotion()) {
+      if (reduced) {
         gsap.set(veil, { opacity: 0 })
         return
       }
@@ -136,7 +69,7 @@ export default function SceneBasement() {
         },
       )
     },
-    { dependencies: [] },
+    { dependencies: [reduced] },
   )
 
   return (
@@ -205,16 +138,16 @@ export default function SceneBasement() {
           </nav>
 
           <ul className="col-span-2 flex flex-col gap-0.5 sm:col-span-1 sm:gap-1">
-            {CONTACTS.map((venue) => (
+            {VENUES.map((venue) => (
               <li
-                key={venue.name}
+                key={venue.id}
                 className="flex items-baseline justify-between gap-4 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] sm:justify-end"
               >
                 <span className="tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]">
-                  {venue.name}
+                  {venue.shortName}
                 </span>
                 <a href={`tel:${venue.phone}`} className={`tabular-nums tracking-[0.04em] ${linkClass}`}>
-                  {venue.label}
+                  {venue.phoneLabel}
                 </a>
               </li>
             ))}

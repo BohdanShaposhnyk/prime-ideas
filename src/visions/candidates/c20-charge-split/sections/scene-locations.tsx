@@ -1,78 +1,12 @@
 import { useState } from 'react'
 import { Phone } from 'lucide-react'
 import AccordionGallery from '@/shared/bits/AccordionGallery'
-import SpecularButton from '@/shared/bits/SpecularButton'
-import barExt from '@/assets/c20/bar_ext.webp'
-import danceNeon from '@/assets/c20/dance_neon.webp'
-import barInterior from '@/assets/c20/bar_interior.webp'
-import { BOOKING_URL } from '../booking'
-import { isCoarsePointer } from '../coarse'
-import { ctaClass, palette, specularInk } from '../palette'
-
-function TelegramIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-    </svg>
-  )
-}
+import { BookNightButton } from '../book-night'
+import { TelegramIcon } from '../icons'
+import { ctaClass, palette } from '../palette'
+import { VENUES, type Venue } from '../venues'
 
 const DEFAULT_INDEX = 1
-
-type Venue = {
-  id: string
-  title: string
-  address: string
-  phone: string
-  telegram: string
-  lat?: number
-  lng?: number
-  appleMaps: string
-  image: string
-}
-
-const VENUES: Venue[] = [
-  {
-    id: 'mennica',
-    title: 'Prime Mennica',
-    address: 'Waliców 11, Warsaw',
-    phone: '+48530811888',
-    telegram: 'https://t.me/primewarsaw',
-    appleMaps:
-      'https://maps.apple.com/?address=Walic%C3%B3w%2011,%20Warsaw,%20Poland&q=Prime%20Cyber%20Lounge&t=m',
-    image: barExt,
-  },
-  {
-    id: 'mokotow',
-    title: 'Prime Mokotów',
-    address: 'Wincentego Rzymowskiego 53, Warsaw',
-    phone: '+48530822888',
-    telegram: 'https://t.me/primemokotow',
-    lat: 52.176772,
-    lng: 21.001543,
-    appleMaps:
-      'https://maps.apple.com/?address=W%20Rzymowskiego%2053,%2002-697%20Warsaw,%20Poland&auid=16981973767258967933&ll=52.176772,21.001543&lsp=9902&q=Prime%20Cyber%20Lounge&t=m',
-    image: danceNeon,
-  },
-  {
-    id: 'wroclaw',
-    title: 'Prime Wrocław',
-    address: 'Plac Teatralny 6-8, Wrocław',
-    phone: '+48530881888',
-    telegram: 'https://t.me/primewroclaw',
-    lat: 51.1057,
-    lng: 17.0324,
-    appleMaps:
-      'https://maps.apple.com/?address=Plac%20Teatralny%206-8,%2050-051%20Wroc%C5%82aw,%20Poland&ll=51.105700,17.032400&q=PRIME%20CYBER%20LOUNGE&t=m',
-    image: barInterior,
-  },
-]
 
 const GALLERY_ITEMS = VENUES.map((venue) => ({
   image: venue.image,
@@ -134,22 +68,7 @@ function VenuePanel({ venue, appleMaps }: { venue: Venue; appleMaps: boolean }) 
           {venue.address}
         </p>
         <div className="flex flex-nowrap items-center gap-2.5 sm:gap-4">
-          <SpecularButton
-            size="sm"
-            radius={999}
-            tint="#ffffff"
-            tintOpacity={0.06}
-            blur={10}
-            {...specularInk}
-            intensity={1.15}
-            autoAnimate={!isCoarsePointer()}
-            className={`shrink-0 ${ctaClass}`}
-            onClick={() => {
-              window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
-            }}
-          >
-            Book a night
-          </SpecularButton>
+          <BookNightButton size="sm" className={`shrink-0 ${ctaClass}`} />
           <a
             href={`tel:${venue.phone}`}
             className={`${actionClass} ${iconBtnClass}`}

@@ -2,47 +2,32 @@ import '@fontsource/bebas-neue/400.css'
 import '@fontsource/barlow/400.css'
 import '@fontsource/barlow/500.css'
 import '@fontsource/barlow/600.css'
+import './charge-split.css'
 
-import { useEffect, type CSSProperties } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { prefersReducedMotion } from '@/shared/lib/motion'
-// import Hero from './sections/hero'
-import HeroV2 from './sections/hero-v2'
-// import SceneBook from './sections/scene-book'
+import HeroV2 from './sections/hero'
 import SceneOverview from './sections/scene-overview'
-// import SceneExperience from './sections/scene-experience'
 import SceneExperienceV2 from './sections/scene-experience-v2'
 import SceneScreen from './sections/scene-screen'
-import SceneShowcase from './sections/scene-showcase'
+import SceneShowcase, { SHOWCASE_MIN_HEIGHT } from './sections/scene-showcase'
 import SceneLocations from './sections/scene-locations'
 import SceneApp from './sections/scene-app'
-// import SceneFranchise from './sections/scene-franchise'
 import SceneFranchiseV2 from './sections/scene-franchise-v2'
 import SceneBasement from './sections/scene-basement'
 import LazyScene from './lazy-scene'
-import { displayLeading, displayTracking, palette } from './palette'
+import { usePrefersReducedMotion } from './media'
+import { cssTokens } from './palette'
 
-const tokens = {
-  '--cs-pitch': palette.pitch,
-  '--cs-blue': '#0A2478',
-  '--cs-navy': '#071A52',
-  '--cs-ice': palette.ice,
-  '--cs-caption': palette.caption,
-  '--cs-gold': palette.gold,
-  '--cs-gold-ink': palette.goldInk,
-  '--cs-void': '#0C0E14',
-  '--cs-well': '#161A24',
-  '--cs-display': '"Bebas Neue", sans-serif',
-  '--cs-body': '"Barlow", sans-serif',
-  '--cs-track-display': `${displayTracking}em`,
-  '--cs-track-micro': '0.24em',
-  '--cs-lead-display': String(displayLeading),
-  '--cs-text-kicker': '0.68rem',
-  '--cs-text-support': 'clamp(1rem, 2.2vw, 1.15rem)',
-  '--cs-text-cta': '0.75rem',
-  '--cs-radius-media': '14px',
-  '--cs-radius-panel': '1.35rem',
-} as CSSProperties
+const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
+  { key: 'experience', node: <SceneExperienceV2 /> },
+  { key: 'showcase', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
+  { key: 'screen', node: <SceneScreen /> },
+  { key: 'locations', node: <SceneLocations /> },
+  { key: 'app', node: <SceneApp /> },
+  { key: 'franchise', node: <SceneFranchiseV2 /> },
+  { key: 'basement', node: <SceneBasement /> },
+]
 
 /**
  * Document scrollport snap for this candidate only.
@@ -50,56 +35,17 @@ const tokens = {
  * inside oversized snap areas; 1vh scenes use scroll-snap-stop: always.
  * Coarse / iOS: snap off — WebKit undershoots 100dvh scenes by the URL-bar delta.
  */
-const PAGE_CSS = `
-.cs-scene {
-  height: 100vh;
-  min-height: 100svh;
-  height: 100lvh;
-}
-html.cs-snap {
-  scroll-snap-type: y mandatory;
-  overscroll-behavior-y: none;
-}
-html.cs-snap [data-scene] {
-  scroll-snap-align: start;
-}
-html.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
-  scroll-snap-stop: always;
-}
-@media (hover: none) and (pointer: coarse) {
-  html.cs-snap {
-    scroll-snap-type: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html.cs-snap {
-    scroll-snap-type: none;
-  }
-}
-/* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
-   flick would otherwise carry the page into the next scene. */
-html.cs-hero-lock,
-html.cs-hero-lock body {
-  overflow: hidden !important;
-}
-html.cs-hero-lock,
-html.cs-snap-pause {
-  scroll-snap-type: none !important;
-}
-html.cs-hero-lock {
-  touch-action: none;
-}
-`
-
 function useDocumentSnap() {
+  const reduced = usePrefersReducedMotion()
+
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    if (reduced) return
     const root = document.documentElement
     root.classList.add('cs-snap')
     return () => {
       root.classList.remove('cs-snap')
     }
-  }, [])
+  }, [reduced])
 }
 
 /**
@@ -113,11 +59,10 @@ export default function ChargeSplitPage() {
     <main
       className="bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
       style={{
-        ...tokens,
+        ...cssTokens,
         fontFamily: 'var(--cs-body)',
       }}
     >
-      <style>{PAGE_CSS}</style>
       {/* Standalone build (`--mode c20`) has no router, so the hub link must not render. */}
       {import.meta.env.MODE !== 'c20' && (
         <Link
@@ -127,39 +72,13 @@ export default function ChargeSplitPage() {
           Hub
         </Link>
       )}
-      {/* <Hero /> */}
       <HeroV2 />
       <SceneOverview />
-      {/* <LazyScene>
-        <SceneExperience />
-      </LazyScene> */}
-      <LazyScene>
-        <SceneExperienceV2 />
-      </LazyScene>
-      <LazyScene minHeight="645vh">
-        <SceneShowcase />
-      </LazyScene>
-      <LazyScene>
-        <SceneScreen />
-      </LazyScene>
-      {/* <LazyScene>
-        <SceneBook />
-      </LazyScene> */}
-      <LazyScene>
-        <SceneLocations />
-      </LazyScene>
-      <LazyScene>
-        <SceneApp />
-      </LazyScene>
-      <LazyScene>
-        <SceneFranchiseV2 />
-      </LazyScene>
-      <LazyScene>
-        <SceneBasement />
-      </LazyScene>
-      {/* <LazyScene>
-        <SceneFranchise />
-      </LazyScene> */}
+      {scenes.map((scene) => (
+        <LazyScene key={scene.key} minHeight={scene.minHeight}>
+          {scene.node}
+        </LazyScene>
+      ))}
     </main>
   )
 }

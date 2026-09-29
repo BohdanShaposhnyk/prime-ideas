@@ -1,0 +1,199 @@
+.cs-scene {
+  height: 100vh;
+  min-height: 100svh;
+  height: 100lvh;
+}
+html.cs-snap {
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: none;
+}
+html.cs-snap [data-scene] {
+  scroll-snap-align: start;
+}
+html.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
+  scroll-snap-stop: always;
+}
+@media (hover: none) and (pointer: coarse) {
+  html.cs-snap {
+    scroll-snap-type: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.cs-snap {
+    scroll-snap-type: none;
+  }
+}
+/* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
+   flick would otherwise carry the page into the next scene. */
+html.cs-hero-lock,
+html.cs-hero-lock body {
+  overflow: hidden !important;
+}
+html.cs-hero-lock,
+html.cs-snap-pause {
+  scroll-snap-type: none !important;
+}
+html.cs-hero-lock {
+  touch-action: none;
+}
+
+[data-hero-vignette] {
+  --v-cap-x: 100%;
+  --v-cap-y: 100%;
+  --v-cap-b: 100%;
+}
+[data-hero-blur] [data-mh-media] {
+  filter: blur(var(--cs-hero-blur)) !important;
+}
+@media (max-width: 640px) {
+  [data-hero-vignette] {
+    --v-cap-x: 96px;
+    --v-cap-y: 210px;
+    --v-cap-b: 315px;
+  }
+}
+
+/* Overview deck. Snap / tension / roll ease come from the stage as
+   --cs-snap, --cs-tension, and --cs-roll-ease. */
+.cs-overview-stage {
+  --cs-overview-nudge: 0px;
+}
+.cs-overview-stage[data-phase="tension"] {
+  --cs-overview-nudge: -1.45rem;
+}
+.cs-overview-card {
+  left: 50%;
+  top: 50%;
+  width: var(--cs-overview-side-w);
+  z-index: 6;
+  opacity: 0;
+  transform: translate3d(
+    calc(-50% + var(--cs-overview-nudge) + var(--cs-overview-x)),
+    -50%,
+    0
+  );
+  will-change: transform, width, opacity;
+}
+.cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
+  transition:
+    transform var(--cs-snap) var(--cs-roll-ease),
+    width var(--cs-snap) var(--cs-roll-ease),
+    opacity 180ms linear;
+}
+.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="-1"]:not([data-skip]),
+.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="0"]:not([data-skip]),
+.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="1"]:not([data-skip]) {
+  transition:
+    transform var(--cs-snap) var(--cs-roll-ease),
+    width var(--cs-snap) var(--cs-roll-ease),
+    opacity 180ms linear 220ms;
+}
+.cs-overview-stage[data-ready="true"][data-phase="tension"] .cs-overview-card:not([data-skip]) {
+  transition: transform var(--cs-tension) cubic-bezier(0.62, 0, 0.78, 0.22);
+}
+.cs-overview-card[data-slot="0"] {
+  z-index: 20;
+  width: var(--cs-overview-center-w);
+  opacity: 1;
+  --cs-overview-x: 0px;
+}
+.cs-overview-card[data-slot="-1"] {
+  z-index: 12;
+  opacity: 1;
+  --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - var(--cs-overview-gap) - 0.5 * var(--cs-overview-side-w));
+}
+.cs-overview-card[data-slot="1"] {
+  z-index: 8;
+  opacity: 1;
+  --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + var(--cs-overview-gap) + 0.5 * var(--cs-overview-side-w));
+}
+.cs-overview-card[data-slot="-2"] {
+  --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - 2 * var(--cs-overview-gap) - 1.5 * var(--cs-overview-side-w));
+}
+.cs-overview-card[data-slot="2"] {
+  --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + 2 * var(--cs-overview-gap) + 1.5 * var(--cs-overview-side-w));
+}
+.cs-overview-card[data-front] {
+  z-index: 30;
+}
+.cs-overview-card img {
+  filter: blur(2px);
+}
+.cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
+  transition: filter var(--cs-snap) var(--cs-roll-ease);
+}
+.cs-overview-card[data-front] img {
+  filter: none;
+}
+@media (pointer: coarse) {
+  .cs-overview-card img,
+  .cs-overview-card[data-front] img {
+    filter: none;
+  }
+  .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
+    transition: none;
+  }
+}
+.cs-overview-card[data-front] .cs-overview-plate {
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
+}
+.cs-overview-type {
+  animation: cs-overview-type 22s linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+.cs-overview-live .cs-overview-type {
+  animation-play-state: running;
+}
+@keyframes cs-overview-type {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.cs-overview-wash {
+  z-index: 0;
+  opacity: clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1);
+}
+.cs-overview-grain {
+  opacity: calc(0.14 * clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1));
+}
+/* The front card punches a hole so the line reads behind it, never over it. */
+.cs-overview-type-wrap {
+  --cs-overview-hole-w: 0px;
+  --cs-overview-hole-h: 0px;
+  --cs-overview-hole-x: -9999px;
+  --cs-overview-hole-y: -9999px;
+  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  -webkit-mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
+  -webkit-mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
+  mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
+  mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
+  mask-repeat: no-repeat;
+  mask-composite: exclude;
+}
+.cs-overview-bg {
+  opacity: 0;
+  will-change: opacity;
+}
+.cs-overview-bg[data-active] {
+  opacity: 1;
+}
+.cs-overview-wash[data-ready="true"] .cs-overview-bg {
+  transition: opacity 820ms ease;
+}
+.cs-overview-bg img {
+  transform: scale(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-overview-stage[data-ready="true"] .cs-overview-card,
+  .cs-overview-stage[data-ready="true"] .cs-overview-card img,
+  .cs-overview-wash[data-ready="true"] .cs-overview-bg {
+    transition: none;
+  }
+  .cs-overview-type { animation: none; }
+  .cs-overview-type-wrap { transition: none; }
+  .cs-overview-wash { opacity: 1; }
+  .cs-overview-grain { opacity: 0.14; }
+}

@@ -2,57 +2,29 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import EchoText from '@/shared/bits/EchoText'
 import Masonry from '@/shared/bits/Masonry'
 import { gsap } from '@/shared/lib/gsap'
-import { prefersReducedMotion } from '@/shared/lib/motion'
-import { isCoarsePointer, useCoarsePointer } from '../coarse'
+import { useCoarsePointer, usePrefersReducedMotion } from '../media'
 import { palette } from '../palette'
-import barPartyHor from '../assets/bar/bar-party-hor.webp'
-import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
-import gamerGirlLightHor from '../assets/gaming/gamer-girl-light-hor.webp'
-import keyboardHor from '../assets/gaming/keyboard-hor.webp'
-import singerHor from '../assets/karaoke/singer-hor.webp'
+import { GAP, MASONRY_DURATION, MASONRY_STAGGER, screenLayout } from './screen-layout'
 
-const GAP = 8
 const GOLD_TINT = '#F4E8B0'
-const COMPACT_MAX = 640
-const MASONRY_DURATION = 0.78
-const MASONRY_STAGGER = 0.1
-/** Start caption this many seconds before the last masonry tile settles. */
-const CAPTION_LEAD = 0.38
 const WORD_STAGGER = 0.15
 const WORD_DURATION = 0.48
 const PRIME_LAG = 0.22
-/** Portrait phone plate on compact; 16:9 PC screen from sm up. */
-const LOCKUP_ASPECT_COMPACT = 9 / 16
-const LOCKUP_ASPECT_DESKTOP = 16 / 9
-const COL_FR_COMPACT = [1.06, 1.28, 1]
-const COL_FR_DESKTOP = [1, 1.22, 1]
-
-type Tile = { id: string; fr: number; col: 0 | 1 | 2 }
-
-/** Desktop 2 / 3 / 2 — five landscape stills around the lockup. */
-const TILES_DESKTOP: Tile[] = [
-  { id: 'gate', fr: 0.62, col: 0 },
-  { id: 'pit', fr: 0.38, col: 0 },
-  { id: 'rake', fr: 0.38, col: 1 },
-  { id: 'lockup', fr: 0, col: 1 },
-  { id: 'marquee', fr: 0.62, col: 1 },
-  { id: 'aisle', fr: 1, col: 2 },
-]
-
-/** Mobile 2 / 3 / 1 — same stills, portrait lockup. */
-const TILES_COMPACT: Tile[] = [
-  { id: 'gate', fr: 0.55, col: 0 },
-  { id: 'pit', fr: 0.45, col: 0 },
-  { id: 'rake', fr: 0.44, col: 1 },
-  { id: 'lockup', fr: 0, col: 1 },
-  { id: 'marquee', fr: 0.56, col: 1 },
-  { id: 'aisle', fr: 1, col: 2 },
-]
 
 const WORD_CLASS =
   'inline-block opacity-0 will-change-[opacity] font-[family-name:var(--cs-body)] text-[clamp(0.92rem,13cqw,1.25rem)] font-medium tracking-[0.08em] text-[var(--cs-ice)] sm:text-[clamp(0.58rem,6.4cqw,1.25rem)]'
 
-function Lockup({ play, delay }: { play: boolean; delay: number }) {
+function Lockup({
+  play,
+  delay,
+  coarse,
+  reduced,
+}: {
+  play: boolean
+  delay: number
+  coarse: boolean
+  reduced: boolean
+}) {
   const rootRef = useRef<HTMLDivElement>(null)
   const [showPrime, setShowPrime] = useState(false)
 
@@ -62,8 +34,6 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
     const words = gsap.utils.toArray<HTMLElement>(root.querySelectorAll('[data-cs-word]'))
     if (words.length === 0) return
 
-    const reduced = prefersReducedMotion()
-    const coarse = isCoarsePointer()
     const useBlur = !reduced && !coarse
 
     if (!play) {
@@ -98,7 +68,7 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
       tween.kill()
       window.clearTimeout(timer)
     }
-  }, [play, delay])
+  }, [play, delay, coarse, reduced])
 
   return (
     <div
@@ -170,60 +140,13 @@ function Lockup({ play, delay }: { play: boolean; delay: number }) {
   )
 }
 
-function splitHeights(parts: number[], total: number) {
-  const sum = parts.reduce((acc, value) => acc + value, 0) || 1
-  const heights = parts.map(value => Math.round((value / sum) * total))
-  const drift = total - heights.reduce((acc, value) => acc + value, 0)
-  heights[heights.length - 1] += drift
-  return heights
-}
-
-function tileHeights(
-  tiles: Tile[],
-  stageH: number,
-  lockupH: number,
-): Map<string, number> {
-  const byCol: Tile[][] = [[], [], []]
-  for (const tile of tiles) byCol[tile.col].push(tile)
-
-  const result = new Map<string, number>()
-  for (const col of byCol) {
-    if (col.length === 0) continue
-    const available = Math.max(stageH - GAP * (col.length - 1), 1)
-    const lockupAt = col.findIndex(tile => tile.id === 'lockup')
-    if (lockupAt === -1) {
-      const heights = splitHeights(
-        col.map(tile => tile.fr),
-        available,
-      )
-      col.forEach((tile, i) => result.set(tile.id, heights[i]))
-      continue
-    }
-    const others = col.filter(tile => tile.id !== 'lockup')
-    const leftover = Math.max(available - lockupH, 1)
-    const heights = splitHeights(
-      others.map(tile => tile.fr),
-      leftover,
-    )
-    others.forEach((tile, i) => result.set(tile.id, heights[i]))
-    result.set('lockup', lockupH)
-  }
-  return result
-}
-
-const STILLS: Record<string, string> = {
-  gate: singerHor,
-  pit: keyboardHor,
-  rake: gamerGirlLightHor,
-  marquee: barPartyHor,
-  aisle: gamerGirlHor,
-}
-
 export default function SceneScreen() {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const [stage, setStage] = useState({ w: 0, h: 0 })
   const [active, setActive] = useState(false)
+  const coarse = useCoarsePointer()
+  const reduced = usePrefersReducedMotion()
 
   useLayoutEffect(() => {
     const el = stageRef.current
@@ -261,33 +184,19 @@ export default function SceneScreen() {
     }
   }, [])
 
-  const compact = stage.w > 0 && stage.w < COMPACT_MAX
-  const coarse = useCoarsePointer()
-  const tiles = compact ? TILES_COMPACT : TILES_DESKTOP
-  const colFracs = compact ? COL_FR_COMPACT : COL_FR_DESKTOP
-  const lockupAspect = compact ? LOCKUP_ASPECT_COMPACT : LOCKUP_ASPECT_DESKTOP
-  const captionDelay = Math.max(
-    (tiles.length - 1) * MASONRY_STAGGER + MASONRY_DURATION - CAPTION_LEAD,
-    0.45,
-  )
-
+  const layout = useMemo(() => screenLayout(stage), [stage])
   const items = useMemo(() => {
-    if (stage.w <= 0 || stage.h <= 0) return []
-    const usable = stage.w - GAP * 2
-    const frSum = colFracs.reduce((acc, value) => acc + value, 0)
-    const lockupW = (usable * colFracs[1]) / frSum
-    const midCount = tiles.filter(tile => tile.col === 1).length
-    const maxLockup = Math.max(stage.h - GAP * (midCount - 1) - 72 * (midCount - 1), 48)
-    const lockupH = Math.min(Math.round(lockupW / lockupAspect), maxLockup)
-    const heights = tileHeights(tiles, stage.h, lockupH)
-    return tiles.map(tile => ({
+    if (!layout) return []
+    return layout.tiles.map(tile => ({
       id: tile.id,
-      column: tile.col,
-      height: heights.get(tile.id) ?? 1,
-      img: tile.id === 'lockup' ? undefined : STILLS[tile.id],
-      content: tile.id === 'lockup' ? <Lockup play={active} delay={captionDelay} /> : undefined,
+      column: tile.column,
+      height: tile.height,
+      img: tile.img,
+      content: tile.isLockup ? (
+        <Lockup play={active} delay={layout.captionDelay} coarse={coarse} reduced={reduced} />
+      ) : undefined,
     }))
-  }, [active, captionDelay, colFracs, lockupAspect, stage.h, stage.w, tiles])
+  }, [active, coarse, layout, reduced])
 
   return (
     <section
@@ -299,11 +208,11 @@ export default function SceneScreen() {
       className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
     >
       <div ref={stageRef} className="absolute inset-1.5 sm:inset-2.5">
-        {items.length > 0 ? (
+        {layout && items.length > 0 ? (
           <Masonry
             items={items}
             columnCount={3}
-            columnFractions={colFracs}
+            columnFractions={layout.colFracs}
             gap={GAP}
             exactHeight
             active={active}

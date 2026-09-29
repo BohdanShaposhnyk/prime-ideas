@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import ScrollExpand from '@/shared/bits/ScrollExpand'
-import { prefersReducedMotion } from '@/shared/lib/motion'
+import { FilmGrain } from '../grain'
+import { useInView } from '../in-view'
+import { usePrefersReducedMotion } from '../media'
 import { lockupClass } from '../palette'
 import barPartyGirl from '../assets/bar/bar-party-girl.webp'
 import cinemaGirl from '../assets/cinema/cinema-girl.webp'
@@ -78,7 +80,7 @@ type Cycle = {
 }
 
 /** Hold → tension → snap loop shared by the card deck and the type belt. */
-function useOverviewCycle(active: boolean): Cycle {
+function useOverviewCycle(active: boolean, reduced: boolean): Cycle {
   const [index, setIndex] = useState(0)
   const [fromIndex, setFromIndex] = useState(0)
   const [front, setFront] = useState(0)
@@ -92,7 +94,7 @@ function useOverviewCycle(active: boolean): Cycle {
   }, [])
 
   useEffect(() => {
-    if (!active || prefersReducedMotion()) return
+    if (!active || reduced) return
 
     let cancelled = false
     let timer = 0
@@ -131,28 +133,16 @@ function useOverviewCycle(active: boolean): Cycle {
       window.clearTimeout(timer)
       window.clearTimeout(frontTimer)
     }
-  }, [active])
+  }, [active, reduced])
 
   return { index, fromIndex, front, phase, ready }
 }
 
 export default function SceneOverview() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const [inView, setInView] = useState(false)
+  const [sectionRef, inView] = useInView<HTMLElement>()
   const frame = useOverviewFrame()
-  const cycle = useOverviewCycle(inView)
-  const reduced = prefersReducedMotion()
-
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => setInView(Boolean(entry?.isIntersecting)),
-      { threshold: 0 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
+  const reduced = usePrefersReducedMotion()
+  const cycle = useOverviewCycle(inView, reduced)
 
   return (
     <section
@@ -197,151 +187,6 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
 
   return (
     <div className="absolute inset-0 isolate overflow-hidden bg-[var(--cs-pitch)] [--cs-overview-center-w:10.75rem] [--cs-overview-side-w:6.9rem] [--cs-overview-gap:1.15rem] sm:[--cs-overview-center-w:16.25rem] sm:[--cs-overview-side-w:10.5rem] sm:[--cs-overview-gap:2.35rem] lg:[--cs-overview-center-w:18.75rem] lg:[--cs-overview-side-w:12rem] lg:[--cs-overview-gap:3.1rem]">
-      <style>{`
-        .cs-overview-stage {
-          --cs-overview-nudge: 0px;
-        }
-        .cs-overview-stage[data-phase="tension"] {
-          --cs-overview-nudge: -1.45rem;
-        }
-        .cs-overview-card {
-          left: 50%;
-          top: 50%;
-          width: var(--cs-overview-side-w);
-          z-index: 6;
-          opacity: 0;
-          transform: translate3d(
-            calc(-50% + var(--cs-overview-nudge) + var(--cs-overview-x)),
-            -50%,
-            0
-          );
-          will-change: transform, width, opacity;
-        }
-        .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
-          transition:
-            transform ${SNAP_MS}ms ${ROLL_EASE},
-            width ${SNAP_MS}ms ${ROLL_EASE},
-            opacity 180ms linear;
-        }
-        .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="-1"]:not([data-skip]),
-        .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="0"]:not([data-skip]),
-        .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="1"]:not([data-skip]) {
-          transition:
-            transform ${SNAP_MS}ms ${ROLL_EASE},
-            width ${SNAP_MS}ms ${ROLL_EASE},
-            opacity 180ms linear 220ms;
-        }
-        .cs-overview-stage[data-ready="true"][data-phase="tension"] .cs-overview-card:not([data-skip]) {
-          transition: transform ${TENSION_MS}ms cubic-bezier(0.62, 0, 0.78, 0.22);
-        }
-        .cs-overview-card[data-slot="0"] {
-          z-index: 20;
-          width: var(--cs-overview-center-w);
-          opacity: 1;
-          --cs-overview-x: 0px;
-        }
-        .cs-overview-card[data-slot="-1"] {
-          z-index: 12;
-          opacity: 1;
-          --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - var(--cs-overview-gap) - 0.5 * var(--cs-overview-side-w));
-        }
-        .cs-overview-card[data-slot="1"] {
-          z-index: 8;
-          opacity: 1;
-          --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + var(--cs-overview-gap) + 0.5 * var(--cs-overview-side-w));
-        }
-        .cs-overview-card[data-slot="-2"] {
-          --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - 2 * var(--cs-overview-gap) - 1.5 * var(--cs-overview-side-w));
-        }
-        .cs-overview-card[data-slot="2"] {
-          --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + 2 * var(--cs-overview-gap) + 1.5 * var(--cs-overview-side-w));
-        }
-        .cs-overview-card[data-front] {
-          z-index: 30;
-        }
-        .cs-overview-card img {
-          filter: blur(2px);
-        }
-        .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
-          transition: filter ${SNAP_MS}ms ${ROLL_EASE};
-        }
-        .cs-overview-card[data-front] img {
-          filter: none;
-        }
-        @media (pointer: coarse) {
-          .cs-overview-card img,
-          .cs-overview-card[data-front] img {
-            filter: none;
-          }
-          .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
-            transition: none;
-          }
-        }
-        .cs-overview-card[data-front] .cs-overview-plate {
-          box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
-        }
-        .cs-overview-type {
-          animation: cs-overview-type 22s linear infinite;
-          animation-play-state: paused;
-          will-change: transform;
-        }
-        .cs-overview-live .cs-overview-type {
-          animation-play-state: running;
-        }
-        @keyframes cs-overview-type {
-          from { transform: translate3d(0, 0, 0); }
-          to { transform: translate3d(-50%, 0, 0); }
-        }
-        .cs-overview-wash {
-          z-index: 0;
-          opacity: clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1);
-        }
-        .cs-overview-grain {
-          opacity: calc(0.14 * clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1));
-        }
-        /* The front card punches a hole so the line reads behind it, never over it. */
-        .cs-overview-type-wrap {
-          --cs-overview-hole-w: 0px;
-          --cs-overview-hole-h: 0px;
-          --cs-overview-hole-x: -9999px;
-          --cs-overview-hole-y: -9999px;
-          -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
-          -webkit-mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
-          -webkit-mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
-          -webkit-mask-repeat: no-repeat;
-          -webkit-mask-composite: xor;
-          mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
-          mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
-          mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
-          mask-repeat: no-repeat;
-          mask-composite: exclude;
-        }
-        .cs-overview-bg {
-          opacity: 0;
-          will-change: opacity;
-        }
-        .cs-overview-bg[data-active] {
-          opacity: 1;
-        }
-        .cs-overview-wash[data-ready="true"] .cs-overview-bg {
-          transition: opacity 820ms ease;
-        }
-        .cs-overview-bg img {
-          transform: scale(1.12);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .cs-overview-stage[data-ready="true"] .cs-overview-card,
-          .cs-overview-stage[data-ready="true"] .cs-overview-card img,
-          .cs-overview-wash[data-ready="true"] .cs-overview-bg {
-            transition: none;
-          }
-          .cs-overview-type { animation: none; }
-          .cs-overview-type-wrap { transition: none; }
-          .cs-overview-wash { opacity: 1; }
-          .cs-overview-grain { opacity: 0.14; }
-        }
-      `}</style>
-
       <div
         className="cs-overview-wash pointer-events-none absolute inset-0 overflow-hidden"
         data-ready={ready ? 'true' : 'false'}
@@ -363,14 +208,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         ))}
         <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_76%,transparent)]" />
       </div>
-      <div
-        className="cs-overview-grain pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E")`,
-          backgroundSize: '180px 180px',
-        }}
-        aria-hidden
-      />
+      <FilmGrain className="cs-overview-grain pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light" />
 
       <h2 id="cs-overview-title" className="sr-only">
         Show up. Link up. Game on. Hang out. Lose track. Stay late.
@@ -381,6 +219,11 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         data-phase={phase}
         data-ready={ready ? 'true' : 'false'}
         aria-hidden
+        style={{
+          '--cs-snap': `${SNAP_MS}ms`,
+          '--cs-tension': `${TENSION_MS}ms`,
+          '--cs-roll-ease': ROLL_EASE,
+        } as CSSProperties}
       >
         {items.map(({ card, cardIndex, slot }) => {
           const skip = Math.abs(slot - slotOf(cardIndex, fromIndex)) > 1

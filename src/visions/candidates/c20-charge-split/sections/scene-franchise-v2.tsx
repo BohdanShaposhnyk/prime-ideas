@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useMediaQuery } from '../media'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/shared/bits/DriftWall'
 import barParty from '../assets/bar/bar-party.webp'
@@ -109,25 +109,8 @@ const WALL_ITEMS = buildWallItems(WALL_COLUMNS, PROOF_ROW)
 
 const NARROW_WALL = '(max-width: 767px)'
 
-/** Phone tiles are smaller so the three diagonal rows fit the viewport. */
-function useNarrowWall() {
-  const [narrow, setNarrow] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia(NARROW_WALL).matches : false,
-  )
-
-  useEffect(() => {
-    const mq = window.matchMedia(NARROW_WALL)
-    const onChange = () => setNarrow(mq.matches)
-    onChange()
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-
-  return narrow
-}
-
 export default function SceneFranchiseV2() {
-  const narrow = useNarrowWall()
+  const narrow = useMediaQuery(NARROW_WALL)
   return (
     <section
       aria-labelledby="cs-franchise-v2-title"
