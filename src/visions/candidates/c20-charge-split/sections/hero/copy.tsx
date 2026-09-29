@@ -36,7 +36,7 @@ export function HeroCopy() {
   return (
     <div
       ref={copyRef}
-      className="pointer-events-none absolute bottom-[max(3rem,env(safe-area-inset-bottom))] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 flex-col items-center px-4 text-center"
+      className="pointer-events-none absolute bottom-[max(6rem,env(safe-area-inset-bottom))] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 flex-col items-center px-4 text-center sm:bottom-[max(3rem,env(safe-area-inset-bottom))]"
     >
       <p
         data-hero-extra=""
