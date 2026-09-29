@@ -52,6 +52,13 @@ html.cs-hero-lock {
     --v-cap-b: 315px;
   }
 }
+/* Landscape reel in a portrait frame. Same element through the letter mask
+   and the full bleed, so the dive scale never has to retarget. */
+@media (orientation: portrait) {
+  [data-scene="hero"] video {
+    object-position: 75% 50%;
+  }
+}
 
 /* Overview deck. Snap / tension / roll ease come from the stage as
    --cs-snap, --cs-tension, and --cs-roll-ease. */
