@@ -15,6 +15,7 @@ import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
 import { useMediaQuery } from '../hooks/media'
+import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, palette, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
@@ -160,7 +161,7 @@ export default function SceneFranchiseV2() {
               className={lockupClass}
             >
               <span className="block">Make</span>
-              <span className="block text-[var(--cs-gold)]">Prime</span>
+              <GoldWord block>Prime</GoldWord>
               <span className="block">yours</span>
             </h2>
 

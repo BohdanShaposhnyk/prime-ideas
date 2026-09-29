@@ -1,6 +1,7 @@
 import BorderGlow from '@/shared/bits/BorderGlow'
 import MicroSlats from '@/shared/bits/MicroSlats'
 import { BookNightButton } from '../components/book-night'
+import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { kickerClass, lockupClass, supportClass, violet } from '../lib/palette'
@@ -49,7 +50,7 @@ function ExperienceCopy() {
     <div className="flex min-w-0 flex-1 flex-col justify-center py-8 pl-5 pr-5 sm:py-10 sm:pl-8 sm:pr-8 md:h-full md:flex-none md:py-8 md:pr-6 lg:pl-12 lg:pr-10">
       <h2 id="cs-experience-offers-title" className={lockupClass}>
         <span className="block">
-          The <span className="text-[var(--cs-gold)]">prime</span>
+          The <GoldWord>prime</GoldWord>
         </span>
         <span className="block">experience</span>
       </h2>
