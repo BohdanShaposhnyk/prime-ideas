@@ -23,6 +23,22 @@ const MOLTEN_IN_S = 0.75
 const MOLTEN_HOLD_S = 2
 const MOLTEN_OUT_S = 0.5
 
+/** Scroll during the dive adds time instead of moving the page.
+ * After the dive, wait out the gesture so snap cannot fling to the next scene. */
+const BOOST_QUIET_MS = 280
+const BOOST_FAILSAFE_MS = 12_000
+/** About one deliberate flick of this many pixels finishes the time still left. */
+const BOOST_PX = 320
+/** A single wheel spike cannot skip the dive in one frame. */
+const BOOST_MAX_STEP_S = 0.35
+const BOOST_MIN_PX = 4
+
+function wheelPixels(event: WheelEvent): number {
+  if (event.deltaMode === 1) return event.deltaY * 16
+  if (event.deltaMode === 2) return event.deltaY * window.innerHeight
+  return event.deltaY
+}
+
 /** Colder violet — blue-shifted from the screen caption’s warmer lilac. */
 const MOLTEN_VIOLET = {
   color1: '#0E1228',
@@ -129,11 +145,7 @@ export default function HeroV2() {
   const brandRef = useRef<HTMLDivElement>(null)
   const vignetteRef = useRef<HTMLDivElement>(null)
   const moltenRef = useRef<HTMLDivElement>(null)
-  /**
-   * Intro playhead. A later scroll boost seeks forward with
-   * `tl.time(Math.min(tl.labels.release, tl.time() + seconds))`.
-   * `labels.release` is the end of the dive.
-   */
+  /** Intro playhead. Scroll boost seeks forward, clamped to `labels.release`. */
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const reduced = prefersReducedMotion()
   /** Don't mount MaskedHeading until display font is live — avoids glyph teleport. */
@@ -161,6 +173,146 @@ export default function HeroV2() {
       if (!root || !brand) return
 
       let cancelled = false
+      let diveDone = false
+      let opening = false
+      let armed = false
+      let pinning = false
+      let lastInput = 0
+      let quietTimer = 0
+      let armTimer = 0
+      let failsafe = 0
+      let touchY = 0
+      let riseSettled = false
+      let targets: SVGTextElement[] = []
+
+      const html = document.documentElement
+
+      const detach = () => {
+        window.clearTimeout(quietTimer)
+        window.clearTimeout(armTimer)
+        window.clearTimeout(failsafe)
+        window.removeEventListener('scroll', onScrollPin)
+        window.removeEventListener('wheel', onWheel, { capture: true })
+        window.removeEventListener('touchstart', onTouchStart)
+        window.removeEventListener('touchmove', onTouchMove)
+        html.classList.remove('cs-hero-lock')
+        html.classList.remove('cs-snap-pause')
+      }
+
+      const scheduleArm = () => {
+        window.clearTimeout(armTimer)
+        armTimer = window.setTimeout(arm, BOOST_QUIET_MS)
+      }
+
+      /** Snap comes back only after the page has sat still at the hero. */
+      const arm = () => {
+        if (armed || cancelled) return
+        if (window.scrollY !== 0) {
+          window.scrollTo(0, 0)
+          scheduleArm()
+          return
+        }
+        if (html.classList.contains('cs-hero-lock') || html.classList.contains('cs-snap-pause')) {
+          html.classList.remove('cs-hero-lock')
+          html.classList.remove('cs-snap-pause')
+          scheduleArm()
+          return
+        }
+        armed = true
+        detach()
+      }
+
+      const beginUnlock = () => {
+        if (armed || cancelled || !diveDone) return
+        opening = true
+        window.scrollTo(0, 0)
+        html.classList.remove('cs-hero-lock')
+        html.classList.add('cs-snap-pause')
+        scheduleArm()
+      }
+
+      const onScrollPin = () => {
+        if (armed || pinning || window.scrollY === 0) return
+        pinning = true
+        window.scrollTo(0, 0)
+        pinning = false
+        if (opening) scheduleArm()
+      }
+
+      const noteInput = () => {
+        lastInput = performance.now()
+        if (!diveDone) return
+        opening = false
+        html.classList.add('cs-hero-lock')
+        html.classList.remove('cs-snap-pause')
+        window.clearTimeout(armTimer)
+        window.clearTimeout(quietTimer)
+        quietTimer = window.setTimeout(beginUnlock, BOOST_QUIET_MS)
+      }
+
+      const onDiveDone = () => {
+        if (diveDone || cancelled) return
+        diveDone = true
+        const idle = lastInput === 0 ? Number.POSITIVE_INFINITY : performance.now() - lastInput
+        if (idle >= BOOST_QUIET_MS) beginUnlock()
+        else {
+          window.clearTimeout(quietTimer)
+          quietTimer = window.setTimeout(beginUnlock, BOOST_QUIET_MS)
+        }
+      }
+
+      const settleRise = () => {
+        if (riseSettled || !targets.length) return
+        riseSettled = true
+        gsap.killTweensOf(targets)
+        gsap.set(targets, { y: 0 })
+      }
+
+      const boost = (pixels: number) => {
+        const tl = timelineRef.current
+        if (!tl || typeof tl.labels.release !== 'number') return
+        const releaseAt = tl.labels.release
+        if (tl.time() >= releaseAt) return
+        settleRise()
+        const remaining = releaseAt - tl.time()
+        const seconds = Math.min(BOOST_MAX_STEP_S, remaining * (pixels / BOOST_PX))
+        if (seconds <= 0) return
+        tl.time(Math.min(releaseAt, tl.time() + seconds))
+      }
+
+      const onWheel = (event: WheelEvent) => {
+        if (armed || event.ctrlKey || event.metaKey) return
+        event.preventDefault()
+        const pixels = wheelPixels(event)
+        noteInput()
+        if (!diveDone && pixels > BOOST_MIN_PX) boost(pixels)
+      }
+
+      const onTouchStart = (event: TouchEvent) => {
+        touchY = event.touches[0]?.clientY ?? touchY
+      }
+
+      const onTouchMove = (event: TouchEvent) => {
+        if (armed) return
+        const y = event.touches[0]?.clientY
+        if (y == null) return
+        const dy = touchY - y
+        touchY = y
+        event.preventDefault()
+        if (dy !== 0) noteInput()
+        if (!diveDone && dy > BOOST_MIN_PX) boost(dy)
+      }
+
+      html.classList.add('cs-hero-lock')
+      if (window.scrollY !== 0) window.scrollTo(0, 0)
+      window.addEventListener('scroll', onScrollPin, { passive: true })
+      window.addEventListener('wheel', onWheel, { passive: false, capture: true })
+      window.addEventListener('touchstart', onTouchStart, { passive: true })
+      window.addEventListener('touchmove', onTouchMove, { passive: false })
+      failsafe = window.setTimeout(() => {
+        onDiveDone()
+        beginUnlock()
+      }, BOOST_FAILSAFE_MS)
 
       const video = root.querySelector('video')
       root.style.setProperty('--cs-hero-blur', `${BLUR_PX}px`)
@@ -199,7 +351,7 @@ export default function HeroV2() {
 
       const start = () => {
         if (cancelled) return
-        const targets = gsap.utils.toArray<SVGTextElement>(
+        targets = gsap.utils.toArray<SVGTextElement>(
           root.querySelectorAll('[data-mh-glyphs] text'),
         )
         if (!targets.length) {
@@ -254,9 +406,12 @@ export default function HeroV2() {
           )
           tl.to(look, { scale: DIVE_SCALE, duration: DIVE_S, ease: 'power3.in' }, 'dive')
 
-          // End of the dive. Later scroll boost clamps here.
+          // End of the dive. Scroll boost clamps here; the page stays on the hero.
           tl.addLabel('release', `dive+=${DIVE_S}`)
-          tl.call(releaseClip, undefined, 'release')
+          tl.call(() => {
+            releaseClip()
+            onDiveDone()
+          }, undefined, 'release')
           tl.to(
             look,
             {
@@ -289,6 +444,8 @@ export default function HeroV2() {
 
       return () => {
         cancelled = true
+        armed = true
+        detach()
         timelineRef.current = null
         video?.removeEventListener('loadeddata', kick)
         setMoltenLive(false)

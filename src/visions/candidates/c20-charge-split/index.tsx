@@ -76,6 +76,19 @@ html.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase
     scroll-snap-type: none;
   }
 }
+/* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
+   flick would otherwise carry the page into the next scene. */
+html.cs-hero-lock,
+html.cs-hero-lock body {
+  overflow: hidden !important;
+}
+html.cs-hero-lock,
+html.cs-snap-pause {
+  scroll-snap-type: none !important;
+}
+html.cs-hero-lock {
+  touch-action: none;
+}
 `
 
 function useDocumentSnap() {
