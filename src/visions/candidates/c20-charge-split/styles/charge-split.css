@@ -32,6 +32,19 @@ html.cs-snap-root body {
     scroll-snap-type: none;
   }
 }
+/* Softens the particle pop. Gather itself stays on ParticleText's own clock. */
+@keyframes cs-prime-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.cs-prime-field {
+  animation: cs-prime-in 0.32s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-prime-field {
+    animation: none;
+  }
+}
 /* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
    flick would otherwise carry the page into the next scene. */
 .cs-snap-port.cs-hero-lock {

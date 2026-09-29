@@ -1,11 +1,12 @@
-import { useRef } from 'react'
-import { gsap, useGSAP } from '@/shared/lib/gsap'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import FoldText from '@/shared/bits/FoldText'
+import ParticleText from '@/shared/bits/ParticleText'
 import { InstagramIcon, TelegramIcon } from '../components/icons'
-import { usePrefersReducedMotion } from '../hooks/media'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
-import { lockupClass } from '../lib/palette'
+import { lockupClass, palette } from '../lib/palette'
 import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.jpg'
+import { stayFold, useBasementIntro } from './basement-intro'
 
 const SOCIALS = [
   {
@@ -23,6 +24,57 @@ const SOCIALS = [
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
 
+const lockupSize = 'clamp(4rem, 9vw, 5.4rem)'
+
+/** Word slot. The canvas is larger than this and centered on it. */
+const primeSlot = { width: '2.28em', height: '1.15em', fontSize: lockupSize }
+
+/** Drops the gathered word onto STAY's line. The field stays centered on the slot. */
+const primeDrop = '0.05em'
+
+function fieldMask(edge: number) {
+  const solid = 100 - edge
+  return [
+    `linear-gradient(to right, transparent 0%, #000 ${edge}%, #000 ${solid}%, transparent 100%)`,
+    `linear-gradient(to bottom, transparent 0%, #000 ${edge + 2}%, #000 ${solid - 2}%, transparent 100%)`,
+  ].join(', ')
+}
+
+function primeFieldStyle(desktop: boolean): CSSProperties {
+  const mask = fieldMask(desktop ? 14 : 22)
+  return {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    width: desktop ? 'min(84vw, 22em)' : '6.4em',
+    height: desktop ? 'min(68vh, 16em)' : '5em',
+    minHeight: 0,
+    fontSize: lockupSize,
+    transform: `translate(-50%, calc(-50% + ${primeDrop}))`,
+    touchAction: 'pan-y',
+    maskImage: mask,
+    WebkitMaskImage: mask,
+    maskComposite: 'intersect',
+    WebkitMaskComposite: 'source-in',
+  }
+}
+
+function useDesktopCloud() {
+  const [desktop, setDesktop] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const apply = () => setDesktop(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  return desktop
+}
+
 function Logo() {
   const src = useWordmark()
 
@@ -39,41 +91,13 @@ function Logo() {
 
 /**
  * Closing viewport — dimmed star field, centered lockup, translucent contact band.
- * A black top veil matches the section above, then fades as this floor locks in.
+ * Enter timeline: veil fades, STAY unfolds, then PRIME assembles. PRIME unmounts on leave.
  */
 export default function SceneBasement() {
   const sectionRef = useRef<HTMLElement>(null)
   const veilRef = useRef<HTMLDivElement>(null)
-  const reduced = usePrefersReducedMotion()
-
-  useGSAP(
-    () => {
-      const veil = veilRef.current
-      const section = sectionRef.current
-      if (!veil || !section) return
-      if (reduced) {
-        gsap.set(veil, { opacity: 0 })
-        return
-      }
-      const port = section.closest<HTMLElement>('[data-cs-scroll]')
-      gsap.fromTo(
-        veil,
-        { opacity: 1 },
-        {
-          opacity: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            ...(port ? { scroller: port } : {}),
-            start: 'top bottom',
-            end: 'top top',
-            scrub: true,
-          },
-        },
-      )
-    },
-    { dependencies: [reduced] },
-  )
+  const { stayOn, primeOn } = useBasementIntro(sectionRef, veilRef)
+  const desktop = useDesktopCloud()
 
   return (
     <section
@@ -104,9 +128,56 @@ export default function SceneBasement() {
       <div className="absolute inset-x-0 top-0 z-[1] flex h-3/4 items-center justify-center px-5">
         <h2
           id="cs-basement-title"
-          className={`text-center ${lockupClass}`}
+          className={`flex items-center justify-center gap-[0.12em] text-center ${lockupClass}`}
         >
-          Stay <span className="text-[var(--cs-gold)]">Prime</span>
+          {stayOn ? (
+            <>
+              <FoldText
+                text="Stay"
+                splitBy="char"
+                hinge="top"
+                trigger="mount"
+                duration={stayFold.duration}
+                stagger={stayFold.stagger}
+                fontSize={lockupSize}
+                fontWeight={400}
+                color={palette.ice}
+                className="font-[family-name:var(--cs-display)] uppercase"
+                style={{
+                  letterSpacing: 'var(--cs-track-display)',
+                  lineHeight: 'var(--cs-lead-display)',
+                }}
+              />
+              <span className="relative shrink-0" style={primeSlot}>
+                {primeOn ? (
+                  <ParticleText
+                    text="PRIME"
+                    color={palette.gold}
+                    highlightColor="#F6E7A8"
+                    particleSize={1.7}
+                    density={3}
+                    scatter={desktop ? 360 : 96}
+                    gatherDuration={1080}
+                    stagger={0}
+                    pointerRepel={22}
+                    repelRadius={desktop ? 140 : 100}
+                    idleDrift={0.22}
+                    glow
+                    trigger="mount"
+                    fontSize={lockupSize}
+                    fontWeight={400}
+                    fontFamily='"Bebas Neue", sans-serif'
+                    className="cs-prime-field"
+                    style={primeFieldStyle(desktop)}
+                  />
+                ) : (
+                  <span className="sr-only">Prime</span>
+                )}
+              </span>
+            </>
+          ) : (
+            <span className="sr-only">Stay Prime</span>
+          )}
         </h2>
       </div>
 

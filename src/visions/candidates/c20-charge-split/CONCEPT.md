@@ -31,7 +31,7 @@ Full-viewport 50/50 vertical split for the charge cell. After it, a full-bleed l
 7. **Locations** — full-viewport AccordionGallery as dimmed backdrop; venue title, map, and Book / Call / Telegram sit inside the active card
 8. **App** — almost-black; SideRays on the right; left caption + support + App Store / Play links for SENET ID; desktop phone mockup; mobile uses cropped top of portrait mockup at the bottom
 9. **Franchise** — Silk field; left lockup MAKE PRIME YOURS + franchise CTA; right GlassSurface proof card
-10. **Basement** — 1vh dimmed star field; centered “stay prime” (prime in gold); bottom quarter is a semi-transparent black band with logo, socials, and venue phones
+10. **Basement** — 1vh dimmed star field; on enter the veil fades, then STAY (FoldText), then PRIME (ParticleText, gold) assembles and unmounts off-screen; bottom quarter is a semi-transparent black band with logo, socials, and venue phones
 
 ## Motion signature
 1. Split-hold pin (GSAP) — 50/50 frame sticks while the right pane recuts
