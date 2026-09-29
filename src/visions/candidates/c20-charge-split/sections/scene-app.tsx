@@ -3,7 +3,7 @@ import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
 import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
-import { lockupClass, supportClass } from '../palette'
+import { lockupClass, supportClass } from '../lib/palette'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'

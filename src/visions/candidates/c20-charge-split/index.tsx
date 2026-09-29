@@ -2,7 +2,7 @@ import '@fontsource/bebas-neue/400.css'
 import '@fontsource/barlow/400.css'
 import '@fontsource/barlow/500.css'
 import '@fontsource/barlow/600.css'
-import './charge-split.css'
+import './styles/charge-split.css'
 
 import { useEffect, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
@@ -15,9 +15,9 @@ import SceneLocations from './sections/scene-locations'
 import SceneApp from './sections/scene-app'
 import SceneFranchiseV2 from './sections/scene-franchise-v2'
 import SceneBasement from './sections/scene-basement'
-import LazyScene from './lazy-scene'
-import { usePrefersReducedMotion } from './media'
-import { cssTokens } from './palette'
+import LazyScene from './components/lazy-scene'
+import { usePrefersReducedMotion } from './hooks/media'
+import { cssTokens } from './lib/palette'
 
 const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', node: <SceneExperienceV2 /> },

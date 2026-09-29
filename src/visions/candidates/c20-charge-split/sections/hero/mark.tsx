@@ -1,4 +1,4 @@
-import { useWordmark } from '../../wordmark'
+import { useWordmark } from '../../hooks/wordmark'
 
 /**
  * Crop to the wordmark and lift the black plate so the letters sit on the video.

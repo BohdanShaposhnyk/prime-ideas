@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import primeLogo from './assets/01_prime-logo.png'
+import primeLogo from '../assets/01_prime-logo.png'
 
 /** Wordmark bounds inside the 1290×790 black plate. */
 const MARK = { x: 229, y: 268, w: 832, h: 192 } as const

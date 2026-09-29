@@ -1,9 +1,9 @@
 import BorderGlow from '@/shared/bits/BorderGlow'
 import MicroSlats from '@/shared/bits/MicroSlats'
-import { BookNightButton } from '../book-night'
-import { useInView } from '../in-view'
-import { usePrefersReducedMotion } from '../media'
-import { kickerClass, lockupClass, supportClass, violet } from '../palette'
+import { BookNightButton } from '../components/book-night'
+import { useInView } from '../hooks/in-view'
+import { usePrefersReducedMotion } from '../hooks/media'
+import { kickerClass, lockupClass, supportClass, violet } from '../lib/palette'
 
 const OFFERS = [
   {

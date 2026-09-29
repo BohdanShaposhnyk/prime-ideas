@@ -5,8 +5,8 @@ import seats from '../assets/cinema/seats.webp'
 import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
-import { FilmGrain } from '../grain'
-import { supportClass } from '../palette'
+import { FilmGrain } from '../components/grain'
+import { supportClass } from '../lib/palette'
 
 const HOLD_W = 1
 const ROLL_W = 1.85

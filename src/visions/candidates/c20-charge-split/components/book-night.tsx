@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import SpecularButton, { type SpecularButtonProps } from '@/shared/bits/SpecularButton'
-import { BOOKING_URL } from './booking'
-import { useCoarsePointer } from './media'
-import { ctaClass, specularInk } from './palette'
+import { useCoarsePointer } from '../hooks/media'
+import { BOOKING_URL } from '../lib/booking'
+import { ctaClass, specularInk } from '../lib/palette'
 
 export function BookNightButton({
   size = 'md',

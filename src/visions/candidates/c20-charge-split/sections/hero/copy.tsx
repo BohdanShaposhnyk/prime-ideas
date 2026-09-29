@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 import SplitText from '@/shared/bits/SplitText'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
-import { BookNightButton } from '../../book-night'
-import { usePrefersReducedMotion } from '../../media'
-import { kickerClass, lockupClass, supportClass } from '../../palette'
+import { BookNightButton } from '../../components/book-night'
+import { usePrefersReducedMotion } from '../../hooks/media'
+import { kickerClass, lockupClass, supportClass } from '../../lib/palette'
 
 export function HeroCopy() {
   const copyRef = useRef<HTMLDivElement>(null)

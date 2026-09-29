@@ -1,4 +1,3 @@
-import { useMediaQuery } from '../media'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/shared/bits/DriftWall'
 import barParty from '../assets/bar/bar-party.webp'
@@ -15,7 +14,8 @@ import hookahGirl from '../assets/hookah/hookah-girl.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
-import { ctaClass, palette, supportClass } from '../palette'
+import { useMediaQuery } from '../hooks/media'
+import { ctaClass, palette, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 

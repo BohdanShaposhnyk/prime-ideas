@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Phone } from 'lucide-react'
 import AccordionGallery from '@/shared/bits/AccordionGallery'
-import { BookNightButton } from '../book-night'
-import { TelegramIcon } from '../icons'
-import { ctaClass, palette } from '../palette'
-import { VENUES, type Venue } from '../venues'
+import { BookNightButton } from '../components/book-night'
+import { TelegramIcon } from '../components/icons'
+import { ctaClass, palette } from '../lib/palette'
+import { VENUES, type Venue } from '../lib/venues'
 
 const DEFAULT_INDEX = 1
 

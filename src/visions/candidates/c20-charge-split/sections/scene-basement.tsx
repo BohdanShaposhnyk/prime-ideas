@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
-import { InstagramIcon, TelegramIcon } from '../icons'
-import { usePrefersReducedMotion } from '../media'
-import { useWordmark, wordmarkAspect } from '../wordmark'
-import { VENUES } from '../venues'
+import { InstagramIcon, TelegramIcon } from '../components/icons'
+import { usePrefersReducedMotion } from '../hooks/media'
+import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
+import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.jpg'
 
 const SOCIALS = [

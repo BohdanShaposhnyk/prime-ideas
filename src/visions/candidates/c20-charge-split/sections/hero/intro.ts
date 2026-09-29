@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { gsap, useGSAP } from '@/shared/lib/gsap'
-import { violet } from '../../palette'
-import { usePrefersReducedMotion } from '../../media'
+import { usePrefersReducedMotion } from '../../hooks/media'
+import { violet } from '../../lib/palette'
 import { applyVignette, VIGNETTE_FROM, VIGNETTE_TO, type Vignette } from './vignette'
 
 export const REVEAL_S = 1.1
