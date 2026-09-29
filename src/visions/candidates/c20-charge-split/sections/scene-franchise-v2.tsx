@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/shared/bits/DriftWall'
 import barParty from '../assets/bar/bar-party.webp'
@@ -106,7 +107,27 @@ const WALL_COLUMNS = 3
 const PROOF_ROW = 1
 const WALL_ITEMS = buildWallItems(WALL_COLUMNS, PROOF_ROW)
 
+const NARROW_WALL = '(max-width: 767px)'
+
+/** Phone tiles are smaller so the three diagonal rows fit the viewport. */
+function useNarrowWall() {
+  const [narrow, setNarrow] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(NARROW_WALL).matches : false,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(NARROW_WALL)
+    const onChange = () => setNarrow(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return narrow
+}
+
 export default function SceneFranchiseV2() {
+  const narrow = useNarrowWall()
   return (
     <section
       aria-labelledby="cs-franchise-v2-title"
@@ -117,10 +138,10 @@ export default function SceneFranchiseV2() {
         <DriftWall
           items={WALL_ITEMS}
           columns={WALL_COLUMNS}
-          tileWidth={176}
-          tileHeight={268}
-          gap={14}
-          radius={14}
+          tileWidth={narrow ? 88 : 176}
+          tileHeight={narrow ? 134 : 268}
+          gap={narrow ? 10 : 14}
+          radius={narrow ? 10 : 14}
           roll={50}
           tilt={18}
           turn={-16}
@@ -134,7 +155,7 @@ export default function SceneFranchiseV2() {
           dim={0.9}
           grayscale={false}
           overlayColor="transparent"
-          className="h-full w-full origin-top-right scale-[1.18]"
+          className="h-full w-full origin-top-right max-md:translate-x-[16%] max-md:translate-y-[2%] md:scale-[1.18]"
         />
       </div>
 
@@ -150,7 +171,7 @@ export default function SceneFranchiseV2() {
 
       <div className="relative z-10 mx-auto flex h-full max-w-[88rem] px-5 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
         <div className="grid h-full w-full grid-cols-1 items-start gap-6 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-start gap-8 md:justify-between md:gap-0">
+          <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-end gap-6 md:justify-between md:gap-0">
             <h2
               id="cs-franchise-v2-title"
               className="font-[family-name:var(--cs-display)] text-[clamp(2.6rem,11vw,3.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] text-[var(--cs-ice)] uppercase md:text-[clamp(4.6rem,21dvh,8.2rem)]"
@@ -166,10 +187,10 @@ export default function SceneFranchiseV2() {
               </p>
               <a
                 href={FRANCHISE_MAIL}
-                className={`mt-4 inline-flex items-center gap-3 rounded-full bg-[var(--cs-ice)] px-7 py-3 text-[var(--cs-pitch)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] sm:px-8 sm:py-3.5 md:mt-8 ${ctaClass}`}
+                className={`mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--cs-ice)] px-6 py-3 leading-none text-[var(--cs-pitch)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] md:mt-8 ${ctaClass}`}
               >
                 Open Prime
-                <ArrowRight className="size-5 shrink-0 sm:size-6" aria-hidden />
+                <ArrowRight className="size-4 shrink-0" aria-hidden />
               </a>
             </div>
           </div>
