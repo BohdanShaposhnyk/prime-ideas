@@ -83,8 +83,8 @@ export default function SceneApp() {
           speed={2.4}
           rayColor1="#7EA0FF"
           rayColor2="#D4C4FF"
-          intensity={3.2}
-          spread={2.8}
+          intensity={2.2}
+          spread={0.8}
           origin="top-right"
           tilt={-12}
           saturation={1.4}
