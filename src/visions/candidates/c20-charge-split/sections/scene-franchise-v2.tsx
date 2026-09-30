@@ -7,15 +7,19 @@ import projectorWide from '../assets/cinema/projector-2.webp'
 import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
 import gamerGirlLight from '../assets/gaming/gamer-girl-light-hor.webp'
 import keyboardHor from '../assets/gaming/keyboard-hor.webp'
+import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
+import smoking from '../assets/hookah/smoking.webp'
+import seats from '../assets/cinema/seats.webp'
+import pcParty from '../assets/gaming/pc-party.webp'
 import { useMediaQuery } from '../hooks/media'
 import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 
-const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime'] as const
+const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime', 'Navi partner'] as const
 
 const WALL_IMAGES = [
   { src: barPartyHor, title: 'Bar night' },
@@ -26,6 +30,10 @@ const WALL_IMAGES = [
   { src: gamerGirlHor, title: 'Play' },
   { src: micPurple, title: 'Mic' },
   { src: projectorWide, title: 'Cinema' },
+  { src: smoking, title: 'Smoke' },
+  { src: seats, title: 'Seats' },
+  { src: pcParty, title: 'Party' },
+  { src: micGold, title: 'Gold mic' },
 ] as const
 
 /** Same breaks the photo tiles use: two lines, so the long side of the card can hold each one. */
@@ -43,25 +51,26 @@ function proofLabel(title: string) {
 }
 
 /**
- * Round-robin fills columns. Cards are portrait so the long side follows the
- * column, which is the travel axis. Proofs sit on column index 1.
+ * Every belt holds four cards, one full proof pass. Stills are dealt in order
+ * with no wrap, so the repeated copy is that same four.
  */
 function buildWallItems(columns: number, proofRow: number): DriftWallItem[] {
-  const total = WALL_IMAGES.length + PROOFS.length * 2
+  const perBelt = PROOFS.length
+  const total = columns * perBelt
   const items: DriftWallItem[] = []
   let imageIndex = 0
   let proofIndex = 0
 
   for (let i = 0; i < total; i++) {
     if (i % columns === proofRow) {
-      const title = PROOFS[proofIndex % PROOFS.length]
+      const title = PROOFS[proofIndex]
       items.push({
         label: proofLabel(title),
         title,
       })
       proofIndex += 1
     } else {
-      const media = WALL_IMAGES[imageIndex % WALL_IMAGES.length]
+      const media = WALL_IMAGES[imageIndex]
       items.push({ image: media.src, title: media.title })
       imageIndex += 1
     }

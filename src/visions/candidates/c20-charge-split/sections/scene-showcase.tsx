@@ -175,7 +175,7 @@ export default function SceneShowcase() {
         </h2>
         <div
           aria-live="polite"
-          className="pointer-events-none absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[6%] sm:left-[6%] sm:w-[min(88vw,36rem)]"
+          className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]"
         >
           <p
             data-copy="caption"
