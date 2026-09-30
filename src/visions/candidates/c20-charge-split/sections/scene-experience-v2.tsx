@@ -1,5 +1,6 @@
 import BorderGlow from '@/shared/bits/BorderGlow'
 import MicroSlats from '@/shared/bits/MicroSlats'
+import SplitFlapText from '@/shared/bits/SplitFlapText'
 import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
@@ -42,6 +43,9 @@ const GLOW = {
   colors: [violet.accent, violet.glint, violet.void],
 } as const
 
+/** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
+const VENUE_VERBS = ['PLAY', 'DRINK', 'EAT', 'CHILL', 'SING'] as const
+
 const glassClass =
   'backdrop-blur-[18px] backdrop-brightness-75 backdrop-saturate-[0.6] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
 
@@ -58,7 +62,27 @@ function ExperienceCopy() {
       <p className="mt-3 max-w-[26rem] font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mt-4 sm:text-[1.02rem]">
         Everything a good night out needs, brought together under one roof.
       </p>
-      <div className="mt-6 sm:mt-8">
+      <div className="mt-5 w-fit max-w-full sm:mt-6">
+        <p className="sr-only">Play, drink, eat, chill, sing</p>
+        <SplitFlapText
+          aria-hidden
+          words={[...VENUE_VERBS]}
+          loop
+          charset="alpha"
+          padTo={5}
+          flipsPerChar={5}
+          flipDuration={0.1}
+          stagger={0.045}
+          cycleDelay={2000}
+          tileColor="#161222"
+          textColor="#F4F7FF"
+          tileRadius={6}
+          gap="0.1em"
+          fontSize="clamp(2.15rem, 4.4vw, 2.85rem)"
+          className="max-w-full gap-[0.1em]"
+        />
+      </div>
+      <div className="mt-5 sm:mt-6">
         <BookNightButton />
       </div>
     </div>
