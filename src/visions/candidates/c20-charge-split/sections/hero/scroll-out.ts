@@ -10,8 +10,8 @@ function shape(raw: number) {
 }
 
 /**
- * Scroll-out parallax. The hero track is taller than the viewport and the
- * frame sticks, so leaving it scrubs `--cs-out` from 0 to 1.
+ * Scroll-out parallax. Leaving the hero scrubs `--cs-out` from 0 to 1
+ * across the one screen of travel, front-loaded so the zoom reads on the way out.
  */
 export function useHeroScrollOut(rootRef: RefObject<HTMLElement | null>, enabled: boolean) {
   useEffect(() => {

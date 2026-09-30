@@ -26,10 +26,10 @@ html.cs-snap-root body {
 .cs-scene {
   height: var(--cs-h, 100svh);
 }
-/* Hero exit is a short sticky runway. The frame holds while the track scrolls,
-   and --cs-out (0→1) splits the reel, the type, and the mark. */
+/* One port tall, same as every other scene, so one flick reaches the next snap.
+   --cs-out (0→1) still scrubs the reel, the type, and the mark across that leave. */
 .cs-scene.cs-hero-track {
-  height: calc(var(--cs-h, 100svh) * 1.48);
+  height: var(--cs-h, 100svh);
   overflow: visible;
 }
 .cs-hero-frame {
@@ -60,7 +60,7 @@ html.cs-snap-root body {
 .cs-snap-port.cs-snap [data-scene] {
   scroll-snap-align: start;
 }
-.cs-snap-port.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
+.cs-snap-port.cs-snap [data-scene]:not([data-scene="showcase"]) {
   scroll-snap-stop: always;
 }
 @media (prefers-reduced-motion: reduce) {

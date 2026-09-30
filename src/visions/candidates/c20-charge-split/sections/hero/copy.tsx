@@ -45,7 +45,7 @@ export function HeroCopy() {
           data-hero-extra=""
           className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
         >
-          Official NAVI partner
+          Official <span className="text-[var(--cs-gold)] italic">NAVI</span> partner
         </p>
         <SplitText
           text="enter your prime"
