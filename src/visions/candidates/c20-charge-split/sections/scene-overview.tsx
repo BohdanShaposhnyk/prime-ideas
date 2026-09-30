@@ -162,9 +162,8 @@ export default function SceneOverview() {
         startHeight={frame.height}
         startRadius={frame.radius}
         endRadius={0}
-        scrollDistance={0.42}
         holdDistance={0}
-        smoothing={0.18}
+        smoothing={0.52}
         className="bg-[var(--cs-pitch)]"
         stageOverlay={<TypeBelt cycle={cycle} />}
       >

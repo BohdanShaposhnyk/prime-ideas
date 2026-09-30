@@ -60,7 +60,7 @@ html.cs-snap-root body {
 .cs-snap-port.cs-snap [data-scene] {
   scroll-snap-align: start;
 }
-.cs-snap-port.cs-snap [data-scene]:not([data-scene="showcase"]) {
+.cs-snap-port.cs-snap [data-scene]:not([data-scene="overview"]):not([data-scene="showcase"]) {
   scroll-snap-stop: always;
 }
 @media (prefers-reduced-motion: reduce) {

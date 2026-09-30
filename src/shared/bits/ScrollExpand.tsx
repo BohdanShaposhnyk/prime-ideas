@@ -53,9 +53,10 @@ export interface ScrollExpandProps {
   overlayScrim?: number;
   useWindowScroll?: boolean;
   /**
-   * Progress runs on the way into the snap, not after it.
-   * 0 while the track sits farther than `scrollDistance` viewports below the port,
-   * 1 once the track is seated. `scrollDistance` is that tail and does not add height.
+   * After a flick settles on this scene, play the expand once.
+   * Scroll itself is left alone (so a hero exit parallax is not sharing frames
+   * with the clip). `smoothing` is the playback length in seconds.
+   * `scrollDistance` does not add track height.
    */
   expandOnApproach?: boolean;
   enabled?: boolean;
@@ -227,18 +228,122 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       if (!c.enabled) return 1;
       const span = stageH * Math.max(0.01, c.scrollDistance);
       if (c.useWindowScroll) {
-        const scroller = pageScroller(root, true);
-        const portTop = scroller instanceof HTMLElement ? scroller.getBoundingClientRect().top : 0;
-        const top = track.getBoundingClientRect().top - portTop;
-        if (c.expandOnApproach) return clamp((span - top) / span, 0, 1);
+        const top = track.getBoundingClientRect().top;
         return clamp(-top / span, 0, 1);
-      }
-      if (c.expandOnApproach) {
-        const top = track.getBoundingClientRect().top - root.getBoundingClientRect().top;
-        return clamp((span - top) / span, 0, 1);
       }
       return clamp(root.scrollTop / span, 0, 1);
     };
+
+    if (expandOnApproach) {
+      let played = false;
+      let arrival = 0;
+      let ratio = 0;
+      let quiet: number[] = [];
+      const scroller = pageScroller(root, useWindowScroll);
+      const portEl = scroller instanceof HTMLElement ? scroller : null;
+
+      const stopArrival = () => {
+        if (arrival) cancelAnimationFrame(arrival);
+        arrival = 0;
+      };
+
+      const clearQuiet = () => {
+        for (const id of quiet) window.clearTimeout(id);
+        quiet = [];
+      };
+
+      /** One geometry read. Not called from the scroll event itself. */
+      const trackTop = () => {
+        const portTop = portEl ? portEl.getBoundingClientRect().top : 0;
+        const portH = portEl && portEl.clientHeight > 0 ? portEl.clientHeight : window.innerHeight;
+        return { top: track.getBoundingClientRect().top - portTop, portH };
+      };
+
+      const playArrival = () => {
+        if (!propsRef.current.enabled) {
+          stopArrival();
+          current = 1;
+          applyProgress(1);
+          played = true;
+          return;
+        }
+        if (played) return;
+        played = true;
+        const from = current;
+        const t0 = performance.now();
+        const ms = reduceMotion ? 0 : Math.round(clamp(propsRef.current.smoothing, 0.36, 0.85) * 1000);
+        const step = (now: number) => {
+          const t = ms <= 0 ? 1 : Math.min(1, (now - t0) / ms);
+          const e = t * t * (3 - 2 * t);
+          current = from + (1 - from) * e;
+          applyProgress(current);
+          arrival = t < 1 ? requestAnimationFrame(step) : 0;
+        };
+        stopArrival();
+        arrival = requestAnimationFrame(step);
+      };
+
+      const onQuiet = () => {
+        const { top, portH } = trackTop();
+        if (top > portH * 0.72) {
+          ratio = 0;
+          if (played || current > 0.001) {
+            stopArrival();
+            played = false;
+            current = 0;
+            applyProgress(0);
+          }
+          return;
+        }
+        // Prefer a settled snap. A high intersection covers an iOS commit
+        // whose rect is still a few pixels short of the snap line.
+        const seated = top <= portH * 0.2 || (ratio >= 0.9 && top <= portH * 0.4);
+        if (seated) playArrival();
+      };
+
+      const poke = () => {
+        clearQuiet();
+        quiet = [120, 480].map((ms) => window.setTimeout(onQuiet, ms));
+      };
+
+      const onArrive = (entries: IntersectionObserverEntry[]) => {
+        const entry = entries[entries.length - 1];
+        if (!entry) return;
+        ratio = entry.intersectionRatio;
+        if (ratio >= 0.6 || ratio <= 0.15) poke();
+      };
+
+      measure();
+      current = propsRef.current.enabled ? 0 : 1;
+      applyProgress(current);
+      if (!propsRef.current.enabled) played = true;
+
+      const io = new IntersectionObserver(onArrive, {
+        root: portEl,
+        threshold: [0, 0.15, 0.6, 0.92],
+      });
+      io.observe(stage);
+
+      scroller.addEventListener('scroll', poke, { passive: true });
+      scroller.addEventListener('scrollend', poke);
+      window.addEventListener('resize', measure);
+      const vv = window.visualViewport;
+      vv?.addEventListener('resize', measure);
+      const ro = new ResizeObserver(measure);
+      if (portEl) ro.observe(portEl);
+      poke();
+
+      return () => {
+        clearQuiet();
+        stopArrival();
+        io.disconnect();
+        scroller.removeEventListener('scroll', poke);
+        scroller.removeEventListener('scrollend', poke);
+        window.removeEventListener('resize', measure);
+        vv?.removeEventListener('resize', measure);
+        ro.disconnect();
+      };
+    }
 
     const tick = () => {
       const c = propsRef.current;

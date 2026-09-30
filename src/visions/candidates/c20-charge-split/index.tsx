@@ -37,7 +37,8 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
  * iOS WebKit shortens flicks under mandatory snap. While a tall scene covers the
  * port, snap is lifted so the flick can travel. A downward overshoot stops on the
  * last frame; upward scroll is left alone so the previous scene stays reachable.
- * Overview is one screen: its expand plays on the way in and the snap rests expanded.
+ * Overview is one screen. Its expand plays after the flick settles, so the hero
+ * exit parallax is not sharing frames with the clip.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
