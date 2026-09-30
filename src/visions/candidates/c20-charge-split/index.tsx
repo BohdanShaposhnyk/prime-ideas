@@ -35,8 +35,8 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
  * inside oversized snap areas; 1-screen scenes use scroll-snap-stop: always.
  * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
  * iOS WebKit shortens flicks under mandatory snap. While a tall scene covers the
- * port, snap is lifted so the flick can travel, and the gesture is pinned at the
- * scene edge so the next one is a normal mandatory snap again.
+ * port, snap is lifted so the flick can travel. A downward overshoot stops on the
+ * last frame; upward scroll is left alone so the previous scene stays reachable.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -103,17 +103,15 @@ function bandCovering(bands: TallBand[], scrollTop: number) {
 
 /**
  * Drops mandatory snap only while overview / showcase still fill the port.
- * A flick that would leave is stopped on the last frame of that scene (or sent
- * back to the previous scene when it starts on the door), so 1-screen snap is
- * unchanged for the next gesture.
+ * Downward momentum that would leave is stopped on the last frame so the next
+ * gesture snaps one screen. Upward scroll is never rewritten.
  */
 function bindIosTallCoast(port: HTMLElement) {
-  let origin: { el: HTMLElement; nearStart: boolean } | null = null
+  let origin: HTMLElement | null = null
   let latched: HTMLElement | null = null
   let coastLatch = false
   let lastY = port.scrollTop
   let touching = false
-  let pinning = false
   let quiet = 0
 
   const remember = (scrollTop: number) => {
@@ -128,20 +126,11 @@ function bindIosTallCoast(port: HTMLElement) {
     if (!covering) latched = null
   }
 
-  const pinScroll = (y: number) => {
-    if (pinning || Math.abs(port.scrollTop - y) < 1) {
-      port.scrollTop = y
-      return
-    }
-    pinning = true
-    const prev = port.style.overflowY
-    port.style.overflowY = 'hidden'
-    port.scrollTop = y
-    requestAnimationFrame(() => {
-      port.style.overflowY = prev
-      port.scrollTop = y
-      pinning = false
-    })
+  const releaseCoast = () => {
+    origin = null
+    latched = null
+    coastLatch = false
+    port.classList.remove('cs-snap-coast')
   }
 
   const releaseOrigin = () => {
@@ -161,15 +150,13 @@ function bindIosTallCoast(port: HTMLElement) {
     window.clearTimeout(quiet)
     const band = bandCovering(tallBands(port), port.scrollTop)
     if (!band) {
-      origin = null
-      coastLatch = false
-      port.classList.remove('cs-snap-coast')
+      releaseCoast()
       return
     }
     port.classList.add('cs-snap-coast')
     latched = band.el
     coastLatch = true
-    origin = { el: band.el, nearStart: port.scrollTop < band.top + port.clientHeight * 0.45 }
+    origin = band.el
   }
 
   const onPointerUp = () => {
@@ -191,42 +178,19 @@ function bindIosTallCoast(port: HTMLElement) {
       scheduleRelease()
       return
     }
-    const bandEl = origin?.el ?? latched
-    if (bandEl && !pinning) {
+    const bandEl = origin ?? latched
+    if (bandEl) {
       const band = tallBands(port).find((item) => item.el === bandEl)
       const y = port.scrollTop
-      const nearStart = origin?.nearStart ?? startY < (band?.top ?? startY) + port.clientHeight * 0.45
       if (!band) {
-        origin = null
-        latched = null
-        coastLatch = false
-      } else if (y > band.end + 1) {
-        if (touching) port.scrollTop = band.end
-        else pinScroll(band.end)
+        releaseCoast()
       } else if (y < band.top - 1) {
-        const pastDoor = nearStart && band.top - y > 56
-        if (pastDoor) {
-          const scenes = [...port.querySelectorAll<HTMLElement>('[data-scene]')]
-          const index = scenes.indexOf(band.el)
-          const prev = index > 0 ? scenes[index - 1] : null
-          origin = null
-          latched = null
-          coastLatch = false
-          port.classList.remove('cs-snap-coast')
-          if (prev) {
-            const prevTop = prev.getBoundingClientRect().top - port.getBoundingClientRect().top + port.scrollTop
-            pinScroll(prevTop)
-          } else {
-            pinScroll(0)
-          }
-        } else if (touching) {
-          port.scrollTop = band.top
-        } else {
-          pinScroll(band.top)
-        }
+        releaseCoast()
+      } else if (y > band.end + 1 && y > startY) {
+        port.scrollTop = band.end
       }
     }
-    const covering = bandCovering(tallBands(port), port.scrollTop)
+    const covering = coastLatch ? bandCovering(tallBands(port), port.scrollTop) : null
     if (covering && coastLatch) {
       latched = covering.el
       port.classList.add('cs-snap-coast')
@@ -246,7 +210,6 @@ function bindIosTallCoast(port: HTMLElement) {
 
   return () => {
     window.clearTimeout(quiet)
-    port.style.overflowY = ''
     port.classList.remove('cs-snap-coast')
     port.removeEventListener('pointerdown', onPointerDown)
     port.removeEventListener('scroll', onScroll)
