@@ -34,6 +34,9 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
  * Tall scenes (overview / showcase) keep align-start so the UA can free-scroll
  * inside oversized snap areas; 1-screen scenes use scroll-snap-stop: always.
  * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
+ * iOS WebKit shortens flicks under mandatory snap. While a tall scene covers the
+ * port, snap is lifted so the flick can travel, and the gesture is pinned at the
+ * scene edge so the next one is a normal mandatory snap again.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -56,13 +59,201 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
     if (port) ro.observe(port)
     window.addEventListener('orientationchange', measure)
 
+    const unbindCoast = port && !reduced && isIosWebKit() ? bindIosTallCoast(port) : null
+
     return () => {
+      unbindCoast?.()
       html.classList.remove('cs-snap-root')
       port?.classList.remove('cs-snap')
+      port?.classList.remove('cs-snap-coast')
       ro.disconnect()
       window.removeEventListener('orientationchange', measure)
     }
   }, [reduced, portRef])
+}
+
+/** iPhone, iPod, iPad, and iPadOS desktop UA. Android / desktop stay on mandatory snap. */
+function isIosWebKit() {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  if (/iPad|iPhone|iPod/.test(ua)) return true
+  return navigator.maxTouchPoints > 1 && /Macintosh/.test(ua) && /AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua)
+}
+
+const TALL_SCENE = '[data-scene="overview"], [data-scene="showcase"]'
+
+type TallBand = { el: HTMLElement; top: number; end: number }
+
+function tallBands(port: HTMLElement): TallBand[] {
+  const height = port.clientHeight
+  if (height <= 0) return []
+  const portTop = port.getBoundingClientRect().top
+  const scrollTop = port.scrollTop
+  return [...port.querySelectorAll<HTMLElement>(TALL_SCENE)].flatMap((el) => {
+    const top = el.getBoundingClientRect().top - portTop + scrollTop
+    const end = top + el.offsetHeight - height
+    if (end <= top + 1) return []
+    return [{ el, top, end }]
+  })
+}
+
+function bandCovering(bands: TallBand[], scrollTop: number) {
+  return bands.find((band) => scrollTop >= band.top - 1 && scrollTop < band.end - 1) ?? null
+}
+
+/**
+ * Drops mandatory snap only while overview / showcase still fill the port.
+ * A flick that would leave is stopped on the last frame of that scene (or sent
+ * back to the previous scene when it starts on the door), so 1-screen snap is
+ * unchanged for the next gesture.
+ */
+function bindIosTallCoast(port: HTMLElement) {
+  let origin: { el: HTMLElement; nearStart: boolean } | null = null
+  let latched: HTMLElement | null = null
+  let coastLatch = false
+  let lastY = port.scrollTop
+  let touching = false
+  let pinning = false
+  let quiet = 0
+
+  const remember = (scrollTop: number) => {
+    const covering = bandCovering(tallBands(port), scrollTop)
+    if (covering) latched = covering.el
+    return covering
+  }
+
+  const syncCoast = () => {
+    const covering = remember(port.scrollTop) !== null
+    port.classList.toggle('cs-snap-coast', covering)
+    if (!covering) latched = null
+  }
+
+  const pinScroll = (y: number) => {
+    if (pinning || Math.abs(port.scrollTop - y) < 1) {
+      port.scrollTop = y
+      return
+    }
+    pinning = true
+    const prev = port.style.overflowY
+    port.style.overflowY = 'hidden'
+    port.scrollTop = y
+    requestAnimationFrame(() => {
+      port.style.overflowY = prev
+      port.scrollTop = y
+      pinning = false
+    })
+  }
+
+  const releaseOrigin = () => {
+    if (touching) return
+    origin = null
+    coastLatch = false
+    syncCoast()
+  }
+
+  const scheduleRelease = () => {
+    window.clearTimeout(quiet)
+    quiet = window.setTimeout(releaseOrigin, 400)
+  }
+
+  const onPointerDown = () => {
+    touching = true
+    window.clearTimeout(quiet)
+    const band = bandCovering(tallBands(port), port.scrollTop)
+    if (!band) {
+      origin = null
+      coastLatch = false
+      port.classList.remove('cs-snap-coast')
+      return
+    }
+    port.classList.add('cs-snap-coast')
+    latched = band.el
+    coastLatch = true
+    origin = { el: band.el, nearStart: port.scrollTop < band.top + port.clientHeight * 0.45 }
+  }
+
+  const onPointerUp = () => {
+    touching = false
+    scheduleRelease()
+  }
+
+  const onScrollEnd = () => {
+    if (touching) return
+    window.clearTimeout(quiet)
+    releaseOrigin()
+  }
+
+  const onScroll = () => {
+    const startY = lastY
+    if (origin || port.classList.contains('cs-snap-coast')) coastLatch = true
+    if (!coastLatch) {
+      lastY = port.scrollTop
+      scheduleRelease()
+      return
+    }
+    const bandEl = origin?.el ?? latched
+    if (bandEl && !pinning) {
+      const band = tallBands(port).find((item) => item.el === bandEl)
+      const y = port.scrollTop
+      const nearStart = origin?.nearStart ?? startY < (band?.top ?? startY) + port.clientHeight * 0.45
+      if (!band) {
+        origin = null
+        latched = null
+        coastLatch = false
+      } else if (y > band.end + 1) {
+        if (touching) port.scrollTop = band.end
+        else pinScroll(band.end)
+      } else if (y < band.top - 1) {
+        const pastDoor = nearStart && band.top - y > 56
+        if (pastDoor) {
+          const scenes = [...port.querySelectorAll<HTMLElement>('[data-scene]')]
+          const index = scenes.indexOf(band.el)
+          const prev = index > 0 ? scenes[index - 1] : null
+          origin = null
+          latched = null
+          coastLatch = false
+          port.classList.remove('cs-snap-coast')
+          if (prev) {
+            const prevTop = prev.getBoundingClientRect().top - port.getBoundingClientRect().top + port.scrollTop
+            pinScroll(prevTop)
+          } else {
+            pinScroll(0)
+          }
+        } else if (touching) {
+          port.scrollTop = band.top
+        } else {
+          pinScroll(band.top)
+        }
+      }
+    }
+    const covering = bandCovering(tallBands(port), port.scrollTop)
+    if (covering && coastLatch) {
+      latched = covering.el
+      port.classList.add('cs-snap-coast')
+    } else if (!covering) {
+      port.classList.remove('cs-snap-coast')
+    }
+    lastY = port.scrollTop
+    scheduleRelease()
+  }
+
+  syncCoast()
+  port.addEventListener('pointerdown', onPointerDown, { passive: true })
+  port.addEventListener('scroll', onScroll, { passive: true })
+  port.addEventListener('scrollend', onScrollEnd)
+  window.addEventListener('pointerup', onPointerUp, { passive: true })
+  window.addEventListener('pointercancel', onPointerUp, { passive: true })
+
+  return () => {
+    window.clearTimeout(quiet)
+    port.style.overflowY = ''
+    port.classList.remove('cs-snap-coast')
+    port.removeEventListener('pointerdown', onPointerDown)
+    port.removeEventListener('scroll', onScroll)
+    port.removeEventListener('scrollend', onScrollEnd)
+    window.removeEventListener('pointerup', onPointerUp)
+    window.removeEventListener('pointercancel', onPointerUp)
+  }
 }
 
 /**

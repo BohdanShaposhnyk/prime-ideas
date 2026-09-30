@@ -18,6 +18,11 @@ html.cs-snap-root body {
 .cs-snap-port.cs-snap {
   scroll-snap-type: y mandatory;
 }
+/* iOS only, and only while overview / showcase still fill the port.
+   1-screen scenes never receive this class, so their mandatory snap stays. */
+.cs-snap-port.cs-snap.cs-snap-coast {
+  scroll-snap-type: none;
+}
 .cs-scene {
   height: var(--cs-h, 100svh);
 }
