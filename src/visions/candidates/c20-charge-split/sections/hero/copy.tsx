@@ -38,39 +38,41 @@ export function HeroCopy() {
   return (
     <div
       ref={copyRef}
-      className={`pointer-events-none absolute bottom-[max(6rem,env(safe-area-inset-bottom))] left-1/2 z-20 flex w-[min(92vw,40rem)] -translate-x-1/2 flex-col items-center px-4 text-center sm:bottom-[max(3rem,env(safe-area-inset-bottom))]${goldLive ? ' cs-gold-live' : ''}`}
+      className={`pointer-events-none absolute bottom-[max(6rem,env(safe-area-inset-bottom))] left-1/2 z-20 w-[min(92vw,40rem)] -translate-x-1/2 px-4 sm:bottom-[max(3rem,env(safe-area-inset-bottom))]${goldLive ? ' cs-gold-live' : ''}`}
     >
-      <p
-        data-hero-extra=""
-        className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
-      >
-        Official NAVI partner
-      </p>
-      <SplitText
-        text="enter your prime"
-        splitType="words"
-        tag="p"
-        textAlign="center"
-        delay={90}
-        duration={0.85}
-        ease="power3.out"
-        from={{ opacity: 0, y: 36 }}
-        to={{ opacity: 1, y: 0 }}
-        threshold={0}
-        rootMargin="0px"
-        className={`${lockupClass} cs-gold-last`}
-      />
-      <p
-        data-hero-extra=""
-        className={`mt-3 max-w-[24rem] sm:mt-4 ${supportClass} ${quiet}`}
-      >
-        One night. Five ways to make it yours.
-      </p>
-      <div
-        data-hero-extra=""
-        className={`pointer-events-auto mt-6 sm:mt-8 ${quiet}`}
-      >
-        <BookNightButton />
+      <div className="cs-hero-copy flex flex-col items-center text-center">
+        <p
+          data-hero-extra=""
+          className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
+        >
+          Official NAVI partner
+        </p>
+        <SplitText
+          text="enter your prime"
+          splitType="words"
+          tag="p"
+          textAlign="center"
+          delay={90}
+          duration={0.85}
+          ease="power3.out"
+          from={{ opacity: 0, y: 36 }}
+          to={{ opacity: 1, y: 0 }}
+          threshold={0}
+          rootMargin="0px"
+          className={`${lockupClass} cs-gold-last`}
+        />
+        <p
+          data-hero-extra=""
+          className={`mt-3 max-w-[24rem] sm:mt-4 ${supportClass} ${quiet}`}
+        >
+          One night. Five ways to make it yours.
+        </p>
+        <div
+          data-hero-extra=""
+          className={`pointer-events-auto mt-6 sm:mt-8 ${quiet}`}
+        >
+          <BookNightButton />
+        </div>
       </div>
     </div>
   )
