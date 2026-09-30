@@ -302,3 +302,31 @@ html.cs-snap-root body {
     color: var(--cs-gold);
   }
 }
+
+/* Proof words in the franchise wall. The box is the card turned −90°, matching the
+   photos, so each line runs along the long side and Bebas on the page can draw it. */
+[data-scene='franchise-v2'] .dw-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--dw-tile-h);
+  height: var(--dw-tile-w);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  text-align: center;
+  font-family: var(--cs-display);
+  font-size: 1rem;
+  line-height: 0.85;
+  letter-spacing: var(--cs-track-display);
+  padding-inline: 0.35em;
+  text-transform: uppercase;
+  color: var(--cs-ice);
+}
+@media (min-width: 768px) {
+  [data-scene='franchise-v2'] .dw-label {
+    font-size: clamp(1.65rem, 2vw, 2.15rem);
+  }
+}

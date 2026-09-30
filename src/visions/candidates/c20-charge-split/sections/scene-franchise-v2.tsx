@@ -1,84 +1,50 @@
+import { useMemo } from 'react'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/shared/bits/DriftWall'
-import barParty from '../assets/bar/bar-party.webp'
 import barPartyHor from '../assets/bar/bar-party-hor.webp'
-import bottles from '../assets/bar/bottles.webp'
-import carsimGirl from '../assets/gaming/carsim-girl.webp'
-import carsimWheelLight from '../assets/gaming/carsim-wheel-light.webp'
-import controllerDark from '../assets/gaming/controller-dark-purple.webp'
+import projector from '../assets/cinema/projector.webp'
+import projectorWide from '../assets/cinema/projector-2.webp'
+import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
 import gamerGirlLight from '../assets/gaming/gamer-girl-light-hor.webp'
 import keyboardHor from '../assets/gaming/keyboard-hor.webp'
-import pcParty from '../assets/gaming/pc-party.webp'
-import hookahCoal from '../assets/hookah/hookah-coal.webp'
-import hookahGirl from '../assets/hookah/hookah-girl.webp'
-import micGold from '../assets/karaoke/mic-gold.webp'
 import micPurple from '../assets/karaoke/mic-purple.webp'
 import singerHor from '../assets/karaoke/singer-hor.webp'
 import { useMediaQuery } from '../hooks/media'
 import { GoldWord } from '../components/gold-word'
-import { ctaClass, lockupClass, palette, supportClass } from '../lib/palette'
+import { ctaClass, lockupClass, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 
 const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime'] as const
 
 const WALL_IMAGES = [
-  { src: bottles, title: 'Bar' },
-  { src: gamerGirlLight, title: 'Arena' },
-  { src: hookahCoal, title: 'Hookah' },
-  { src: micGold, title: 'Karaoke' },
   { src: barPartyHor, title: 'Bar night' },
-  { src: carsimWheelLight, title: 'Sim' },
+  { src: gamerGirlLight, title: 'Arena' },
   { src: singerHor, title: 'Stage' },
   { src: keyboardHor, title: 'Keys' },
-  { src: hookahGirl, title: 'Lounge' },
-  { src: pcParty, title: 'Party' },
+  { src: projector, title: 'Screen' },
+  { src: gamerGirlHor, title: 'Play' },
   { src: micPurple, title: 'Mic' },
-  { src: barParty, title: 'Crowd' },
-  { src: controllerDark, title: 'Play' },
-  { src: carsimGirl, title: 'Drive' },
+  { src: projectorWide, title: 'Cinema' },
 ] as const
 
-/**
- * Landscape type lockup rotated into the portrait tile so copy reads along the
- * long edge (landscape relative to the card).
- */
-function proofImage(title: string): string {
-  const lines = wrapTitle(title)
-  const lineH = 78
-  const blockH = lines.length * lineH
-  const titleNodes = lines
-    .map(
-      (line, i) =>
-        `<text x="0" y="${i * lineH + lineH * 0.72}" text-anchor="middle" fill="${palette.ice}" font-family="Bebas Neue, Impact, sans-serif" font-size="68" letter-spacing="1.5">${escapeXml(line)}</text>`,
-    )
-    .join('')
-  const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="720" viewBox="0 0 480 720">
-  <rect width="480" height="720" fill="${palette.pitch}"/>
-  <g transform="translate(240 360) rotate(-90) translate(0 ${-blockH / 2})">
-    ${titleNodes}
-  </g>
-</svg>`.trim()
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
-}
-
-function wrapTitle(title: string) {
+/** Same breaks the photo tiles use: two lines, so the long side of the card can hold each one. */
+function proofLabel(title: string) {
   if (title.includes('. ')) {
-    return title.split('. ').map((part, i, all) => (i < all.length - 1 ? `${part}.` : part))
+    return title
+      .split('. ')
+      .map((part, i, all) => (i < all.length - 1 ? `${part}.` : part))
+      .join('\n')
   }
   const words = title.split(' ')
-  if (words.length <= 2) return [title]
-  return [words.slice(0, 2).join(' '), words.slice(2).join(' ')]
-}
-
-function escapeXml(value: string) {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  if (words.length <= 1) return title
+  if (words.length === 2) return words.join('\n')
+  return `${words.slice(0, 2).join(' ')}\n${words.slice(2).join(' ')}`
 }
 
 /**
- * Round-robin fills columns; with roll=50° columns read as rows top→bottom.
- * Proofs sit in the 2nd row (column index 1).
+ * Round-robin fills columns. Cards are portrait so the long side follows the
+ * column, which is the travel axis. Proofs sit on column index 1.
  */
 function buildWallItems(columns: number, proofRow: number): DriftWallItem[] {
   const total = WALL_IMAGES.length + PROOFS.length * 2
@@ -90,7 +56,7 @@ function buildWallItems(columns: number, proofRow: number): DriftWallItem[] {
     if (i % columns === proofRow) {
       const title = PROOFS[proofIndex % PROOFS.length]
       items.push({
-        image: proofImage(title),
+        label: proofLabel(title),
         title,
       })
       proofIndex += 1
@@ -104,32 +70,66 @@ function buildWallItems(columns: number, proofRow: number): DriftWallItem[] {
   return items
 }
 
-const WALL_COLUMNS = 3
 const PROOF_ROW = 1
-const WALL_ITEMS = buildWallItems(WALL_COLUMNS, PROOF_ROW)
-
 const NARROW_WALL = '(max-width: 767px)'
 
 export default function SceneFranchiseV2() {
   const narrow = useMediaQuery(NARROW_WALL)
+  const columns = narrow ? 4 : 3
+  const items = useMemo(() => buildWallItems(columns, PROOF_ROW), [columns])
   return (
     <section
       aria-labelledby="cs-franchise-v2-title"
       data-scene="franchise-v2"
-      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      className="cs-scene relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)] md:block"
     >
-      <div data-placeholder="visual" className="absolute inset-0" aria-hidden>
+      {/* Desktop veil opens the top-right so the wall reads beside the lockup. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] hidden md:block"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(ellipse 110% 105% at 100% -5%, transparent 0%, transparent 34%, rgba(0,0,0,0.28) 52%, rgba(0,0,0,0.72) 68%, #000 82%)',
+        }}
+      />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-[88rem] shrink-0 items-start px-5 pt-10 sm:px-8 md:h-full md:items-center md:py-12 lg:px-12 lg:py-14">
+        <div className="grid w-full grid-cols-1 md:grid-cols-2 md:gap-12 lg:gap-16">
+          <div className="flex min-w-0 flex-col items-start gap-6 md:gap-10 lg:gap-12">
+            <div>
+              <h2 id="cs-franchise-v2-title" className={lockupClass}>
+                <span className="block">Make</span>
+                <GoldWord block>Prime</GoldWord>
+                <span className="block">yours</span>
+              </h2>
+              <p className={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`}>
+                Bring the Prime experience to your city.
+              </p>
+            </div>
+            <a
+              href={FRANCHISE_MAIL}
+              className={`inline-flex items-center gap-2 rounded-full bg-[var(--cs-ice)] px-6 py-3 leading-none text-[var(--cs-pitch)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] ${ctaClass}`}
+            >
+              Open Prime
+              <ArrowRight className="size-4 shrink-0" aria-hidden />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: horizontal band in the space under the CTA. Desktop: full-bleed wall. */}
+      <div data-placeholder="visual" className="relative min-h-0 flex-1 md:absolute md:inset-0" aria-hidden>
         <DriftWall
-          items={WALL_ITEMS}
-          columns={WALL_COLUMNS}
-          tileWidth={narrow ? 88 : 176}
-          tileHeight={narrow ? 134 : 268}
+          items={items}
+          columns={columns}
+          tileWidth={narrow ? 78 : 176}
+          tileHeight={narrow ? 119 : 268}
           gap={narrow ? 10 : 14}
           radius={narrow ? 10 : 14}
-          roll={50}
-          tilt={18}
+          roll={narrow ? 75 : 50}
+          tilt={narrow ? 0 : 18}
           turn={-16}
-          perspective={1380}
+          perspective={narrow ? 2000 : 1380}
           depth={140}
           speed={34}
           variance={0.42}
@@ -139,46 +139,20 @@ export default function SceneFranchiseV2() {
           dim={0.9}
           grayscale={false}
           overlayColor="transparent"
-          className="h-full w-full origin-top-right max-md:translate-x-[16%] max-md:translate-y-[2%] md:scale-[1.18]"
+          className="h-full w-full [&_img]:-rotate-90 [&_img]:scale-[1.52] md:origin-top-right md:scale-[1.18]"
+          style={
+            narrow
+              ? {
+                  maskImage:
+                    'linear-gradient(to bottom, transparent 0%, #000 35%, #000 60%, transparent 100%), linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%)',
+                  WebkitMaskImage:
+                    'linear-gradient(to bottom, transparent 0%, #000 35%, #000 60%, transparent 100%), linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%)',
+                  maskComposite: 'intersect',
+                  WebkitMaskComposite: 'source-in',
+                }
+              : undefined
+          }
         />
-      </div>
-
-      {/* Soft black veil — open in the top-right quarter so the wall reads through */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[1]"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(ellipse 110% 105% at 100% -5%, transparent 0%, transparent 34%, rgba(0,0,0,0.28) 52%, rgba(0,0,0,0.72) 68%, #000 82%)',
-        }}
-      />
-
-      <div className="relative z-10 mx-auto flex h-full max-w-[88rem] px-5 py-8 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
-        <div className="grid h-full w-full grid-cols-1 items-start gap-6 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <div className="flex h-full min-h-0 min-w-0 flex-col items-start justify-end gap-6 md:justify-between md:gap-0">
-            <h2
-              id="cs-franchise-v2-title"
-              className={lockupClass}
-            >
-              <span className="block">Make</span>
-              <GoldWord block>Prime</GoldWord>
-              <span className="block">yours</span>
-            </h2>
-
-            <div className="flex w-full flex-col items-start">
-              <p className={`max-w-[28rem] ${supportClass}`}>
-                Bring the Prime experience to your city.
-              </p>
-              <a
-                href={FRANCHISE_MAIL}
-                className={`mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--cs-ice)] px-6 py-3 leading-none text-[var(--cs-pitch)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] md:mt-8 ${ctaClass}`}
-              >
-                Open Prime
-                <ArrowRight className="size-4 shrink-0" aria-hidden />
-              </a>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   )

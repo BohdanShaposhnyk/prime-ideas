@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 
 export interface DriftWallItem {
-  image: string;
+  image?: string;
   title?: string;
+  /** Real type in the tile. Newlines are separate lines. */
+  label?: string;
   href?: string;
 }
 
@@ -299,14 +301,24 @@ const DriftWall = ({
   const renderTile = (item: DriftWallItem, id: string, colIndex: number) => {
     const inner = (
       <span className={innerClass}>
-        <img
-          src={item.image}
-          alt={item.title ?? ''}
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-          className={imgClass}
-        />
+        {item.label ? (
+          <span className="dw-label">
+            {item.label.split('\n').map((line, i) => (
+              <span key={i} className="block">
+                {line}
+              </span>
+            ))}
+          </span>
+        ) : (
+          <img
+            src={item.image}
+            alt={item.title ?? ''}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className={imgClass}
+          />
+        )}
         <span className={overlayClass} aria-hidden="true" />
       </span>
     );
