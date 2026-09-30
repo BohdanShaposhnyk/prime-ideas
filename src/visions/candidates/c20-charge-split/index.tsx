@@ -31,12 +31,13 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
 
 /**
  * Snap lives on a viewport-sized port, not the document.
- * Tall scenes (overview / showcase) keep align-start so the UA can free-scroll
+ * Tall scenes (showcase) keep align-start so the UA can free-scroll
  * inside oversized snap areas; 1-screen scenes use scroll-snap-stop: always.
  * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
  * iOS WebKit shortens flicks under mandatory snap. While a tall scene covers the
  * port, snap is lifted so the flick can travel. A downward overshoot stops on the
  * last frame; upward scroll is left alone so the previous scene stays reachable.
+ * Overview is one screen: its expand plays on the way in and the snap rests expanded.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -80,7 +81,7 @@ function isIosWebKit() {
   return navigator.maxTouchPoints > 1 && /Macintosh/.test(ua) && /AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua)
 }
 
-const TALL_SCENE = '[data-scene="overview"], [data-scene="showcase"]'
+const TALL_SCENE = '[data-scene="showcase"]'
 
 type TallBand = { el: HTMLElement; top: number; end: number }
 
@@ -102,7 +103,7 @@ function bandCovering(bands: TallBand[], scrollTop: number) {
 }
 
 /**
- * Drops mandatory snap only while overview / showcase still fill the port.
+ * Drops mandatory snap only while showcase still fills the port.
  * Downward momentum that would leave is stopped on the last frame so the next
  * gesture snaps one screen. Upward scroll is never rewritten.
  */

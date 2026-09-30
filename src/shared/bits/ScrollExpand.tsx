@@ -32,6 +32,7 @@ type ConfigKey =
   | 'smoothing'
   | 'overlayScrim'
   | 'useWindowScroll'
+  | 'expandOnApproach'
   | 'enabled';
 
 export interface ScrollExpandProps {
@@ -51,6 +52,12 @@ export interface ScrollExpandProps {
   smoothing?: number;
   overlayScrim?: number;
   useWindowScroll?: boolean;
+  /**
+   * Progress runs on the way into the snap, not after it.
+   * 0 while the track sits farther than `scrollDistance` viewports below the port,
+   * 1 once the track is seated. `scrollDistance` is that tail and does not add height.
+   */
+  expandOnApproach?: boolean;
   enabled?: boolean;
   children?: ReactNode;
   /** Unclipped layer on the sticky stage — sits above the expanding frame. */
@@ -77,6 +84,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
   smoothing = 0.1,
   overlayScrim = 0.45,
   useWindowScroll = false,
+  expandOnApproach = false,
   enabled = true,
   children,
   stageOverlay,
@@ -105,6 +113,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     smoothing,
     overlayScrim,
     useWindowScroll,
+    expandOnApproach,
     enabled
   });
 
@@ -120,6 +129,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       smoothing,
       overlayScrim,
       useWindowScroll,
+      expandOnApproach,
       enabled
     };
   }, [
@@ -133,6 +143,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     smoothing,
     overlayScrim,
     useWindowScroll,
+    expandOnApproach,
     enabled
   ]);
 
@@ -202,7 +213,10 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         stage.style.height = '100lvh';
         stageH = stage.getBoundingClientRect().height || window.innerHeight;
       }
-      track.style.height = `${stageH * (1 + Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance))}px`;
+      const runway = c.expandOnApproach
+        ? Math.max(0, c.holdDistance)
+        : Math.max(0, c.scrollDistance) + Math.max(0, c.holdDistance);
+      track.style.height = `${stageH * (1 + runway)}px`;
 
       const w = root.clientWidth || stageH;
       stage.style.setProperty('--se-title-size', `${clamp(w * 0.075, 20, 84)}px`);
@@ -213,8 +227,15 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       if (!c.enabled) return 1;
       const span = stageH * Math.max(0.01, c.scrollDistance);
       if (c.useWindowScroll) {
-        const top = track.getBoundingClientRect().top;
+        const scroller = pageScroller(root, true);
+        const portTop = scroller instanceof HTMLElement ? scroller.getBoundingClientRect().top : 0;
+        const top = track.getBoundingClientRect().top - portTop;
+        if (c.expandOnApproach) return clamp((span - top) / span, 0, 1);
         return clamp(-top / span, 0, 1);
+      }
+      if (c.expandOnApproach) {
+        const top = track.getBoundingClientRect().top - root.getBoundingClientRect().top;
+        return clamp((span - top) / span, 0, 1);
       }
       return clamp(root.scrollTop / span, 0, 1);
     };
@@ -275,7 +296,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       vv?.removeEventListener('resize', onResize);
       ro.disconnect();
     };
-  }, [applyProgress, useWindowScroll, startWidth, startHeight, startRadius, enabled, scrollDistance, holdDistance]);
+  }, [applyProgress, useWindowScroll, expandOnApproach, startWidth, startHeight, startRadius, enabled, scrollDistance, holdDistance]);
 
   const hasSrc = Boolean(src);
   const open = !enabled;

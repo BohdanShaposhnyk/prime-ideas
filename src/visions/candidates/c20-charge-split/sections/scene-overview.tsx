@@ -154,6 +154,7 @@ export default function SceneOverview() {
     >
       <ScrollExpand
         useWindowScroll
+        expandOnApproach
         enabled={!reduced}
         mediaZoom={1}
         overlayScrim={0}
@@ -161,9 +162,9 @@ export default function SceneOverview() {
         startHeight={frame.height}
         startRadius={frame.radius}
         endRadius={0}
-        scrollDistance={1.1}
-        holdDistance={0.5}
-        smoothing={0.09}
+        scrollDistance={0.42}
+        holdDistance={0}
+        smoothing={0.18}
         className="bg-[var(--cs-pitch)]"
         stageOverlay={<TypeBelt cycle={cycle} />}
       >
