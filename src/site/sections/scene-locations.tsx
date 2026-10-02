@@ -17,9 +17,10 @@ const BASE_EXPAND = 0.7
 /** Active card share of the row. Above this, inactive cards take the leftover. */
 const CONTENT_CAP_PX = 56 * 16
 const GALLERY_ITEMS = VENUES.map((venue) => ({
+  id: venue.id,
   image: venue.image,
   label: venue.title,
-  alt: venue.title,
+  alt: `${venue.title}, ${venue.address}`,
 }))
 
 /** Keyless OSM raster. CARTO's dark CDN now watermarks tiles without an API key. */
@@ -134,7 +135,7 @@ function VenuePanel({
           <a
             href={`tel:${venue.phone}`}
             className={`${actionClass} ${iconBtnClass}`}
-            aria-label="Call"
+            aria-label={`Call ${venue.phoneLabel}`}
           >
             <Phone className="size-[1.05em] shrink-0 text-[#34C759]" strokeWidth={2.25} aria-hidden />
             <span className="sr-only sm:not-sr-only">Call</span>

@@ -1,6 +1,6 @@
 # Prime Warsaw
 
-Landing page for [Prime Warsaw](https://www.instagram.com/prime_warsaw/) — gaming, cinema, karaoke, hookah, and bar.
+Landing page for Prime Warsaw — gaming, cinema, karaoke, hookah, and bar. Instagram: [@prime_warsaw](https://www.instagram.com/prime_warsaw/) and [@prime_wroclaw](https://www.instagram.com/prime_wroclaw/).
 
 ## Stack
 

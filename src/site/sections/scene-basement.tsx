@@ -4,22 +4,10 @@ import ParticleText from '@/site/bits/ParticleText'
 import { InstagramIcon, TelegramIcon } from '../components/icons'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
 import { lockupClass, palette } from '../lib/palette'
+import { INSTAGRAMS } from '../lib/seo'
 import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.jpg'
 import { stayFold, useBasementIntro } from './basement-intro'
-
-const SOCIALS = [
-  {
-    id: 'instagram',
-    label: '@prime_warsaw',
-    href: 'https://www.instagram.com/prime_warsaw/',
-  },
-  {
-    id: 'telegram',
-    label: 'Telegram',
-    href: 'https://t.me/primewarsaw',
-  },
-] as const
 
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
@@ -192,21 +180,18 @@ export default function SceneBasement() {
             aria-label="Social"
             className="flex items-center justify-end gap-4 sm:justify-center sm:gap-6"
           >
-            {SOCIALS.map((social) => (
+            {INSTAGRAMS.map((profile) => (
               <a
-                key={social.id}
-                href={social.href}
+                key={profile.id}
+                href={profile.href}
                 target="_blank"
                 rel="noreferrer"
-                aria-label={social.label}
+                aria-label={profile.handle}
                 className={`inline-flex items-center gap-2 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[0.14em] uppercase sm:tracking-[var(--cs-track-micro)] ${linkClass}`}
               >
-                {social.id === 'instagram' ? (
-                  <InstagramIcon className="size-[1.25em] shrink-0" />
-                ) : (
-                  <TelegramIcon className="size-[1.15em] shrink-0" />
-                )}
-                <span className="hidden md:inline">{social.label}</span>
+                <InstagramIcon className="size-[1.25em] shrink-0" />
+                <span className="md:hidden">{profile.city}</span>
+                <span className="hidden md:inline">{profile.handle}</span>
               </a>
             ))}
           </nav>
@@ -215,14 +200,25 @@ export default function SceneBasement() {
             {VENUES.map((venue) => (
               <li
                 key={venue.id}
-                className="flex items-baseline justify-between gap-4 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] sm:justify-end"
+                className="flex items-center justify-between gap-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] sm:justify-end sm:gap-4"
               >
                 <span className="tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]">
                   {venue.shortName}
                 </span>
-                <a href={`tel:${venue.phone}`} className={`tabular-nums tracking-[0.04em] ${linkClass}`}>
-                  {venue.phoneLabel}
-                </a>
+                <span className="inline-flex items-center gap-2">
+                  <a href={`tel:${venue.phone}`} className={`tabular-nums tracking-[0.04em] ${linkClass}`}>
+                    {venue.phoneLabel}
+                  </a>
+                  <a
+                    href={venue.telegram}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${venue.shortName} on Telegram`}
+                    className={`inline-flex ${linkClass}`}
+                  >
+                    <TelegramIcon className="size-[1.15em] shrink-0" />
+                  </a>
+                </span>
               </li>
             ))}
           </ul>

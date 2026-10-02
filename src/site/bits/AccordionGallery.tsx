@@ -11,6 +11,7 @@ import {
 import { gsap } from 'gsap';
 
 export interface AccordionGalleryItem {
+  id?: string;
   image: string;
   label?: string;
   link?: string;
@@ -250,7 +251,8 @@ const AccordionGallery = ({
         const Tag = (item.link ? 'a' : 'div') as 'a';
         return (
           <Tag
-            key={i}
+            key={item.id ?? i}
+            id={item.id}
             ref={(el: HTMLElement | null) => {
               panelRefs.current[i] = el;
             }}
