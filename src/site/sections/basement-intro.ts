@@ -2,13 +2,11 @@ import { useEffect, useState, type RefObject } from 'react'
 import { gsap, useGSAP } from '@/site/lib/gsap'
 import { usePrefersReducedMotion } from '../hooks/media'
 
-/** Veil fade on enter. STAY waits 0.75s, then PRIME waits out the fold. */
 const VEIL_S = 0.85
-const STAY_AT = 0.75
-const FOLD_S = 0.7
+const STAY_AT = 0.5
+const FOLD_S = 0.3
 const FOLD_STAGGER = 0.06
-const STAY_CHARS = 4
-const PRIME_AT = STAY_AT + FOLD_S + FOLD_STAGGER * (STAY_CHARS - 1)
+const PRIME_AT = STAY_AT
 
 /** How much of the floor must be in the snap port before the intro plays. */
 const ENTER_AT = 0.45
