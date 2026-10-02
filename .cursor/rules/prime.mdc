@@ -1,0 +1,29 @@
+---
+description: Prime Warsaw site — stack, layout, hard constraints
+alwaysApply: true
+---
+
+# Prime Warsaw
+
+## Goal
+
+The Prime Warsaw landing page: gaming, cinema, karaoke, hookah, and bar. Brand: [@prime_warsaw](https://www.instagram.com/prime_warsaw/).
+
+## Stack
+
+`pnpm` · Vite · React 19 · TypeScript · Tailwind 4 · GSAP · `@/*` → `src/*`. No backend, auth, or env files.
+
+## Layout
+
+The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets:c20` live in `assets-src/c20`.
+
+## Commands
+
+`pnpm install` · `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm build`
+
+## Hard constraints
+
+- Mobile-first; English microcopy only
+- Motion uses GSAP and the pieces in `src/site/bits`
+- `instagram_ref/` is moodboard only — don’t import it unless the still is already in `src/site/assets`
+- Keep `pnpm lint` and `pnpm build` green

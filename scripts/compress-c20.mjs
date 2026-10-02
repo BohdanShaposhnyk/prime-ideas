@@ -20,10 +20,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const srcRoot = path.join(root, 'assets-src/c20')
 
 const TARGETS = [
-  { from: 'page', to: 'src/visions/candidates/c20-charge-split/assets' },
-  { from: 'shared', to: 'src/assets/c20' },
+  { from: 'page', to: 'src/site/assets' },
+  { from: 'shared', to: 'src/site/assets' },
 ]
-const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/assets/c20/night-reel.mp4' }]
+const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
 
 /** Photos: WebP with full-res chroma so neon reds/blues keep crisp edges. */
 const PHOTO = { quality: 82, effort: 6, smartSubsample: true }
