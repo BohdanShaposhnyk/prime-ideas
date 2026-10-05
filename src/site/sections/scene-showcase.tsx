@@ -10,9 +10,9 @@ import { lockupClass, supportClass } from '../lib/palette'
 
 const HOLD_W = 1
 const ROLL_W = 1.85
+/** Share of each card step that rests before the roll. */
+const STEP_HOLD = HOLD_W / (HOLD_W + ROLL_W)
 
-/** Shared with the page's lazy placeholder so the snap area does not jump. */
-export const SHOWCASE_MIN_HEIGHT = '645vh'
 const CARDS = [
   {
     id: 'bar',
@@ -51,6 +51,9 @@ const CARDS = [
   },
 ] as const
 
+/** One port, plus a short step per card after the first. Shared with the lazy placeholder. */
+export const SHOWCASE_MIN_HEIGHT = `calc(var(--cs-h, 100svh) + ${CARDS.length - 1} * var(--cs-card-pitch, calc(var(--cs-h, 100svh) * 0.8)))`
+
 const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   id,
   src,
@@ -69,25 +72,16 @@ function easeRoll(u: number) {
 
 function motionAt(t: number) {
   const last = CARDS.length - 1
-  const total = CARDS.length * HOLD_W + last * ROLL_W
-  let x = clamp(t, 0, 1) * total
-
-  for (let i = 0; i < CARDS.length; i++) {
-    if (i === last || x <= HOLD_W) {
-      return { progress: i, word: i }
-    }
-    x -= HOLD_W
-    if (x <= ROLL_W) {
-      const u = x / ROLL_W
-      return {
-        progress: i + easeRoll(u),
-        word: u < 0.5 ? i : i + 1,
-      }
-    }
-    x -= ROLL_W
+  if (last <= 0) return { progress: 0, word: 0 }
+  const x = clamp(t, 0, 1) * last
+  const i = Math.min(Math.floor(x), last - 1)
+  const u = x - i
+  if (u <= STEP_HOLD) return { progress: i, word: i }
+  const roll = (u - STEP_HOLD) / (1 - STEP_HOLD)
+  return {
+    progress: i + easeRoll(roll),
+    word: roll < 0.5 ? i : i + 1,
   }
-
-  return { progress: last, word: last }
 }
 
 export default function SceneShowcase() {
@@ -150,6 +144,15 @@ export default function SceneShowcase() {
       className="relative bg-[var(--cs-pitch)]"
       style={{ height: SHOWCASE_MIN_HEIGHT }}
     >
+      {CARDS.map((item, i) => (
+        <div
+          key={item.id}
+          data-showcase-stop=""
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 h-px"
+          style={{ top: `calc(${i} * var(--cs-card-pitch, calc(var(--cs-h, 100svh) * 0.8)))` }}
+        />
+      ))}
       <div ref={stickyRef} className="cs-scene sticky top-0 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           {CARDS.map((card, i) => (

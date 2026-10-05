@@ -14,12 +14,13 @@ html.cs-snap-root body {
   overscroll-behavior-y: none;
   background: var(--cs-pitch, #000000);
   --cs-h: 100svh;
+  --cs-card-pitch: calc(var(--cs-h) * 0.8);
 }
 .cs-snap-port.cs-snap {
   scroll-snap-type: y mandatory;
 }
-/* iOS only, and only while showcase still fills the port.
-   1-screen scenes never receive this class, so their mandatory snap stays. */
+/* Touch turns this on for the gesture and the settle tween, so mandatory snap
+   cannot pull mid-swipe. Mouse and trackpad never receive it. */
 .cs-snap-port.cs-snap.cs-snap-coast {
   scroll-snap-type: none;
 }
@@ -62,6 +63,9 @@ html.cs-snap-root body {
 }
 .cs-snap-port.cs-snap [data-scene]:not([data-scene="showcase"]) {
   scroll-snap-stop: always;
+}
+.cs-snap-port.cs-snap [data-showcase-stop] {
+  scroll-snap-align: start;
 }
 @media (prefers-reduced-motion: reduce) {
   .cs-snap-port.cs-snap {

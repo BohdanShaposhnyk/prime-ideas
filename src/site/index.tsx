@@ -17,6 +17,7 @@ import SceneBasement from './sections/scene-basement'
 import LazyScene from './components/lazy-scene'
 import { usePrefersReducedMotion } from './hooks/media'
 import { cssTokens } from './lib/palette'
+import { bindTouchSnap } from './lib/touch-snap'
 
 const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', node: <SceneExperienceV2 /> },
@@ -30,12 +31,9 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
 
 /**
  * Snap lives on a viewport-sized port, not the document.
- * Tall scenes (showcase) keep align-start so the UA can free-scroll
- * inside oversized snap areas; 1-screen scenes use scroll-snap-stop: always.
  * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
- * iOS WebKit shortens flicks under mandatory snap. While a tall scene covers the
- * port, snap is lifted so the flick can travel. A downward overshoot stops on the
- * last frame; upward scroll is left alone so the previous scene stays reachable.
+ * One-screen scenes use scroll-snap-stop: always. Showcase cards are shorter stops.
+ * Touch eases to one stop in either direction. Mouse and trackpad stay on CSS snap.
  * Overview is one screen. Its expand plays after the flick settles, so the hero
  * exit parallax is not sharing frames with the clip.
  */
@@ -60,10 +58,10 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
     if (port) ro.observe(port)
     window.addEventListener('orientationchange', measure)
 
-    const unbindCoast = port && !reduced && isIosWebKit() ? bindIosTallCoast(port) : null
+    const unbindTouch = port && !reduced ? bindTouchSnap(port) : null
 
     return () => {
-      unbindCoast?.()
+      unbindTouch?.()
       html.classList.remove('cs-snap-root')
       port?.classList.remove('cs-snap')
       port?.classList.remove('cs-snap-coast')
@@ -71,153 +69,6 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
       window.removeEventListener('orientationchange', measure)
     }
   }, [reduced, portRef])
-}
-
-/** iPhone, iPod, iPad, and iPadOS desktop UA. Android / desktop stay on mandatory snap. */
-function isIosWebKit() {
-  if (typeof navigator === 'undefined') return false
-  const ua = navigator.userAgent
-  if (/iPad|iPhone|iPod/.test(ua)) return true
-  return navigator.maxTouchPoints > 1 && /Macintosh/.test(ua) && /AppleWebKit/.test(ua) && !/Chrome|CriOS|FxiOS/.test(ua)
-}
-
-const TALL_SCENE = '[data-scene="showcase"]'
-
-type TallBand = { el: HTMLElement; top: number; end: number }
-
-function tallBands(port: HTMLElement): TallBand[] {
-  const height = port.clientHeight
-  if (height <= 0) return []
-  const portTop = port.getBoundingClientRect().top
-  const scrollTop = port.scrollTop
-  return [...port.querySelectorAll<HTMLElement>(TALL_SCENE)].flatMap((el) => {
-    const top = el.getBoundingClientRect().top - portTop + scrollTop
-    const end = top + el.offsetHeight - height
-    if (end <= top + 1) return []
-    return [{ el, top, end }]
-  })
-}
-
-function bandCovering(bands: TallBand[], scrollTop: number) {
-  return bands.find((band) => scrollTop >= band.top - 1 && scrollTop < band.end - 1) ?? null
-}
-
-/**
- * Drops mandatory snap only while showcase still fills the port.
- * Downward momentum that would leave is stopped on the last frame so the next
- * gesture snaps one screen. Upward scroll is never rewritten.
- */
-function bindIosTallCoast(port: HTMLElement) {
-  let origin: HTMLElement | null = null
-  let latched: HTMLElement | null = null
-  let coastLatch = false
-  let lastY = port.scrollTop
-  let touching = false
-  let quiet = 0
-
-  const remember = (scrollTop: number) => {
-    const covering = bandCovering(tallBands(port), scrollTop)
-    if (covering) latched = covering.el
-    return covering
-  }
-
-  const syncCoast = () => {
-    const covering = remember(port.scrollTop) !== null
-    port.classList.toggle('cs-snap-coast', covering)
-    if (!covering) latched = null
-  }
-
-  const releaseCoast = () => {
-    origin = null
-    latched = null
-    coastLatch = false
-    port.classList.remove('cs-snap-coast')
-  }
-
-  const releaseOrigin = () => {
-    if (touching) return
-    origin = null
-    coastLatch = false
-    syncCoast()
-  }
-
-  const scheduleRelease = () => {
-    window.clearTimeout(quiet)
-    quiet = window.setTimeout(releaseOrigin, 400)
-  }
-
-  const onPointerDown = () => {
-    touching = true
-    window.clearTimeout(quiet)
-    const band = bandCovering(tallBands(port), port.scrollTop)
-    if (!band) {
-      releaseCoast()
-      return
-    }
-    port.classList.add('cs-snap-coast')
-    latched = band.el
-    coastLatch = true
-    origin = band.el
-  }
-
-  const onPointerUp = () => {
-    touching = false
-    scheduleRelease()
-  }
-
-  const onScrollEnd = () => {
-    if (touching) return
-    window.clearTimeout(quiet)
-    releaseOrigin()
-  }
-
-  const onScroll = () => {
-    const startY = lastY
-    if (origin || port.classList.contains('cs-snap-coast')) coastLatch = true
-    if (!coastLatch) {
-      lastY = port.scrollTop
-      scheduleRelease()
-      return
-    }
-    const bandEl = origin ?? latched
-    if (bandEl) {
-      const band = tallBands(port).find((item) => item.el === bandEl)
-      const y = port.scrollTop
-      if (!band) {
-        releaseCoast()
-      } else if (y < band.top - 1) {
-        releaseCoast()
-      } else if (y > band.end + 1 && y > startY) {
-        port.scrollTop = band.end
-      }
-    }
-    const covering = coastLatch ? bandCovering(tallBands(port), port.scrollTop) : null
-    if (covering && coastLatch) {
-      latched = covering.el
-      port.classList.add('cs-snap-coast')
-    } else if (!covering) {
-      port.classList.remove('cs-snap-coast')
-    }
-    lastY = port.scrollTop
-    scheduleRelease()
-  }
-
-  syncCoast()
-  port.addEventListener('pointerdown', onPointerDown, { passive: true })
-  port.addEventListener('scroll', onScroll, { passive: true })
-  port.addEventListener('scrollend', onScrollEnd)
-  window.addEventListener('pointerup', onPointerUp, { passive: true })
-  window.addEventListener('pointercancel', onPointerUp, { passive: true })
-
-  return () => {
-    window.clearTimeout(quiet)
-    port.classList.remove('cs-snap-coast')
-    port.removeEventListener('pointerdown', onPointerDown)
-    port.removeEventListener('scroll', onScroll)
-    port.removeEventListener('scrollend', onScrollEnd)
-    window.removeEventListener('pointerup', onPointerUp)
-    window.removeEventListener('pointercancel', onPointerUp)
-  }
 }
 
 /**
