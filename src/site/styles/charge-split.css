@@ -24,13 +24,6 @@ html.cs-snap-root body {
 .cs-snap-port.cs-snap.cs-snap-coast {
   scroll-snap-type: none;
 }
-/* Android Chrome latches scroll-snap-type when the gesture starts. Turning it
-   off inside pointerdown is one swipe too late: a short flick still uses the
-   mandatory threshold, travels about halfway, and snaps back. The next flick
-   works. JS owns snap for the whole visit. */
-.cs-snap-port.cs-snap.cs-snap-android {
-  scroll-snap-type: none;
-}
 .cs-scene {
   height: var(--cs-h, 100svh);
 }
