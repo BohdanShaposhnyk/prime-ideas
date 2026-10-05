@@ -2,17 +2,21 @@ import { gsap } from './gsap'
 
 /**
  * Touch owns the snap. CSS mandatory snap stays for mouse and trackpad.
- * Chrome Android fires pointercancel as soon as it claims the gesture for
- * scrolling, while the finger is still down, and then flings. Settling on that
- * cancel fights the fling and lands on a random scene. The finger-up (touchend
- * or pointerup) is the only commit. Any movement picks the next stop in that
- * direction. Overflow stays hidden through the ease so the fling cannot resume.
+ * The port is touch-action: none, so Android cannot claim a tap as a pan.
+ * Finger travel inside the slop stays a tap: no scroll write and no overflow
+ * change, or the click never reaches accordions and buttons. Past the slop,
+ * the finger moves one stop and the finger-up eases there. Chrome Android
+ * fires pointercancel once it claims a scroll, while the finger is still down,
+ * and then flings — the finger-up is the only commit. Overflow stays hidden
+ * through the ease so a leftover fling cannot resume.
  */
 
 const COAST = 'cs-snap-coast'
 const LOCKS = ['cs-hero-lock', 'cs-snap-pause']
 const MAX_S = 0.32
 const MIN_S = 0.2
+/** Chrome's touch slop. Shorter travel is a tap, not the next scene. */
+const TAP_SLOP = 16
 
 function locked(port: HTMLElement) {
   return LOCKS.some((name) => port.classList.contains(name))
@@ -83,6 +87,8 @@ export function bindTouchSnap(port: HTMLElement) {
   let held = port.scrollTop
   let epoch = 0
   let stops: number[] = []
+  let startClientY = 0
+  let armed = false
 
   const killTween = () => {
     const current = tween
@@ -135,6 +141,18 @@ export function bindTouchSnap(port: HTMLElement) {
     tween = created
   }
 
+  const follow = (clientY: number) => {
+    const travel = startClientY - clientY
+    if (!armed) {
+      if (Math.abs(travel) < TAP_SLOP) return
+      armed = true
+      port.classList.add(COAST)
+    }
+    if (locked(port) || stops.length === 0) return
+    const { prev, next } = windowFor(stops, originIndex)
+    writeScroll(Math.min(next, Math.max(prev, originY + travel)))
+  }
+
   const finish = () => {
     if (!dragging) return
     dragging = false
@@ -142,6 +160,17 @@ export function bindTouchSnap(port: HTMLElement) {
 
     if (locked(port) || stops.length === 0) {
       release()
+      return
+    }
+
+    if (!armed) {
+      holding = false
+      if (!port.classList.contains(COAST) && port.style.overflow === '') return
+      const token = epoch
+      requestAnimationFrame(() => {
+        if (token !== epoch || dragging) return
+        release()
+      })
       return
     }
 
@@ -179,12 +208,18 @@ export function bindTouchSnap(port: HTMLElement) {
     epoch += 1
     dragging = true
     holding = false
+    armed = false
     pointerId = event.pointerId
-    port.classList.add(COAST)
     stops = measureStops(port)
     originY = port.scrollTop
     originIndex = nearestIndex(stops, originY)
     held = originY
+    startClientY = event.clientY
+  }
+
+  const onPointerMove = (event: PointerEvent) => {
+    if (!dragging || event.pointerId !== pointerId) return
+    follow(event.clientY)
   }
 
   const onPointerUp = (event: PointerEvent) => {
@@ -199,6 +234,10 @@ export function bindTouchSnap(port: HTMLElement) {
 
   const onScroll = () => {
     if (writing) return
+    if (dragging && !armed) {
+      if (Math.abs(port.scrollTop - originY) >= TAP_SLOP) writeScroll(originY)
+      return
+    }
     if (dragging && stops.length > 0) {
       const { prev, next } = windowFor(stops, originIndex)
       if (port.scrollTop < prev || port.scrollTop > next) {
@@ -213,6 +252,7 @@ export function bindTouchSnap(port: HTMLElement) {
 
   port.addEventListener('pointerdown', onPointerDown, { passive: true })
   port.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('pointermove', onPointerMove, { passive: true })
   window.addEventListener('pointerup', onPointerUp, { passive: true })
   window.addEventListener('touchend', onTouchEnd, { passive: true })
   window.addEventListener('touchcancel', onTouchEnd, { passive: true })
@@ -223,6 +263,7 @@ export function bindTouchSnap(port: HTMLElement) {
     port.classList.remove(COAST)
     port.removeEventListener('pointerdown', onPointerDown)
     port.removeEventListener('scroll', onScroll)
+    window.removeEventListener('pointermove', onPointerMove)
     window.removeEventListener('pointerup', onPointerUp)
     window.removeEventListener('touchend', onTouchEnd)
     window.removeEventListener('touchcancel', onTouchEnd)

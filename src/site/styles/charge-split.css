@@ -18,6 +18,9 @@ html.cs-snap-root body {
 }
 .cs-snap-port.cs-snap {
   scroll-snap-type: y mandatory;
+  /* Touch scrolling is owned by bindTouchSnap. A native pan turns an Android
+     tap into a snap and the click never reaches accordions or buttons. */
+  touch-action: none;
 }
 /* Touch turns this on for the gesture and the settle tween, so mandatory snap
    cannot pull mid-swipe. Mouse and trackpad never receive it. */
