@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view'
 import InfiniteSpiral from '@/site/bits/InfiniteSpiral'
 import bottles from '../assets/bar/bottles.webp'
 import seats from '../assets/cinema/seats.webp'
@@ -7,6 +8,9 @@ import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micGold from '../assets/karaoke/mic-gold.webp'
 import { FilmGrain } from '../components/grain'
 import { lockupClass, supportClass } from '../lib/palette'
+import { SHOWCASE_MIN_HEIGHT } from './showcase-span'
+
+export { SHOWCASE_MIN_HEIGHT }
 
 const HOLD_W = 1
 const ROLL_W = 1.85
@@ -51,9 +55,6 @@ const CARDS = [
   },
 ] as const
 
-/** One port, plus a short step per card after the first. Shared with the lazy placeholder. */
-export const SHOWCASE_MIN_HEIGHT = `calc(var(--cs-h, 100svh) + ${CARDS.length - 1} * var(--cs-card-pitch, calc(var(--cs-h, 100svh) * 0.8)))`
-
 const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   id,
   src,
@@ -96,39 +97,71 @@ export default function SceneShowcase() {
     if (!section || !sticky) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const port = snapScrollRoot(section)
     let frame = 0
     let lastIndex = -1
+    let lastProgress = Number.NaN
     let visible = false
 
-    const update = () => {
+    const read = () => {
       const rect = section.getBoundingClientRect()
-      const vh = sticky.clientHeight || window.innerHeight
+      const portTop = port?.getBoundingClientRect().top ?? 0
+      const vh = sticky.clientHeight || port?.clientHeight || window.innerHeight
       const total = Math.max(section.offsetHeight - vh, 1)
-      const t = clamp(-rect.top / total, 0, 1)
-      const motion = motionAt(t)
-      drivenProgressRef.current = reduced.matches
-        ? Math.round(motion.progress)
-        : motion.progress
+      const t = clamp(-(rect.top - portTop) / total, 0, 1)
+      return motionAt(t)
+    }
+
+    const publish = () => {
+      const motion = read()
+      const progress = reduced.matches ? Math.round(motion.progress) : motion.progress
+      if (progress === lastProgress && motion.word === lastIndex) return
+      lastProgress = progress
+      drivenProgressRef.current = progress
       if (motion.word !== lastIndex) {
         lastIndex = motion.word
         setWordIndex(motion.word)
       }
     }
 
-    const loop = () => {
-      update()
-      frame = visible ? requestAnimationFrame(loop) : 0
+    const onScroll = () => {
+      if (!visible) return
+      const motion = read()
+      const progress = reduced.matches ? Math.round(motion.progress) : motion.progress
+      if (progress !== lastProgress) {
+        lastProgress = progress
+        drivenProgressRef.current = progress
+      }
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        if (!visible) return
+        const next = read()
+        if (next.word !== lastIndex) {
+          lastIndex = next.word
+          setWordIndex(next.word)
+        }
+      })
     }
 
-    const io = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting
-      if (visible && !frame) loop()
+    const stopWatch = observeSnapPort(sticky, (hit) => {
+      visible = hit
+      if (hit) publish()
     })
-    io.observe(sticky)
+    if (intersectsSnapPort(sticky)) {
+      visible = true
+      publish()
+    }
+
+    const scroller: EventTarget = port ?? window
+    scroller.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
 
     return () => {
       visible = false
-      io.disconnect()
+      stopWatch()
+      scroller.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
       if (frame) cancelAnimationFrame(frame)
     }
   }, [])

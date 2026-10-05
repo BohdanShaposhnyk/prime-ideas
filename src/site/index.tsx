@@ -4,20 +4,22 @@ import '@fontsource/barlow/500.css'
 import '@fontsource/barlow/600.css'
 import './styles/charge-split.css'
 
-import { useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
+import { lazy, Suspense, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
 import HeroV2 from './sections/hero'
 import SceneOverview from './sections/scene-overview'
-import SceneExperienceV2 from './sections/scene-experience-v2'
-import SceneScreen from './sections/scene-screen'
-import SceneShowcase, { SHOWCASE_MIN_HEIGHT } from './sections/scene-showcase'
-import SceneLocations from './sections/scene-locations'
-import SceneApp from './sections/scene-app'
-import SceneFranchiseV2 from './sections/scene-franchise-v2'
-import SceneBasement from './sections/scene-basement'
+import { SHOWCASE_MIN_HEIGHT } from './sections/showcase-span'
 import LazyScene from './components/lazy-scene'
 import { usePrefersReducedMotion } from './hooks/media'
 import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
+
+const SceneExperienceV2 = lazy(() => import('./sections/scene-experience-v2'))
+const SceneScreen = lazy(() => import('./sections/scene-screen'))
+const SceneShowcase = lazy(() => import('./sections/scene-showcase'))
+const SceneLocations = lazy(() => import('./sections/scene-locations'))
+const SceneApp = lazy(() => import('./sections/scene-app'))
+const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
+const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
 const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', node: <SceneExperienceV2 /> },
@@ -92,7 +94,7 @@ export default function ChargeSplitPage() {
         <SceneOverview />
         {scenes.map((scene) => (
           <LazyScene key={scene.key} minHeight={scene.minHeight}>
-            {scene.node}
+            <Suspense fallback={null}>{scene.node}</Suspense>
           </LazyScene>
         ))}
       </div>

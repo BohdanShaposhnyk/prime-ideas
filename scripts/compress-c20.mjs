@@ -25,6 +25,9 @@ const TARGETS = [
 ]
 const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
 
+/** Photos stay under this long edge. Cards and full-bleed washes share one master. */
+const LONG_EDGE = 1600
+
 /** Photos: WebP with full-res chroma so neon reds/blues keep crisp edges. */
 const PHOTO = { quality: 82, effort: 6, smartSubsample: true }
 /** Transparent PNG mockups: higher quality, lossless alpha so device edges stay clean. */
@@ -35,10 +38,11 @@ const OVERRIDES = {}
 /** Tiny files aren't worth a lossy pass. */
 const COPY_BELOW_BYTES = 20 * 1024
 
-/** H.264 for universal autoplay; CRF 23 is visually transparent for full-bleed background video. */
+/** H.264, capped at 1280px wide. CRF 28 keeps the full-bleed loop small on one file. */
 const VIDEO_ARGS = [
-  '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '23',
+  '-c:v', 'libx264', '-preset', 'veryslow', '-crf', '28',
   '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+  '-vf', "scale='min(1280,iw)':-2",
   '-an', '-movflags', '+faststart',
 ]
 
@@ -79,7 +83,11 @@ async function processImage(file, outDir, srcDir) {
   const out = path.join(outDir, rel.slice(0, -ext.length) + '.webp')
   await fs.mkdir(path.dirname(out), { recursive: true })
   const options = { ...(ext === '.png' ? ALPHA : PHOTO), ...OVERRIDES[relFromRoot] }
-  const info = await sharp(file).rotate().webp(options).toFile(out)
+  const info = await sharp(file)
+    .rotate()
+    .resize({ width: LONG_EDGE, height: LONG_EDGE, fit: 'inside', withoutEnlargement: true })
+    .webp(options)
+    .toFile(out)
   report(relFromRoot, size, info.size)
 }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type CSSProperties } from 'react';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 export interface ParticleTextProps {
   text?: string;
   particleSize?: number;
@@ -131,6 +132,7 @@ const ParticleText = ({
     let resizeFrame: number | null = null;
     let buildId = 0;
     let gathering = false;
+    let visible = intersectsSnapPort(container);
     let gatherStart = 0;
     let reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     let width = 0;
@@ -166,6 +168,7 @@ const ParticleText = ({
 
       gatherStart = now;
       gathering = true;
+      ensureRenderLoop();
     };
 
     const drawParticle = (particle: Particle): void => {
@@ -183,9 +186,14 @@ const ParticleText = ({
     };
 
     const render = (now: number): void => {
+      if (!visible) {
+        animationFrame = null;
+        return;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
-      if (glow && !reducedMotion) {
+      if (glow && !reducedMotion && gathering) {
         ctx.shadowBlur = particleSize * 3;
         ctx.shadowColor = highlightColor;
       } else {
@@ -196,6 +204,7 @@ const ParticleText = ({
       pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
 
       let complete = true;
+      let maxError = 0;
 
       particles.forEach(particle => {
         let baseX = particle.targetX;
@@ -209,10 +218,6 @@ const ParticleText = ({
           baseX = particle.startX + (particle.targetX - particle.startX) * eased;
           baseY = particle.startY + (particle.targetY - particle.startY) * eased;
           if (progress < 1) complete = false;
-        } else if (!reducedMotion && idleDrift > 0) {
-          const driftTime = now * 0.001;
-          baseX += Math.sin(driftTime * 0.9 + particle.seed * 10) * idleDrift * particle.depth;
-          baseY += Math.cos(driftTime * 0.75 + particle.depth * 10) * idleDrift * particle.depth;
         }
 
         if (pointer.active && !reducedMotion && pointerRepel > 0 && repelRadius > 0) {
@@ -229,6 +234,7 @@ const ParticleText = ({
         const follow = reducedMotion ? 1 : 0.22;
         particle.x += (baseX - particle.x) * follow;
         particle.y += (baseY - particle.y) * follow;
+        maxError = Math.max(maxError, Math.hypot(baseX - particle.x, baseY - particle.y));
 
         ctx.globalAlpha = clamp(0.35 + progress * 0.65, 0, 1);
         drawParticle(particle);
@@ -241,13 +247,17 @@ const ParticleText = ({
         gathering = false;
       }
 
+      const idle = !gathering && !pointer.active && maxError < 0.35;
+      if (idle || !visible) {
+        animationFrame = null;
+        return;
+      }
       animationFrame = window.requestAnimationFrame(render);
     };
 
     const ensureRenderLoop = (): void => {
-      if (animationFrame === null) {
-        animationFrame = window.requestAnimationFrame(render);
-      }
+      if (!visible || animationFrame !== null) return;
+      animationFrame = window.requestAnimationFrame(render);
     };
 
     const sampleText = async (): Promise<void> => {
@@ -387,6 +397,7 @@ const ParticleText = ({
       pointer.x = event.clientX - rect.left;
       pointer.y = event.clientY - rect.top;
       pointer.active = true;
+      ensureRenderLoop();
     };
 
     const handlePointerLeave = (): void => {
@@ -416,9 +427,18 @@ const ParticleText = ({
 
     const resizeObserver = new ResizeObserver(queueSample);
     resizeObserver.observe(container);
+    const stopWatch = observeSnapPort(container, hit => {
+      visible = hit;
+      if (hit) ensureRenderLoop();
+      else if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+    });
     void sampleText();
 
     return () => {
+      stopWatch();
       buildId += 1;
       resizeObserver.disconnect();
       reduceMotionQuery?.removeEventListener('change', handleReduceMotionChange);

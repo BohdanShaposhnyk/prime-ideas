@@ -1,5 +1,6 @@
 import { useRef, useEffect, type CSSProperties, type ReactNode, type MouseEventHandler } from 'react';
 import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 type ButtonSize = 'sm' | 'md' | 'lg';
 
@@ -215,7 +216,7 @@ const SpecularButton = ({
     let lastH = 0;
     let pointerAngle: number | null = null;
     let proximityT = 0;
-    let inView = true;
+    let inView = intersectsSnapPort(btn);
     let tabVisible = document.visibilityState !== 'hidden';
     let contextLost = false;
     let angle = 2.4;
@@ -388,19 +389,15 @@ const SpecularButton = ({
     canvas.addEventListener('webglcontextlost', handleContextLost);
     canvas.addEventListener('webglcontextrestored', handleContextRestored);
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const was = inView;
-        inView = Boolean(entry?.isIntersecting);
-        if (inView && !was) kick();
-        else if (!inView) {
-          cancelAnimationFrame(raf);
-          raf = 0;
-        }
-      },
-      { threshold: 0 }
-    );
-    io.observe(btn);
+    const stopWatch = observeSnapPort(btn, hit => {
+      const was = inView;
+      inView = hit;
+      if (inView && !was) kick();
+      else if (!inView) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    });
 
     const onVisibility = () => {
       tabVisible = document.visibilityState !== 'hidden';
@@ -425,7 +422,7 @@ const SpecularButton = ({
       cancelAnimationFrame(raf);
       cancelAnimationFrame(revealRaf);
       ro.disconnect();
-      io.disconnect();
+      stopWatch();
       window.removeEventListener('pointermove', onPointerMove);
       document.removeEventListener('visibilitychange', onVisibility);
       canvas.removeEventListener('webglcontextlost', handleContextLost);

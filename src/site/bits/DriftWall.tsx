@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 export interface DriftWallItem {
   image?: string;
@@ -158,7 +159,15 @@ const DriftWall = ({
   );
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let visible = intersectsSnapPort(container);
+
     const animate = (ts: number) => {
+      if (!visible) {
+        rafRef.current = null;
+        return;
+      }
       if (lastTsRef.current === null) lastTsRef.current = ts;
       const dt = Math.min(0.05, Math.max(0, ts - lastTsRef.current) / 1000);
       lastTsRef.current = ts;
@@ -199,8 +208,26 @@ const DriftWall = ({
       rafRef.current = requestAnimationFrame(animate);
     };
 
-    rafRef.current = requestAnimationFrame(animate);
+    const start = () => {
+      if (!visible || rafRef.current) return;
+      lastTsRef.current = null;
+      rafRef.current = requestAnimationFrame(animate);
+    };
+
+    const stopWatch = observeSnapPort(container, hit => {
+      visible = hit;
+      if (hit) start();
+      else if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+        lastTsRef.current = null;
+      }
+    });
+
+    start();
     return () => {
+      visible = false;
+      stopWatch();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
       lastTsRef.current = null;

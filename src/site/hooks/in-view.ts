@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
+import { observeSnapPort } from './snap-in-view'
 
 /**
- * Track whether a node intersects the viewport.
+ * Track whether a node sits inside the snap port.
  * `once` latches true and disconnects. Otherwise the flag follows the observer.
  */
 export function useInView<T extends Element>(
@@ -14,20 +15,20 @@ export function useInView<T extends Element>(
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const hit = Boolean(entry?.isIntersecting)
+    let stop = () => {}
+    stop = observeSnapPort(
+      el,
+      (hit) => {
         if (!hit) {
           if (!once) setInView(false)
           return
         }
         setInView(true)
-        if (once) io.disconnect()
+        if (once) stop()
       },
       { threshold, rootMargin },
     )
-    io.observe(el)
-    return () => io.disconnect()
+    return () => stop()
   }, [once, threshold, rootMargin])
 
   return [ref, inView]

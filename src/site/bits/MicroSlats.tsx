@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { Renderer, Program, Mesh, Triangle, RenderTarget, Texture } from 'ogl';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 type SwellPreset = 'swell' | 'tide' | 'storm' | 'signal';
 type Rgba = [number, number, number, number];
@@ -645,7 +646,8 @@ const MicroSlats = ({
     let last = performance.now();
     let time = 0;
     let introClock = 0;
-    let visible = true;
+    let visible = intersectsSnapPort(container);
+    const frameMs = 1000 / 30;
     let alive = true;
     let fluid: Fluid | null = null;
     let fluidUntil = 0;
@@ -814,7 +816,11 @@ const MicroSlats = ({
 
     const frame = (now: number) => {
       raf = 0;
-      if (!alive) return;
+      if (!alive || !visible) return;
+      if (now - last < frameMs) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const s = settingsRef.current;
       const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
       last = now;
@@ -967,11 +973,14 @@ const MicroSlats = ({
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(container);
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      start();
+    const stopWatch = observeSnapPort(container, hit => {
+      visible = hit;
+      if (hit) start();
+      else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
     });
-    intersectionObserver.observe(container);
 
     wakeRef.current = start;
     resize();
@@ -981,7 +990,7 @@ const MicroSlats = ({
       visible = false;
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
-      intersectionObserver.disconnect();
+      stopWatch();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerout', onPointerOut);

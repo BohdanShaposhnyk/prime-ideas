@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, type FC } from 'react';
 import type { CSSProperties, ElementType } from 'react';
 import { gsap } from 'gsap';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 const clamp = (v: number, a: number, b: number): number => (v < a ? a : v > b ? b : v);
 
@@ -94,11 +95,22 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     const H = root.clientHeight;
     const off = offsetRef.current;
 
+    if (media.dataset.mhSettled === '1') {
+      media.style.transform = 'none';
+      media.style.filter = 'none';
+      media.style.willChange = 'auto';
+      return;
+    }
+
     const maxX = Math.max(0, ((s.fillScale - 1) / 2) * W);
     const maxY = Math.max(0, ((s.fillScale - 1) / 2) * H);
 
+    media.style.willChange = 'transform';
     media.style.transform = `translate3d(${clamp(off.x, -maxX, maxX).toFixed(2)}px, ${clamp(off.y, -maxY, maxY).toFixed(2)}px, 0) scale(${s.fillScale})`;
-    media.style.filter = `brightness(${s.brightness}) saturate(${s.saturation})${s.grayscale ? ' grayscale(1)' : ''}`;
+    const identity = s.brightness === 1 && s.saturation === 1 && !s.grayscale;
+    media.style.filter = identity
+      ? 'none'
+      : `brightness(${s.brightness}) saturate(${s.saturation})${s.grayscale ? ' grayscale(1)' : ''}`;
   }, []);
 
   const sync = useCallback(() => {
@@ -139,7 +151,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     let raf = 0;
     let last = performance.now();
     let clock = 0;
-    let inView = true;
+    let inView = intersectsSnapPort(root);
     let tabVisible = document.visibilityState !== 'hidden';
 
     const videoEl = () => mediaRef.current?.querySelector('video');
@@ -167,6 +179,13 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       const s = settingsRef.current;
       const off = offsetRef.current;
 
+      const media = mediaRef.current;
+      if (media?.dataset.mhSettled === '1') {
+        place();
+        raf = 0;
+        return;
+      }
+
       const dx = Math.sin(clock * 0.21) * s.drift;
       const dy = Math.cos(clock * 0.17) * s.drift * 0.6;
 
@@ -175,6 +194,18 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       off.y += (off.ty + dy - off.y) * ease;
 
       place();
+
+      const resting =
+        s.drift === 0 &&
+        Math.abs(off.tx) < 0.05 &&
+        Math.abs(off.ty) < 0.05 &&
+        Math.abs(off.x) < 0.05 &&
+        Math.abs(off.y) < 0.05;
+      if (resting) {
+        if (media) media.style.willChange = 'auto';
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(frame);
     };
 
@@ -201,19 +232,15 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       offsetRef.current.ty = 0;
     };
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        inView = Boolean(entry?.isIntersecting);
-        if (inView) kick();
-        else {
-          cancelAnimationFrame(raf);
-          raf = 0;
-          syncMedia();
-        }
-      },
-      { threshold: 0 }
-    );
-    io.observe(root);
+    const stopWatch = observeSnapPort(root, hit => {
+      inView = hit;
+      if (inView) kick();
+      else {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        syncMedia();
+      }
+    });
 
     const onVisibility = () => {
       tabVisible = document.visibilityState !== 'hidden';
@@ -233,7 +260,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      io.disconnect();
+      stopWatch();
       document.removeEventListener('visibilitychange', onVisibility);
       root.removeEventListener('pointermove', onMove);
       root.removeEventListener('pointerleave', onLeave);
@@ -397,7 +424,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
           data-mh-clip=""
           style={{ clipPath: `url(#${clipId})` }}
         >
-          <span ref={mediaRef} data-mh-media="" className="absolute inset-0 block [will-change:transform,filter]">
+          <span ref={mediaRef} data-mh-media="" className="absolute inset-0 block">
             {mediaType === 'video' ? (
               <video
                 className="block w-full h-full object-cover select-none"

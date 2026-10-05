@@ -192,14 +192,16 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         data-ready={ready ? 'true' : 'false'}
         aria-hidden
       >
-        {CARDS.map((card, i) => (
+        {(phase === 'rest' ? [index] : [fromIndex, index])
+          .filter((value, i, list) => list.indexOf(value) === i)
+          .map((i) => (
           <div
-            key={card.id}
+            key={CARDS[i].id}
             className="cs-overview-bg absolute inset-0"
             data-active={i === index ? '' : undefined}
           >
             <img
-              src={card.image}
+              src={CARDS[i].image}
               alt=""
               decoding="async"
               className="absolute inset-[-8%] h-[116%] w-[116%] max-w-none object-cover"

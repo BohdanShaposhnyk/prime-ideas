@@ -1,5 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react'
 import { usePrefersReducedMotion } from './media'
+import { observeSnapPort } from './snap-in-view'
 
 /**
  * Gold sheen is a CSS background sweep. It is attached only while the node
@@ -12,13 +13,7 @@ export function useGoldShine(ref: RefObject<Element | null>) {
   useEffect(() => {
     const el = ref.current
     if (!el || reduced) return
-    const root = el.closest<Element>('[data-cs-scroll]')
-    const io = new IntersectionObserver(
-      ([entry]) => setLive(Boolean(entry?.isIntersecting)),
-      { root, threshold: 0 },
-    )
-    io.observe(el)
-    return () => io.disconnect()
+    return observeSnapPort(el, setLive)
   }, [reduced, ref])
 
   return !reduced && live

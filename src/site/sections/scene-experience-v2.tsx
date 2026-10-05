@@ -47,7 +47,7 @@ const GLOW = {
 const VENUE_VERBS = ['PLAY', 'DRINK', 'EAT', 'CHILL', 'SING'] as const
 
 const glassClass =
-  'backdrop-blur-[18px] backdrop-brightness-75 backdrop-saturate-[0.6] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
+  'bg-[color-mix(in_srgb,#07060C_62%,transparent)] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
 
 function ExperienceCopy() {
   return (

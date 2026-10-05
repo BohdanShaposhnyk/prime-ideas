@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
+import { observeSnapPort } from '@/site/hooks/snap-in-view';
 
 type Origin = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 
@@ -219,24 +220,20 @@ void main() {
     gl.canvas.addEventListener('webglcontextrestored', onContextRestored);
     window.addEventListener('resize', updateSize);
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        const wasInView = inView;
-        inView = Boolean(entry?.isIntersecting);
-        if (inView && !wasInView) {
-          updateSize();
-          if (prefersReducedMotion) {
-            paint(performance.now());
-          } else {
-            kick();
-          }
-        } else if (!inView) {
-          cancelAnimationFrame(raf);
+    const stopWatch = observeSnapPort(container, hit => {
+      const wasInView = inView;
+      inView = hit;
+      if (inView && !wasInView) {
+        updateSize();
+        if (prefersReducedMotion) {
+          paint(performance.now());
+        } else {
+          kick();
         }
-      },
-      { threshold: 0 },
-    );
-    io.observe(container);
+      } else if (!inView) {
+        cancelAnimationFrame(raf);
+      }
+    });
 
     const onVisibility = () => {
       tabVisible = document.visibilityState !== 'hidden';
@@ -249,7 +246,7 @@ void main() {
 
     return () => {
       cancelAnimationFrame(raf);
-      io.disconnect();
+      stopWatch();
       window.removeEventListener('resize', updateSize);
       document.removeEventListener('visibilitychange', onVisibility);
       gl.canvas.removeEventListener('webglcontextlost', onContextLost);

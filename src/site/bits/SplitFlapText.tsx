@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
+import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 type TileState = {
   current: string;
@@ -137,6 +138,7 @@ const SplitFlapText = ({
   ...props
 }: SplitFlapTextProps) => {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
   const cycleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentTextRef = useRef('');
@@ -178,8 +180,12 @@ const SplitFlapText = ({
       return clearAnimation;
     }
 
+    const root = rootRef.current;
+    if (!root) return clearAnimation;
+
     let phraseIndex = 0;
     let cancelled = false;
+    let visible = intersectsSnapPort(root);
 
     const safeFlipMs = Math.max(40, (Number(flipDuration) || 0.12) * 1000);
     const safeStaggerMs = Math.max(0, (Number(stagger) || 0) * 1000);
@@ -245,7 +251,10 @@ const SplitFlapText = ({
       };
 
       const tick = (now: number) => {
-        if (cancelled) return;
+        if (cancelled || !visible) {
+          rafRef.current = null;
+          return;
+        }
 
         const elapsed = now - startedAt;
         const updates: TileUpdate[] = [];
@@ -299,8 +308,9 @@ const SplitFlapText = ({
     };
 
     const scheduleNext = (delay: number) => {
+      if (cycleTimerRef.current) clearTimeout(cycleTimerRef.current);
       cycleTimerRef.current = window.setTimeout(() => {
-        if (cancelled) return;
+        if (cancelled || !visible) return;
 
         const nextIndex = phraseIndex + 1;
 
@@ -312,10 +322,27 @@ const SplitFlapText = ({
       }, delay);
     };
 
-    scheduleNext(safeCycleDelay);
+    const pause = () => {
+      clearAnimation();
+      setTiles(createTiles(currentTextRef.current));
+    };
+
+    const stopWatch = observeSnapPort(root, hit => {
+      const was = visible;
+      visible = hit;
+      if (!hit) {
+        pause();
+        return;
+      }
+      if (!was) scheduleNext(safeCycleDelay);
+    });
+
+    if (visible) scheduleNext(safeCycleDelay);
 
     return () => {
       cancelled = true;
+      visible = false;
+      stopWatch();
       clearAnimation();
     };
   }, [normalizedPhrases, width, loop, cycleDelay, flipDuration, stagger, flipsPerChar, charset, prefersReducedMotion]);
@@ -338,6 +365,7 @@ const SplitFlapText = ({
     <>
       <style>{styles}</style>
       <div
+        ref={rootRef}
         className={`split-flap-text inline-flex items-center whitespace-pre select-none ${className}`.trim()}
         style={componentStyle}
         role="text"

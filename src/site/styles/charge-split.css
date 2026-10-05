@@ -138,7 +138,6 @@ html.cs-snap-root body {
     -50%,
     0
   );
-  will-change: transform, width, opacity;
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
   transition:
@@ -183,13 +182,14 @@ html.cs-snap-root body {
   z-index: 30;
 }
 .cs-overview-card img {
+  filter: none;
+}
+.cs-overview-stage[data-phase="tension"] .cs-overview-card:not([data-front]) img,
+.cs-overview-stage[data-phase="snap"] .cs-overview-card:not([data-front]) img {
   filter: blur(2px);
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
   transition: filter var(--cs-snap) var(--cs-roll-ease);
-}
-.cs-overview-card[data-front] img {
-  filter: none;
 }
 @media (pointer: coarse) {
   .cs-overview-card img,
@@ -206,7 +206,6 @@ html.cs-snap-root body {
 .cs-overview-type {
   animation: cs-overview-type 22s linear infinite;
   animation-play-state: paused;
-  will-change: transform;
 }
 .cs-overview-live .cs-overview-type {
   animation-play-state: running;
@@ -241,7 +240,6 @@ html.cs-snap-root body {
 }
 .cs-overview-bg {
   opacity: 0;
-  will-change: opacity;
 }
 .cs-overview-bg[data-active] {
   opacity: 1;

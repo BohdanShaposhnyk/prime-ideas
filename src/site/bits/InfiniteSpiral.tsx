@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
+import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view';
 
 export interface InfiniteSpiralItem {
   id?: string | number;
@@ -72,7 +73,7 @@ const InfiniteSpiral = ({
   const targetProgressRef = useRef(0);
   const autoSpeedRef = useRef(0);
   const hoveredRef = useRef(false);
-  const visibleRef = useRef(true);
+  const visibleRef = useRef(false);
   const draggingRef = useRef(false);
   const lastPointerYRef = useRef(0);
   const dragMovedRef = useRef(false);
@@ -93,6 +94,7 @@ const InfiniteSpiral = ({
 
     let frameId = 0;
     let previousTime = performance.now();
+    let paintedProgress = Number.NaN;
     let bounds = root.getBoundingClientRect();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const driven = Boolean(drivenProgressRef);
@@ -109,6 +111,7 @@ const InfiniteSpiral = ({
     });
     resizeObserver.observe(root);
     let tabVisible = document.visibilityState !== 'hidden';
+    visibleRef.current = intersectsSnapPort(root);
 
     const render = (time: number) => {
       if (!visibleRef.current || !tabVisible) {
@@ -135,6 +138,15 @@ const InfiniteSpiral = ({
       const followK = driven ? 18 : draggingRef.current ? 22 : 11;
       const followBlend = 1 - Math.exp(-delta * followK);
       progressRef.current += (targetProgressRef.current - progressRef.current) * followBlend;
+
+      const gap = Math.abs(targetProgressRef.current - progressRef.current);
+      const autoMoving = Math.abs(autoSpeedRef.current) > 0.0001;
+      const moving = gap > 0.001 || autoMoving || draggingRef.current;
+      if (!moving && Math.abs(progressRef.current - paintedProgress) < 0.0005) {
+        frameId = 0;
+        return;
+      }
+      paintedProgress = progressRef.current;
 
       const count = normalizedItems.length;
       const half = count / 2;
@@ -166,6 +178,10 @@ const InfiniteSpiral = ({
         card.style.zIndex = String(Math.round(depth * 100000) + index);
         card.style.pointerEvents = opacity > 0.25 ? 'auto' : 'none';
       });
+      if (!moving) {
+        frameId = 0;
+        return;
+      }
       frameId = requestAnimationFrame(render);
     };
 
@@ -175,15 +191,14 @@ const InfiniteSpiral = ({
       frameId = requestAnimationFrame(render);
     };
 
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      visibleRef.current = entry.isIntersecting;
-      if (visibleRef.current) kick();
+    const stopWatch = observeSnapPort(root, hit => {
+      visibleRef.current = hit;
+      if (hit) kick();
       else {
         cancelAnimationFrame(frameId);
         frameId = 0;
       }
     });
-    intersectionObserver.observe(root);
 
     const onVisibility = () => {
       tabVisible = document.visibilityState !== 'hidden';
@@ -196,6 +211,10 @@ const InfiniteSpiral = ({
     document.addEventListener('visibilitychange', onVisibility);
 
     const handleScroll = () => {
+      if (driven) {
+        kick();
+        return;
+      }
       const nextScrollY = window.scrollY;
       const scrollDelta = nextScrollY - lastScrollY;
       lastScrollY = nextScrollY;
@@ -207,15 +226,16 @@ const InfiniteSpiral = ({
       );
       kick();
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    const scroller: EventTarget = snapScrollRoot(root) ?? window;
+    scroller.addEventListener('scroll', handleScroll, { passive: true });
 
-    frameId = requestAnimationFrame(render);
+    if (visibleRef.current) kick();
     return () => {
       cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
-      intersectionObserver.disconnect();
+      stopWatch();
       document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('scroll', handleScroll);
+      scroller.removeEventListener('scroll', handleScroll);
     };
   }, [
     normalizedItems,

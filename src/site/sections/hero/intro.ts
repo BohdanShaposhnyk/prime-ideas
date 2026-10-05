@@ -303,6 +303,8 @@ export function useHeroIntro({
         if (media) {
           media.style.transform = 'none'
           media.style.filter = 'none'
+          media.style.willChange = 'auto'
+          media.dataset.mhSettled = '1'
         }
       }
 
@@ -378,6 +380,7 @@ export function useHeroIntro({
               ease: 'power2.out',
               onComplete: () => {
                 root.style.setProperty('--cs-hero-blur', '0px')
+                root.removeAttribute('data-hero-blur')
                 const vig = vignetteRef.current
                 if (vig) applyVignette(vig, VIGNETTE_TO)
                 if (!cancelled) setCopyReady(true)

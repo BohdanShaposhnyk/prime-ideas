@@ -6,7 +6,7 @@ import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
 import { lockupClass, palette } from '../lib/palette'
 import { INSTAGRAMS } from '../lib/seo'
 import { VENUES } from '../lib/venues'
-import space from '../assets/stars/space.jpg'
+import space from '../assets/stars/space.webp'
 import { stayFold, useBasementIntro } from './basement-intro'
 
 const linkClass =
