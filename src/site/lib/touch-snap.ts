@@ -5,13 +5,12 @@ import { gsap } from './gsap'
  * Chrome Android fires pointercancel as soon as it claims the gesture for
  * scrolling, while the finger is still down, and then flings. Settling on that
  * cancel fights the fling and lands on a random scene. The finger-up (touchend
- * or pointerup) is the only commit, and only if the drag crossed the gap.
- * Overflow stays hidden through the ease so the fling cannot resume.
+ * or pointerup) is the only commit. Any movement picks the next stop in that
+ * direction. Overflow stays hidden through the ease so the fling cannot resume.
  */
 
 const COAST = 'cs-snap-coast'
 const LOCKS = ['cs-hero-lock', 'cs-snap-pause']
-const COMMIT_RATIO = 0.22
 const MAX_S = 0.32
 const MIN_S = 0.2
 
@@ -62,13 +61,10 @@ function windowFor(stops: number[], index: number) {
 
 function pickTarget(stops: number[], originIndex: number, y: number) {
   const { origin, prev, next } = windowFor(stops, originIndex)
-  const clamped = Math.min(next, Math.max(prev, y))
-  const travel = clamped - origin
-  const dir = Math.sign(travel)
-  if (dir === 0) return origin
-  const neighbor = dir < 0 ? prev : next
-  const gap = Math.abs(neighbor - origin) || 1
-  return Math.abs(travel) > gap * COMMIT_RATIO ? neighbor : origin
+  const dir = Math.sign(Math.min(next, Math.max(prev, y)) - origin)
+  if (dir < 0) return prev
+  if (dir > 0) return next
+  return origin
 }
 
 function settleDuration(distance: number, portHeight: number) {
