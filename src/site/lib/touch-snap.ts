@@ -1,19 +1,19 @@
 import { gsap } from './gsap'
 
 /**
- * Touch owns the snap. CSS mandatory snap stays for mouse and trackpad, but on a
- * finger it pulls Android back toward the scene below and tows the showcase toward
- * a stop that is screens away. Snap is off while the finger is down so the drag
- * tracks, then one stop is eased in — the same rule up and down.
+ * Touch owns the snap. CSS mandatory snap stays for mouse and trackpad.
+ * Chrome Android fires pointercancel as soon as it claims the gesture for
+ * scrolling, while the finger is still down, and then flings. Settling on that
+ * cancel fights the fling and lands on a random scene. The finger-up (touchend
+ * or pointerup) is the only commit, and only if the drag crossed the gap.
+ * Overflow stays hidden through the ease so the fling cannot resume.
  */
 
 const COAST = 'cs-snap-coast'
 const LOCKS = ['cs-hero-lock', 'cs-snap-pause']
-const COMMIT_RATIO = 0.2
-/** px/ms. A real flick commits even when the finger has not yet crossed 20%. */
-const FLICK = 0.5
-const MAX_S = 0.34
-const MIN_S = 0.18
+const COMMIT_RATIO = 0.22
+const MAX_S = 0.32
+const MIN_S = 0.2
 
 function locked(port: HTMLElement) {
   return LOCKS.some((name) => port.classList.contains(name))
@@ -53,27 +53,27 @@ function nearestIndex(stops: number[], y: number) {
   return best
 }
 
-function pickTarget(stops: number[], originIndex: number, originY: number, y: number, velocity: number) {
-  const travel = y - originY
-  const speed = Math.abs(velocity)
-  const flick = speed > FLICK
-  let dir = 0
-  if (Math.abs(travel) > 1) dir = Math.sign(travel)
-  else if (flick) dir = Math.sign(velocity)
-  if (dir === 0) return stops[originIndex]
+function windowFor(stops: number[], index: number) {
+  const origin = stops[index] ?? 0
+  const prev = stops[index - 1] ?? origin
+  const next = stops[index + 1] ?? origin
+  return { origin, prev, next }
+}
 
-  const next = originIndex + dir
-  if (next < 0 || next >= stops.length) return stops[originIndex]
-
-  const gap = Math.abs(stops[next] - stops[originIndex]) || 1
-  const crossed = Math.abs(travel) > gap * COMMIT_RATIO
-  const flicked = flick && Math.sign(velocity) === dir
-  return crossed || flicked ? stops[next] : stops[originIndex]
+function pickTarget(stops: number[], originIndex: number, y: number) {
+  const { origin, prev, next } = windowFor(stops, originIndex)
+  const clamped = Math.min(next, Math.max(prev, y))
+  const travel = clamped - origin
+  const dir = Math.sign(travel)
+  if (dir === 0) return origin
+  const neighbor = dir < 0 ? prev : next
+  const gap = Math.abs(neighbor - origin) || 1
+  return Math.abs(travel) > gap * COMMIT_RATIO ? neighbor : origin
 }
 
 function settleDuration(distance: number, portHeight: number) {
   const span = Math.max(portHeight, 1)
-  return Math.min(MAX_S, Math.max(MIN_S, (distance / span) * 0.42))
+  return Math.min(MAX_S, Math.max(MIN_S, (distance / span) * 0.4))
 }
 
 export function bindTouchSnap(port: HTMLElement) {
@@ -83,10 +83,9 @@ export function bindTouchSnap(port: HTMLElement) {
   let writing = false
   let pointerId = -1
   let originY = 0
+  let originIndex = 0
   let held = port.scrollTop
-  let lastPointerY = 0
-  let lastPointerT = 0
-  let velocity = 0
+  let epoch = 0
   let stops: number[] = []
 
   const killTween = () => {
@@ -95,33 +94,21 @@ export function bindTouchSnap(port: HTMLElement) {
     current?.kill()
   }
 
+  const thaw = () => {
+    port.style.overflow = ''
+  }
+
   const release = () => {
     holding = false
     dragging = false
+    thaw()
     port.classList.remove(COAST)
   }
 
-  const trackPointer = (event: PointerEvent) => {
-    const now = performance.now()
-    const dt = now - lastPointerT
-    if (dt > 0 && dt < 100) {
-      const next = -(event.clientY - lastPointerY) / dt
-      velocity = velocity * 0.35 + next * 0.65
-    } else if (dt >= 100) {
-      velocity = 0
-    }
-    lastPointerY = event.clientY
-    lastPointerT = now
-  }
-
-  const pin = (y: number) => {
+  const writeScroll = (y: number) => {
     writing = true
-    const previous = port.style.overflow
-    port.style.overflow = 'hidden'
-    void port.offsetHeight
-    port.style.overflow = previous
-    port.scrollTop = y
     held = y
+    port.scrollTop = y
     writing = false
   }
 
@@ -129,9 +116,7 @@ export function bindTouchSnap(port: HTMLElement) {
     killTween()
     const from = port.scrollTop
     if (Math.abs(target - from) < 1) {
-      writing = true
-      port.scrollTop = target
-      writing = false
+      writeScroll(target)
       release()
       return
     }
@@ -139,25 +124,51 @@ export function bindTouchSnap(port: HTMLElement) {
     const created = gsap.to(state, {
       y: target,
       duration: settleDuration(Math.abs(target - from), port.clientHeight),
-      ease: 'power3.out',
+      ease: 'power2.out',
       onUpdate: () => {
-        writing = true
-        held = state.y
-        port.scrollTop = state.y
-        writing = false
+        writeScroll(state.y)
       },
       onComplete: () => {
         if (tween !== created) return
-        writing = true
-        held = target
-        port.scrollTop = target
-        writing = false
+        writeScroll(target)
         tween = null
         holding = false
-        if (!dragging) port.classList.remove(COAST)
+        if (!dragging) release()
       },
     })
     tween = created
+  }
+
+  const finish = () => {
+    if (!dragging) return
+    dragging = false
+    pointerId = -1
+
+    if (locked(port) || stops.length === 0) {
+      release()
+      return
+    }
+
+    const token = epoch
+    const { prev, next } = windowFor(stops, originIndex)
+    const y = Math.min(next, Math.max(prev, port.scrollTop))
+    const target = pickTarget(stops, originIndex, y)
+
+    holding = true
+    port.style.overflow = 'hidden'
+    writeScroll(y)
+
+    if (Math.abs(target - y) < 1) {
+      writeScroll(target)
+      window.setTimeout(() => {
+        if (token !== epoch || dragging || tween) return
+        writeScroll(target)
+        release()
+      }, 48)
+      return
+    }
+
+    go(target)
   }
 
   const onPointerDown = (event: PointerEvent) => {
@@ -168,68 +179,56 @@ export function bindTouchSnap(port: HTMLElement) {
       return
     }
     killTween()
+    thaw()
+    epoch += 1
     dragging = true
     holding = false
     pointerId = event.pointerId
     port.classList.add(COAST)
     stops = measureStops(port)
     originY = port.scrollTop
-    lastPointerY = event.clientY
-    lastPointerT = performance.now()
-    velocity = 0
-  }
-
-  const onPointerMove = (event: PointerEvent) => {
-    if (!dragging || event.pointerId !== pointerId) return
-    trackPointer(event)
-  }
-
-  const onScroll = () => {
-    if (writing || !holding) return
-    if (Math.abs(port.scrollTop - held) < 0.5) return
-    writing = true
-    port.scrollTop = held
-    writing = false
+    originIndex = nearestIndex(stops, originY)
+    held = originY
   }
 
   const onPointerUp = (event: PointerEvent) => {
     if (!dragging || event.pointerId !== pointerId) return
-    dragging = false
-    pointerId = -1
-    if (performance.now() - lastPointerT > 80) velocity = 0
+    finish()
+  }
 
-    if (locked(port) || stops.length === 0) {
-      release()
+  const onTouchEnd = (event: TouchEvent) => {
+    if (event.touches.length > 0) return
+    finish()
+  }
+
+  const onScroll = () => {
+    if (writing) return
+    if (dragging && stops.length > 0) {
+      const { prev, next } = windowFor(stops, originIndex)
+      if (port.scrollTop < prev || port.scrollTop > next) {
+        writeScroll(Math.min(next, Math.max(prev, port.scrollTop)))
+      }
       return
     }
-
-    const y = port.scrollTop
-    const moved = Math.abs(y - originY) > 1 || Math.abs(velocity) > 0.05
-    if (!moved) {
-      release()
-      return
+    if (holding && Math.abs(port.scrollTop - held) > 8) {
+      writeScroll(held)
     }
-
-    holding = true
-    held = y
-    pin(y)
-    const originIndex = nearestIndex(stops, originY)
-    go(pickTarget(stops, originIndex, originY, y, velocity))
   }
 
   port.addEventListener('pointerdown', onPointerDown, { passive: true })
   port.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('pointermove', onPointerMove, { passive: true })
   window.addEventListener('pointerup', onPointerUp, { passive: true })
-  window.addEventListener('pointercancel', onPointerUp, { passive: true })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
+  window.addEventListener('touchcancel', onTouchEnd, { passive: true })
 
   return () => {
     killTween()
+    thaw()
     port.classList.remove(COAST)
     port.removeEventListener('pointerdown', onPointerDown)
     port.removeEventListener('scroll', onScroll)
-    window.removeEventListener('pointermove', onPointerMove)
     window.removeEventListener('pointerup', onPointerUp)
-    window.removeEventListener('pointercancel', onPointerUp)
+    window.removeEventListener('touchend', onTouchEnd)
+    window.removeEventListener('touchcancel', onTouchEnd)
   }
 }
