@@ -122,43 +122,36 @@ html.cs-snap-root body {
   }
 }
 
-/* Overview deck. Snap / tension / roll ease come from the stage as
-   --cs-snap, --cs-tension, and --cs-roll-ease.
-   Blur is not transitioned — animating it is the iOS hitch. */
-.cs-overview-stage {
-  --cs-overview-nudge: 0px;
-}
-.cs-overview-stage[data-phase="tension"] {
-  --cs-overview-nudge: -1.45rem;
-}
+/* Overview deck. Centering is a fixed `translate` on the card and does
+   not run. The plate's `translate` is only the slot offset, so iOS never
+   interpolates `-50%` together with a custom property — that, and
+   replacing `transition` as the move starts, is the first-frame twitch. */
 .cs-overview-card {
   left: 50%;
   top: 50%;
   width: var(--cs-overview-side-w);
   z-index: 6;
   opacity: 0;
-  transform: translate3d(
-    calc(-50% + var(--cs-overview-nudge) + var(--cs-overview-x)),
-    -50%,
-    0
-  );
+  translate: -50% -50%;
+}
+.cs-overview-plate {
+  translate: var(--cs-overview-x, 0px) 0;
+}
+.cs-overview-stage[data-phase="tension"] .cs-overview-plate {
+  translate: calc(var(--cs-overview-x, 0px) - 1.45rem) 0;
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
   transition:
-    transform var(--cs-snap) var(--cs-roll-ease),
     width var(--cs-snap) var(--cs-roll-ease),
     opacity 180ms linear;
+}
+.cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) .cs-overview-plate {
+  transition: translate var(--cs-snap) var(--cs-roll-ease);
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="-1"]:not([data-skip]),
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="0"]:not([data-skip]),
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="1"]:not([data-skip]) {
-  transition:
-    transform var(--cs-snap) var(--cs-roll-ease),
-    width var(--cs-snap) var(--cs-roll-ease),
-    opacity 180ms linear 220ms;
-}
-.cs-overview-stage[data-ready="true"][data-phase="tension"] .cs-overview-card:not([data-skip]) {
-  transition: transform var(--cs-tension) cubic-bezier(0.62, 0, 0.78, 0.22);
+  transition-delay: 0s, 220ms;
 }
 .cs-overview-card[data-slot="0"] {
   z-index: 20;
@@ -243,6 +236,7 @@ html.cs-snap-root body {
 }
 @media (prefers-reduced-motion: reduce) {
   .cs-overview-stage[data-ready="true"] .cs-overview-card,
+  .cs-overview-stage[data-ready="true"] .cs-overview-plate,
   .cs-overview-stage[data-ready="true"] .cs-overview-card img,
   .cs-overview-wash[data-ready="true"] .cs-overview-bg {
     transition: none;

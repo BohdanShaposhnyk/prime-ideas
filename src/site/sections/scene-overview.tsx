@@ -12,7 +12,6 @@ import hallRooms from '../assets/showcase/hall-rooms.webp'
 
 const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'STAY LATE'] as const
 const HOLD_MS = 2000
-const TENSION_MS = 280
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
 const OFFSETS = [-2, -1, 0, 1, 2] as const
@@ -223,7 +222,6 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         aria-hidden
         style={{
           '--cs-snap': `${SNAP_MS}ms`,
-          '--cs-tension': `${TENSION_MS}ms`,
           '--cs-roll-ease': ROLL_EASE,
         } as CSSProperties}
       >
@@ -258,7 +256,8 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
 /** Runs across the whole stage, unclipped — the front card punches a hole so the line reads behind it. */
 function TypeBelt({ cycle }: { cycle: Cycle }) {
   const beltRef = useRef<HTMLDivElement>(null)
-  const { phase, front, ready } = cycle
+  const { phase, ready } = cycle
+  const moving = phase !== 'rest'
 
   useEffect(() => {
     const belt = beltRef.current
@@ -269,7 +268,7 @@ function TypeBelt({ cycle }: { cycle: Cycle }) {
     const sync = () => {
       const card = document.querySelector<HTMLElement>('[data-overview-card][data-front]')
       if (!card) return
-      const plate = card.firstElementChild ?? card
+      const plate = card.querySelector<HTMLElement>('.cs-overview-plate') ?? card
       const box = plate.getBoundingClientRect()
       const host = belt.getBoundingClientRect()
       belt.style.setProperty('--cs-overview-hole-w', `${box.width}px`)
@@ -283,16 +282,17 @@ function TypeBelt({ cycle }: { cycle: Cycle }) {
       raf = requestAnimationFrame(track)
     }
 
-    sync()
-    // Cards only travel outside the rest phase — follow them frame by frame there.
-    if (phase !== 'rest') raf = requestAnimationFrame(track)
+    // Measure on the next frame once the cards leave rest, so the wind-up
+    // doesn't start in the same turn as a layout read.
+    if (moving) raf = requestAnimationFrame(track)
+    else sync()
     window.addEventListener('resize', sync)
 
     return () => {
       if (raf) cancelAnimationFrame(raf)
       window.removeEventListener('resize', sync)
     }
-  }, [phase, front, ready])
+  }, [moving, ready])
 
   return (
     <div
