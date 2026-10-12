@@ -186,7 +186,7 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
   })
 
   return (
-    <div className="absolute inset-0 isolate overflow-hidden bg-[var(--cs-pitch)] [--cs-overview-center-w:10.75rem] [--cs-overview-side-w:6.9rem] [--cs-overview-gap:1.15rem] sm:[--cs-overview-center-w:16.25rem] sm:[--cs-overview-side-w:10.5rem] sm:[--cs-overview-gap:2.35rem] lg:[--cs-overview-center-w:18.75rem] lg:[--cs-overview-side-w:12rem] lg:[--cs-overview-gap:3.1rem]">
+    <div className="absolute inset-0 isolate overflow-hidden bg-[var(--cs-pitch)] [--cs-overview-center-w:10.75rem] [--cs-overview-side-w:6.9rem] [--cs-overview-scale:0.642] [--cs-overview-gap:1.15rem] sm:[--cs-overview-center-w:16.25rem] sm:[--cs-overview-side-w:10.5rem] sm:[--cs-overview-scale:0.646] sm:[--cs-overview-gap:2.35rem] lg:[--cs-overview-center-w:18.75rem] lg:[--cs-overview-side-w:12rem] lg:[--cs-overview-scale:0.64] lg:[--cs-overview-gap:3.1rem]">
       <div
         className="cs-overview-wash pointer-events-none absolute inset-0 overflow-hidden"
         data-ready={ready ? 'true' : 'false'}

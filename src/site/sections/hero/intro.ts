@@ -391,13 +391,23 @@ export function useHeroIntro({
         })
       }
 
+      let kicked = false
+      let videoWait = 0
       const kick = () => {
-        if (cancelled) return
+        if (cancelled || kicked) return
+        kicked = true
+        window.clearTimeout(videoWait)
         afterPaint(start)
       }
 
       if (video && video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
         video.addEventListener('loadeddata', kick, { once: true })
+        video.addEventListener('error', kick, { once: true })
+        /* Chrome Android often never fires loadeddata while preload is still
+           metadata and the reel is racing the stills. The hero stays black and
+           scroll stays locked. Don't wait on that frame. */
+        videoWait = window.setTimeout(kick, 480)
+        video.play()?.catch(() => {})
       } else {
         kick()
       }
@@ -407,7 +417,9 @@ export function useHeroIntro({
         armed = true
         detach()
         timelineRef.current = null
+        window.clearTimeout(videoWait)
         video?.removeEventListener('loadeddata', kick)
+        video?.removeEventListener('error', kick)
         setMoltenLive(false)
       }
     },

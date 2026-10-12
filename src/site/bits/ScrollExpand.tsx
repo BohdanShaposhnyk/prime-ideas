@@ -164,7 +164,10 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     frame.style.clipPath = `inset(${iy}% ${ix}% ${iy}% ${ix}% round ${r}px)`;
     frame.style.setProperty('--se-progress', String(p));
 
-    media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
+    const zoom = c.mediaZoom + (1 - c.mediaZoom) * e;
+    /* scale(1) is still a transform. On Android that promoted layer, with a
+       child blur inside it, paints the fixed scroller black. */
+    media.style.transform = Math.abs(zoom - 1) < 0.0001 ? '' : `scale(${zoom})`;
 
     if (scrimRef.current) scrimRef.current.style.opacity = `${c.overlayScrim * e}`;
 
@@ -443,12 +446,12 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         <div ref={stageRef} className="sticky top-0 h-[100lvh] w-full overflow-hidden bg-black [--se-title-size:4rem]">
           <div
             ref={frameRef}
-            className="absolute inset-0 [will-change:clip-path]"
+            className="absolute inset-0"
             style={{ clipPath: startClip, '--se-progress': open ? '1' : '0' } as CSSProperties}
           >
             <div
               ref={mediaRef}
-              className="absolute inset-0 size-full origin-center [will-change:transform]"
+              className="absolute inset-0 size-full origin-center"
             >
               {media}
             </div>

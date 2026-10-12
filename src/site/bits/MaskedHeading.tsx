@@ -434,7 +434,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
               />
             ) : (
               <img className="block w-full h-full object-cover select-none" src={src} alt="" draggable={false} />
