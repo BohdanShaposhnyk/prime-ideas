@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc -b --pretty false",
     "preview": "vite preview",
-    "assets:c20": "node scripts/compress-c20.mjs"
+    "assets": "node scripts/compress-assets.mjs"
   },
   "dependencies": {
     "@fontsource/barlow": "^5.3.0",

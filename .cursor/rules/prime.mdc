@@ -15,7 +15,7 @@ The Prime Warsaw landing page: gaming, cinema, karaoke, hookah, and bar. Brand: 
 
 ## Layout
 
-The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets:c20` live in `assets-src/c20`.
+The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets` live in `assets-src`.
 
 ## Commands
 

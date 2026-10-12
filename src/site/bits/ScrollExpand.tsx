@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from 'react';
 
 const clamp = (v: number, a: number, b: number): number => (v < a ? a : v > b ? b : v);
 
-/** Page scroller for window-scroll mode. An overflow ancestor (c20 snap port) wins; otherwise the document. */
+/** Page scroller for window-scroll mode. An overflow ancestor wins; otherwise the document. */
 function pageScroller(node: HTMLElement, useWindow: boolean): HTMLElement | Window {
   if (!useWindow) return node;
   let el = node.parentElement;

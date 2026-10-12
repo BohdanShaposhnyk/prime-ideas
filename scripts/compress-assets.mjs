@@ -1,8 +1,8 @@
 /**
- * Builds web-ready c20 assets from the full-quality originals in assets-src/c20.
+ * Builds web-ready assets from the full-quality originals in assets-src.
  * Outputs are committed and imported by the page; originals are never modified.
  *
- *   pnpm assets:c20
+ *   pnpm assets
  *
  * Re-running always re-encodes from the originals, so tweaking quality here never
  * stacks compression on top of compression.
@@ -17,7 +17,7 @@ import sharp from 'sharp'
 
 const run = promisify(execFile)
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const srcRoot = path.join(root, 'assets-src/c20')
+const srcRoot = path.join(root, 'assets-src')
 
 const TARGETS = [
   { from: 'page', to: 'src/site/assets' },
@@ -32,7 +32,7 @@ const LONG_EDGE = 1600
 const PHOTO = { quality: 82, effort: 6, smartSubsample: true }
 /** Transparent PNG mockups: higher quality, lossless alpha so device edges stay clean. */
 const ALPHA = { quality: 90, alphaQuality: 100, effort: 6, smartSubsample: true }
-/** Per-file overrides (path relative to assets-src/c20) if banding shows up on a dark shot. */
+/** Per-file overrides (path relative to assets-src) if banding shows up on a dark shot. */
 const OVERRIDES = {}
 
 /** Tiny files aren't worth a lossy pass. */
