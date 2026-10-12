@@ -124,76 +124,67 @@ html.cs-snap-root body {
 
 /* Overview deck. Snap / tension / roll ease come from the stage as
    --cs-snap, --cs-tension, and --cs-roll-ease.
-   Cards move with the translate property. A custom property inside
-   transform jumps on the first frame in iOS Safari, and that same
-   transform drops the inactive-card blur. Width stays the center size
-   so -50% centering doesn't hitch — scale makes the side cards. */
+   Blur is not transitioned — animating it is the iOS hitch. */
+.cs-overview-stage {
+  --cs-overview-nudge: 0px;
+}
+.cs-overview-stage[data-phase="tension"] {
+  --cs-overview-nudge: -1.45rem;
+}
 .cs-overview-card {
   left: 50%;
   top: 50%;
-  width: var(--cs-overview-center-w);
+  width: var(--cs-overview-side-w);
   z-index: 6;
   opacity: 0;
-  scale: var(--cs-overview-scale, 0.642);
-  translate: -50% -50%;
+  transform: translate3d(
+    calc(-50% + var(--cs-overview-nudge) + var(--cs-overview-x)),
+    -50%,
+    0
+  );
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
   transition:
-    translate var(--cs-snap) var(--cs-roll-ease),
-    scale var(--cs-snap) var(--cs-roll-ease),
+    transform var(--cs-snap) var(--cs-roll-ease),
+    width var(--cs-snap) var(--cs-roll-ease),
     opacity 180ms linear;
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="-1"]:not([data-skip]),
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="0"]:not([data-skip]),
 .cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="1"]:not([data-skip]) {
   transition:
-    translate var(--cs-snap) var(--cs-roll-ease),
-    scale var(--cs-snap) var(--cs-roll-ease),
+    transform var(--cs-snap) var(--cs-roll-ease),
+    width var(--cs-snap) var(--cs-roll-ease),
     opacity 180ms linear 220ms;
 }
 .cs-overview-stage[data-ready="true"][data-phase="tension"] .cs-overview-card:not([data-skip]) {
-  transition: translate var(--cs-tension) cubic-bezier(0.62, 0, 0.78, 0.22);
+  transition: transform var(--cs-tension) cubic-bezier(0.62, 0, 0.78, 0.22);
 }
 .cs-overview-card[data-slot="0"] {
   z-index: 20;
+  width: var(--cs-overview-center-w);
   opacity: 1;
-  scale: 1;
-  translate: -50% -50%;
+  --cs-overview-x: 0px;
 }
 .cs-overview-card[data-slot="-1"] {
   z-index: 12;
   opacity: 1;
   --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - var(--cs-overview-gap) - 0.5 * var(--cs-overview-side-w));
-  translate: calc(-50% + var(--cs-overview-x)) -50%;
 }
 .cs-overview-card[data-slot="1"] {
   z-index: 8;
   opacity: 1;
   --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + var(--cs-overview-gap) + 0.5 * var(--cs-overview-side-w));
-  translate: calc(-50% + var(--cs-overview-x)) -50%;
 }
 .cs-overview-card[data-slot="-2"] {
   --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - 2 * var(--cs-overview-gap) - 1.5 * var(--cs-overview-side-w));
-  translate: calc(-50% + var(--cs-overview-x)) -50%;
 }
 .cs-overview-card[data-slot="2"] {
   --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + 2 * var(--cs-overview-gap) + 1.5 * var(--cs-overview-side-w));
-  translate: calc(-50% + var(--cs-overview-x)) -50%;
-}
-.cs-overview-stage[data-phase="tension"] .cs-overview-card[data-slot="0"] {
-  translate: calc(-50% - 1.45rem) -50%;
-}
-.cs-overview-stage[data-phase="tension"] .cs-overview-card[data-slot="-1"],
-.cs-overview-stage[data-phase="tension"] .cs-overview-card[data-slot="1"],
-.cs-overview-stage[data-phase="tension"] .cs-overview-card[data-slot="-2"],
-.cs-overview-stage[data-phase="tension"] .cs-overview-card[data-slot="2"] {
-  translate: calc(-50% - 1.45rem + var(--cs-overview-x)) -50%;
 }
 .cs-overview-card[data-front] {
   z-index: 30;
 }
-/* Blur stays on, including touch. It is not transitioned: animating
-   filter is what makes iOS hitch as the cards leave rest. */
 .cs-overview-card img {
   filter: blur(2px);
 }
