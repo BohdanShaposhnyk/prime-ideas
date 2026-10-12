@@ -4,11 +4,11 @@ import { FilmGrain } from '../components/grain'
 import { useInView } from '../hooks/in-view'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { lockupClass } from '../lib/palette'
+import crowdLounge from '../assets/event-cs6/crowd-lounge.webp'
 import carsim from '../assets/showcase/carsim.webp'
-import guestRoom from '../assets/showcase/guest-room-2.webp'
-import hallPurple from '../assets/showcase/hall-purple.webp'
+import entrance from '../assets/showcase/entrance.webp'
+import gamers from '../assets/showcase/gamers-3.webp'
 import hallRooms from '../assets/showcase/hall-rooms.webp'
-import rigs from '../assets/showcase/rigs.webp'
 
 const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'STAY LATE'] as const
 const HOLD_MS = 2000
@@ -31,10 +31,10 @@ const ROLL_EASE = `linear(
 
 const CARDS = [
   { id: 'carsim', image: carsim },
-  { id: 'rigs', image: rigs },
+  { id: 'entrance', image: entrance },
   { id: 'hall-rooms', image: hallRooms },
-  { id: 'guest-room', image: guestRoom },
-  { id: 'hall-purple', image: hallPurple },
+  { id: 'crowd', image: crowdLounge },
+  { id: 'gamers', image: gamers },
 ]
 
 const TYPE_LOOP = Array.from({ length: 4 }, () => LINE).flat()

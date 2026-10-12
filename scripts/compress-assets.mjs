@@ -26,6 +26,15 @@ const TARGETS = [
 ]
 const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
 
+/** Named event stills. The numbered dump in event-cs6 stays out of the encode. */
+const EXTRAS = [
+  'event-cs6/crowd-hookah.jpg',
+  'event-cs6/crowd-lounge.jpg',
+  'event-cs6/crowd-lounge-2.jpg',
+  'event-cs6/gamers.jpg',
+  'event-cs6/glass-ls.jpg',
+]
+
 /** Photos stay under this long edge. Cards and full-bleed washes share one master. */
 const LONG_EDGE = 1600
 
@@ -105,6 +114,10 @@ for (const { from, to } of TARGETS) {
   const srcDir = path.join(srcRoot, from)
   const outDir = path.join(root, to)
   for (const file of await walk(srcDir)) await processImage(file, outDir, srcDir)
+}
+for (const rel of EXTRAS) {
+  const file = path.join(srcRoot, rel)
+  await processImage(file, path.join(root, 'src/site/assets', path.dirname(rel)), path.dirname(file))
 }
 for (const video of VIDEOS) await processVideo(video)
 

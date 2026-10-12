@@ -5,7 +5,7 @@ import bottles from '../assets/bar/bottles.webp'
 import seats from '../assets/cinema/seats.webp'
 import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
-import micGold from '../assets/karaoke/mic-gold.webp'
+import micPurple from '../assets/karaoke/mic-purple-2.webp'
 import { FilmGrain } from '../components/grain'
 import { lockupClass, supportClass } from '../lib/palette'
 import { SHOWCASE_MIN_HEIGHT } from './showcase-span'
@@ -44,7 +44,7 @@ const CARDS = [
     word: 'KARAOKE',
     line: 'No stage fright allowed.',
     alt: 'Karaoke',
-    src: micGold,
+    src: micPurple,
   },
   {
     id: 'cinema',

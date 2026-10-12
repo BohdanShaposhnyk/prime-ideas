@@ -1,18 +1,18 @@
 import { useMemo } from 'react'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/site/bits/DriftWall'
-import barPartyHor from '../assets/bar/bar-party-hor.webp'
-import seats from '../assets/cinema/seats.webp'
-import pcParty from '../assets/gaming/pc-party.webp'
-import smoking from '../assets/hookah/smoking.webp'
-import micGold from '../assets/karaoke/mic-gold.webp'
-import singerHor from '../assets/karaoke/singer-hor.webp'
+import crowdHookah from '../assets/event-cs6/crowd-hookah.webp'
+import crowdLounge from '../assets/event-cs6/crowd-lounge-2.webp'
+import gamers from '../assets/event-cs6/gamers.webp'
+import glassLive from '../assets/event-cs6/glass-ls.webp'
 import gameRoom from '../assets/showcase/game-room-ls.webp'
 import glassRoom from '../assets/showcase/glass-2-ls.webp'
 import guestLounge from '../assets/showcase/guest-room-ls.webp'
 import guestScreen from '../assets/showcase/guest-room-3-ls.webp'
 import lounge from '../assets/showcase/lounge-3-ls.webp'
+import outside from '../assets/showcase/outside-dude.webp'
 import rigs from '../assets/showcase/rigs-2-ls.webp'
+import screen from '../assets/showcase/screen-cs.webp'
 import { useMediaQuery } from '../hooks/media'
 import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, supportClass } from '../lib/palette'
@@ -23,17 +23,17 @@ const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Pr
 
 const WALL_IMAGES = [
   { src: gameRoom, title: 'Game room' },
-  { src: singerHor, title: 'Stage' },
+  { src: crowdHookah, title: 'Hookah' },
   { src: glassRoom, title: 'Glass' },
   { src: guestLounge, title: 'Guest lounge' },
-  { src: seats, title: 'Seats' },
+  { src: screen, title: 'Watch' },
   { src: rigs, title: 'Rigs' },
   { src: lounge, title: 'Lounge' },
-  { src: barPartyHor, title: 'Bar night' },
+  { src: glassLive, title: 'Rooms' },
   { src: guestScreen, title: 'Screen' },
-  { src: smoking, title: 'Smoke' },
-  { src: pcParty, title: 'Party' },
-  { src: micGold, title: 'Gold mic' },
+  { src: crowdLounge, title: 'Crowd' },
+  { src: gamers, title: 'Play' },
+  { src: outside, title: 'Outside' },
 ] as const
 
 /** Same breaks the photo tiles use: two lines, so the long side of the card can hold each one. */
