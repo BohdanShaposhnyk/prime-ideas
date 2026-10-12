@@ -2,17 +2,17 @@ import { useMemo } from 'react'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/site/bits/DriftWall'
 import barPartyHor from '../assets/bar/bar-party-hor.webp'
-import projector from '../assets/cinema/projector.webp'
-import projectorWide from '../assets/cinema/projector-2.webp'
-import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
-import gamerGirlLight from '../assets/gaming/gamer-girl-light-hor.webp'
-import keyboardHor from '../assets/gaming/keyboard-hor.webp'
-import micGold from '../assets/karaoke/mic-gold.webp'
-import micPurple from '../assets/karaoke/mic-purple.webp'
-import singerHor from '../assets/karaoke/singer-hor.webp'
-import smoking from '../assets/hookah/smoking.webp'
 import seats from '../assets/cinema/seats.webp'
 import pcParty from '../assets/gaming/pc-party.webp'
+import smoking from '../assets/hookah/smoking.webp'
+import micGold from '../assets/karaoke/mic-gold.webp'
+import singerHor from '../assets/karaoke/singer-hor.webp'
+import gameRoom from '../assets/showcase/game-room-ls.webp'
+import glassRoom from '../assets/showcase/glass-2-ls.webp'
+import guestLounge from '../assets/showcase/guest-room-ls.webp'
+import guestScreen from '../assets/showcase/guest-room-3-ls.webp'
+import lounge from '../assets/showcase/lounge-3-ls.webp'
+import rigs from '../assets/showcase/rigs-2-ls.webp'
 import { useMediaQuery } from '../hooks/media'
 import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, supportClass } from '../lib/palette'
@@ -22,16 +22,16 @@ const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
 const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime', 'Navi partner'] as const
 
 const WALL_IMAGES = [
-  { src: barPartyHor, title: 'Bar night' },
-  { src: gamerGirlLight, title: 'Arena' },
+  { src: gameRoom, title: 'Game room' },
   { src: singerHor, title: 'Stage' },
-  { src: keyboardHor, title: 'Keys' },
-  { src: projector, title: 'Screen' },
-  { src: gamerGirlHor, title: 'Play' },
-  { src: micPurple, title: 'Mic' },
-  { src: projectorWide, title: 'Cinema' },
-  { src: smoking, title: 'Smoke' },
+  { src: glassRoom, title: 'Glass' },
+  { src: guestLounge, title: 'Guest lounge' },
   { src: seats, title: 'Seats' },
+  { src: rigs, title: 'Rigs' },
+  { src: lounge, title: 'Lounge' },
+  { src: barPartyHor, title: 'Bar night' },
+  { src: guestScreen, title: 'Screen' },
+  { src: smoking, title: 'Smoke' },
   { src: pcParty, title: 'Party' },
   { src: micGold, title: 'Gold mic' },
 ] as const

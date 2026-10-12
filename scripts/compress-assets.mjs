@@ -22,6 +22,7 @@ const srcRoot = path.join(root, 'assets-src')
 const TARGETS = [
   { from: 'page', to: 'src/site/assets' },
   { from: 'shared', to: 'src/site/assets' },
+  { from: 'showcase', to: 'src/site/assets/showcase' },
 ]
 const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
 
