@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view'
 import InfiniteSpiral from '@/site/bits/InfiniteSpiral'
 import bottles from '../assets/bar/bottles.webp'
-import cinemaHall from '../assets/showcase/screen-cs-2.webp'
+import seats from '../assets/cinema/seats.webp'
 import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micPurple from '../assets/karaoke/mic-purple-2.webp'
@@ -51,7 +51,7 @@ const CARDS = [
     word: 'CINEMA',
     line: 'Settle in. The night is on.',
     alt: 'Cinema',
-    src: cinemaHall,
+    src: seats,
   },
 ] as const
 
