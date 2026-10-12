@@ -32,6 +32,7 @@ const EXTRAS = [
   'event-cs6/crowd-lounge.jpg',
   'event-cs6/crowd-lounge-2.jpg',
   'event-cs6/gamers.jpg',
+  'event-cs6/crowd-hookah-2.jpg',
   'event-cs6/glass-ls.jpg',
 ]
 

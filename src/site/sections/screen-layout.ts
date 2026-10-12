@@ -1,8 +1,10 @@
-import barPartyHor from '../assets/bar/bar-party-hor.webp'
-import gamerGirlHor from '../assets/gaming/gamer-girl-hor.webp'
-import gamerGirlLightHor from '../assets/gaming/gamer-girl-light-hor.webp'
-import keyboardHor from '../assets/gaming/keyboard-hor.webp'
-import singerHor from '../assets/karaoke/singer-hor.webp'
+import hookahStill from '../assets/event-cs6/crowd-hookah-2.webp'
+import gamersStill from '../assets/event-cs6/gamers.webp'
+import facesStill from '../assets/showcase/faces.webp'
+import micStill from '../assets/showcase/mic.webp'
+import outsideStill from '../assets/showcase/outside-dude.webp'
+import rigsStill from '../assets/showcase/rigs.webp'
+import screenStill from '../assets/showcase/screen-cs-2.webp'
 
 export const GAP = 8
 export const MASONRY_DURATION = 0.78
@@ -19,32 +21,38 @@ const COL_FR_DESKTOP = [1, 1.22, 1]
 
 type Tile = { id: string; fr: number; col: 0 | 1 | 2 }
 
-/** Desktop 2 / 3 / 2 — five landscape stills around the lockup. */
+/** Desktop 2 / 2+lockup / 3 — portrait stills. Right cells crop landscape. */
 const TILES_DESKTOP: Tile[] = [
-  { id: 'gate', fr: 0.62, col: 0 },
-  { id: 'pit', fr: 0.38, col: 0 },
-  { id: 'rake', fr: 0.38, col: 1 },
+  { id: 'rigs', fr: 0.62, col: 0 },
+  { id: 'screen', fr: 0.38, col: 0 },
+  { id: 'faces', fr: 0.38, col: 1 },
   { id: 'lockup', fr: 0, col: 1 },
-  { id: 'marquee', fr: 0.62, col: 1 },
-  { id: 'aisle', fr: 1, col: 2 },
+  { id: 'hookah', fr: 0.62, col: 1 },
+  { id: 'gamers', fr: 1, col: 2 },
+  { id: 'mic', fr: 1, col: 2 },
+  { id: 'outside', fr: 1, col: 2 },
 ]
 
-/** Mobile 2 / 3 / 1 — same stills, portrait lockup. */
+/** Mobile 2 / 2+lockup / 3 — same stills, portrait lockup and right cells. */
 const TILES_COMPACT: Tile[] = [
-  { id: 'gate', fr: 0.55, col: 0 },
-  { id: 'pit', fr: 0.45, col: 0 },
-  { id: 'rake', fr: 0.44, col: 1 },
+  { id: 'rigs', fr: 0.55, col: 0 },
+  { id: 'screen', fr: 0.45, col: 0 },
+  { id: 'faces', fr: 0.44, col: 1 },
   { id: 'lockup', fr: 0, col: 1 },
-  { id: 'marquee', fr: 0.56, col: 1 },
-  { id: 'aisle', fr: 1, col: 2 },
+  { id: 'hookah', fr: 0.56, col: 1 },
+  { id: 'gamers', fr: 1, col: 2 },
+  { id: 'mic', fr: 1, col: 2 },
+  { id: 'outside', fr: 1, col: 2 },
 ]
 
-const STILLS: Record<string, string> = {
-  gate: singerHor,
-  pit: keyboardHor,
-  rake: gamerGirlLightHor,
-  marquee: barPartyHor,
-  aisle: gamerGirlHor,
+const STILLS: Record<string, { src: string; objectPosition?: string }> = {
+  rigs: { src: rigsStill },
+  screen: { src: screenStill, objectPosition: 'center 32%' },
+  faces: { src: facesStill },
+  hookah: { src: hookahStill, objectPosition: 'center 36%' },
+  gamers: { src: gamersStill },
+  mic: { src: micStill },
+  outside: { src: outsideStill },
 }
 
 export type ScreenTile = {
@@ -52,6 +60,7 @@ export type ScreenTile = {
   column: 0 | 1 | 2
   height: number
   img?: string
+  objectPosition?: string
   isLockup: boolean
 }
 
@@ -122,12 +131,16 @@ export function screenLayout(stage: { w: number; h: number }): ScreenLayout | nu
   return {
     colFracs,
     captionDelay,
-    tiles: tiles.map(tile => ({
-      id: tile.id,
-      column: tile.col,
-      height: heights.get(tile.id) ?? 1,
-      img: tile.id === 'lockup' ? undefined : STILLS[tile.id],
-      isLockup: tile.id === 'lockup',
-    })),
+    tiles: tiles.map(tile => {
+      const still = tile.id === 'lockup' ? undefined : STILLS[tile.id]
+      return {
+        id: tile.id,
+        column: tile.col,
+        height: heights.get(tile.id) ?? 1,
+        img: still?.src,
+        objectPosition: still?.objectPosition,
+        isLockup: tile.id === 'lockup',
+      }
+    }),
   }
 }

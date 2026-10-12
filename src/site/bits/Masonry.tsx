@@ -55,6 +55,8 @@ const preloadImages = async (urls: string[]): Promise<void> => {
 interface Item {
   id: string;
   img?: string;
+  /** CSS object-position for the cover crop. Defaults to center. */
+  objectPosition?: string;
   url?: string;
   height: number;
   content?: React.ReactNode;
@@ -303,6 +305,7 @@ const Masonry: React.FC<MasonryProps> = ({
                 src={item.img}
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover"
+                style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
               />
             ) : null}
             {item.content}

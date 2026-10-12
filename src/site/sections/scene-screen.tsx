@@ -194,6 +194,7 @@ export default function SceneScreen() {
       column: tile.column,
       height: tile.height,
       img: tile.img,
+      objectPosition: tile.objectPosition,
       content: tile.isLockup ? (
         <Lockup play={active} delay={layout.captionDelay} coarse={coarse} reduced={reduced} />
       ) : undefined,
