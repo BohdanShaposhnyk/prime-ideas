@@ -14,6 +14,7 @@ const LINE = ['SHOW UP', 'LINK UP', 'GAME ON', 'HANG OUT', 'LOSE TRACK', 'STAY L
 const HOLD_MS = 2000
 const TENSION_HANDOFF_MS = 200
 const SNAP_MS = 580
+const BG_FADE_MS = 820
 const OFFSETS = [-2, -1, 0, 1, 2] as const
 const ROLL_EASE = `linear(
   0,
@@ -73,15 +74,33 @@ function useOverviewFrame() {
 type Cycle = {
   index: number
   fromIndex: number
+  /** Previous wash photo, kept until its fade finishes. */
+  linger: number | null
   front: number
   phase: 'rest' | 'tension' | 'snap'
   ready: boolean
+}
+
+/** Old photo under the new one. The next photo is mounted during the wind-up so it can fade in. */
+function washIndexes(cycle: Cycle) {
+  const { phase, index, fromIndex, linger } = cycle
+  const next = (index + 1) % CARD_COUNT
+  const ids =
+    phase === 'tension'
+      ? [index, next]
+      : phase === 'snap'
+        ? [fromIndex, index]
+        : linger != null && linger !== index
+          ? [linger, index]
+          : [index]
+  return ids.filter((value, i, list) => list.indexOf(value) === i)
 }
 
 /** Hold → tension → snap loop shared by the card deck and the type belt. */
 function useOverviewCycle(active: boolean, reduced: boolean): Cycle {
   const [index, setIndex] = useState(0)
   const [fromIndex, setFromIndex] = useState(0)
+  const [linger, setLinger] = useState<number | null>(null)
   const [front, setFront] = useState(0)
   const [phase, setPhase] = useState<Cycle['phase']>('rest')
   const [ready, setReady] = useState(false)
@@ -98,6 +117,7 @@ function useOverviewCycle(active: boolean, reduced: boolean): Cycle {
     let cancelled = false
     let timer = 0
     let frontTimer = 0
+    let lingerTimer = 0
 
     const hold = () => {
       if (cancelled) return
@@ -119,10 +139,15 @@ function useOverviewCycle(active: boolean, reduced: boolean): Cycle {
       setPhase('snap')
       setFromIndex(current)
       setIndex(next)
+      setLinger(current)
       indexRef.current = next
       frontTimer = window.setTimeout(() => {
         if (!cancelled) setFront(next)
       }, Math.round(SNAP_MS * 0.42))
+      window.clearTimeout(lingerTimer)
+      lingerTimer = window.setTimeout(() => {
+        if (!cancelled) setLinger(null)
+      }, BG_FADE_MS)
       timer = window.setTimeout(hold, SNAP_MS)
     }
 
@@ -131,10 +156,11 @@ function useOverviewCycle(active: boolean, reduced: boolean): Cycle {
       cancelled = true
       window.clearTimeout(timer)
       window.clearTimeout(frontTimer)
+      window.clearTimeout(lingerTimer)
     }
   }, [active, reduced])
 
-  return { index, fromIndex, front, phase, ready }
+  return { index, fromIndex, linger, front, phase, ready }
 }
 
 export default function SceneOverview() {
@@ -190,10 +216,9 @@ function OverviewDeck({ cycle }: { cycle: Cycle }) {
         className="cs-overview-wash pointer-events-none absolute inset-0 overflow-hidden"
         data-ready={ready ? 'true' : 'false'}
         aria-hidden
+        style={{ '--cs-bg-fade': `${BG_FADE_MS}ms` } as CSSProperties}
       >
-        {(phase === 'rest' ? [index] : [fromIndex, index])
-          .filter((value, i, list) => list.indexOf(value) === i)
-          .map((i) => (
+        {washIndexes(cycle).map((i) => (
           <div
             key={CARDS[i].id}
             className="cs-overview-bg absolute inset-0"

@@ -229,7 +229,7 @@ html.cs-snap-root body {
   opacity: 1;
 }
 .cs-overview-wash[data-ready="true"] .cs-overview-bg {
-  transition: opacity 820ms ease;
+  transition: opacity var(--cs-bg-fade, 820ms) ease;
 }
 .cs-overview-bg img {
   transform: scale(1.12);
