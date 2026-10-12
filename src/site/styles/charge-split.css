@@ -185,14 +185,13 @@ html.cs-snap-root body {
   z-index: 30;
 }
 .cs-overview-card img {
-  filter: none;
-}
-.cs-overview-stage[data-phase="tension"] .cs-overview-card:not([data-front]) img,
-.cs-overview-stage[data-phase="snap"] .cs-overview-card:not([data-front]) img {
   filter: blur(2px);
 }
 .cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) img {
   transition: filter var(--cs-snap) var(--cs-roll-ease);
+}
+.cs-overview-card[data-front] img {
+  filter: none;
 }
 @media (pointer: coarse) {
   .cs-overview-card img,
