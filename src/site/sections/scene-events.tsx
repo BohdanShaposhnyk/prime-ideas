@@ -5,29 +5,16 @@ import { useSnapInView } from '../hooks/snap-in-view'
 import { lockupClass, supportClass } from '../lib/palette'
 import crowd from '../assets/event-cs6/carousel/crowd.webp'
 import crowd2 from '../assets/event-cs6/carousel/crowd-2.webp'
-import crowd3 from '../assets/event-cs6/carousel/crowd-3.webp'
-import crowd4 from '../assets/event-cs6/carousel/crowd-4.webp'
 import dj from '../assets/event-cs6/carousel/dj.webp'
 import emotions from '../assets/event-cs6/carousel/emotions.webp'
-import emotions2 from '../assets/event-cs6/carousel/emotions-2.webp'
-import emotions3 from '../assets/event-cs6/carousel/emotions-3.webp'
-import emotions4 from '../assets/event-cs6/carousel/emotions-4.webp'
-import emotions5 from '../assets/event-cs6/carousel/emotions-5.webp'
-import emotions6 from '../assets/event-cs6/carousel/emotions-6.webp'
-import emotions7 from '../assets/event-cs6/carousel/emotions-7.webp'
-import emotions8 from '../assets/event-cs6/carousel/emotions-8.webp'
-import emotionsTeam from '../assets/event-cs6/carousel/emotions-team.webp'
 import gamers from '../assets/event-cs6/carousel/gamers.webp'
 import gamers2 from '../assets/event-cs6/carousel/gamers-2.webp'
-import gamers3 from '../assets/event-cs6/carousel/gamers-3.webp'
 import girls from '../assets/event-cs6/carousel/girls.webp'
 import prize from '../assets/event-cs6/carousel/prize.webp'
 import screen from '../assets/event-cs6/carousel/screen.webp'
-import screen2 from '../assets/event-cs6/carousel/screen-2.webp'
 import stage from '../assets/event-cs6/carousel/stage.webp'
 import stage2 from '../assets/event-cs6/carousel/stage-2.webp'
 import team from '../assets/event-cs6/carousel/team.webp'
-import team2 from '../assets/event-cs6/carousel/team-2.webp'
 
 const GALLERY = 'https://gregoryvyshnevetsky63.pixieset.com/affiliatecs6/'
 
@@ -45,19 +32,6 @@ const PHOTOS: FlexCarouselItem[] = [
   { src: crowd2, alt: 'Two guests on a red sofa' },
   { src: gamers2, alt: 'Player at a match PC' },
   { src: girls, alt: 'Two guests posing on a sofa' },
-  { src: emotions2, alt: 'Team celebrating with raised fists' },
-  { src: team2, alt: 'Five players posing in gaming chairs' },
-  { src: screen2, alt: 'Crowd watching a close view of the match' },
-  { src: emotionsTeam, alt: 'Team in matching jerseys celebrating' },
-  { src: crowd3, alt: 'Guests watching from the lounge chairs' },
-  { src: gamers3, alt: 'Players at the rigs, one standing by' },
-  { src: emotions3, alt: 'Guest cheering with both fists' },
-  { src: crowd4, alt: 'Guests seated around the lounge tables' },
-  { src: emotions4, alt: 'Guest sitting on the floor among the crowd' },
-  { src: emotions5, alt: 'Guest posing in an armchair' },
-  { src: emotions6, alt: 'Guest laughing on a sofa' },
-  { src: emotions7, alt: 'Guests watching from the front row' },
-  { src: emotions8, alt: 'Guest smiling in the front row' },
 ]
 
 const linkClass =
