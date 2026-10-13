@@ -23,6 +23,8 @@ const TARGETS = [
   { from: 'page', to: 'src/site/assets' },
   { from: 'shared', to: 'src/site/assets' },
   { from: 'showcase', to: 'src/site/assets/showcase' },
+  /** Portrait cards, not full-bleed. A shorter edge keeps the carousel textures small. */
+  { from: 'event-cs6/carousel', to: 'src/site/assets/event-cs6/carousel', longEdge: 960 },
 ]
 const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
 
@@ -36,7 +38,7 @@ const EXTRAS = [
   'event-cs6/glass-ls.jpg',
 ]
 
-/** Photos stay under this long edge. Cards and full-bleed washes share one master. */
+/** Default long edge. Full-bleed washes use this. The carousel target sets its own. */
 const LONG_EDGE = 1600
 
 /** Photos: WebP with full-res chroma so neon reds/blues keep crisp edges. */
@@ -76,7 +78,7 @@ function report(rel, inBytes, outBytes, note = '') {
   console.log(`${rel.padEnd(70)} ${kb(inBytes)} -> ${kb(outBytes)}  ${String(pct).padStart(3)}% ${note}`)
 }
 
-async function processImage(file, outDir, srcDir) {
+async function processImage(file, outDir, srcDir, longEdge = LONG_EDGE) {
   const rel = path.relative(srcDir, file)
   const relFromRoot = path.relative(srcRoot, file).replaceAll('\\', '/')
   const ext = path.extname(file).toLowerCase()
@@ -96,7 +98,7 @@ async function processImage(file, outDir, srcDir) {
   const options = { ...(ext === '.png' ? ALPHA : PHOTO), ...OVERRIDES[relFromRoot] }
   const info = await sharp(file)
     .rotate()
-    .resize({ width: LONG_EDGE, height: LONG_EDGE, fit: 'inside', withoutEnlargement: true })
+    .resize({ width: longEdge, height: longEdge, fit: 'inside', withoutEnlargement: true })
     .webp(options)
     .toFile(out)
   report(relFromRoot, size, info.size)
@@ -111,10 +113,10 @@ async function processVideo({ from, to }) {
   report(from, a.size, b.size)
 }
 
-for (const { from, to } of TARGETS) {
+for (const { from, to, longEdge } of TARGETS) {
   const srcDir = path.join(srcRoot, from)
   const outDir = path.join(root, to)
-  for (const file of await walk(srcDir)) await processImage(file, outDir, srcDir)
+  for (const file of await walk(srcDir)) await processImage(file, outDir, srcDir, longEdge)
 }
 for (const rel of EXTRAS) {
   const file = path.join(srcRoot, rel)

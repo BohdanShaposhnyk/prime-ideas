@@ -1,0 +1,119 @@
+import { useEffect, useRef, useState } from 'react'
+import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
+import { observeSnapPort } from '../hooks/snap-in-view'
+import { lockupClass, supportClass } from '../lib/palette'
+import crowd from '../assets/event-cs6/carousel/crowd.webp'
+import crowd2 from '../assets/event-cs6/carousel/crowd-2.webp'
+import crowd3 from '../assets/event-cs6/carousel/crowd-3.webp'
+import crowd4 from '../assets/event-cs6/carousel/crowd-4.webp'
+import dj from '../assets/event-cs6/carousel/dj.webp'
+import emotions from '../assets/event-cs6/carousel/emotions.webp'
+import emotions2 from '../assets/event-cs6/carousel/emotions-2.webp'
+import emotions3 from '../assets/event-cs6/carousel/emotions-3.webp'
+import emotions4 from '../assets/event-cs6/carousel/emotions-4.webp'
+import emotions5 from '../assets/event-cs6/carousel/emotions-5.webp'
+import emotions6 from '../assets/event-cs6/carousel/emotions-6.webp'
+import emotions7 from '../assets/event-cs6/carousel/emotions-7.webp'
+import emotions8 from '../assets/event-cs6/carousel/emotions-8.webp'
+import emotionsTeam from '../assets/event-cs6/carousel/emotions-team.webp'
+import gamers from '../assets/event-cs6/carousel/gamers.webp'
+import gamers2 from '../assets/event-cs6/carousel/gamers-2.webp'
+import gamers3 from '../assets/event-cs6/carousel/gamers-3.webp'
+import girls from '../assets/event-cs6/carousel/girls.webp'
+import prize from '../assets/event-cs6/carousel/prize.webp'
+import screen from '../assets/event-cs6/carousel/screen.webp'
+import screen2 from '../assets/event-cs6/carousel/screen-2.webp'
+import stage from '../assets/event-cs6/carousel/stage.webp'
+import stage2 from '../assets/event-cs6/carousel/stage-2.webp'
+import team from '../assets/event-cs6/carousel/team.webp'
+import team2 from '../assets/event-cs6/carousel/team-2.webp'
+
+const GALLERY = 'https://gregoryvyshnevetsky63.pixieset.com/affiliatecs6/'
+
+/** Mixed so autoplay does not sit on one kind of shot. */
+const PHOTOS: FlexCarouselItem[] = [
+  { src: stage, alt: 'Host with a microphone addressing the room' },
+  { src: crowd, alt: 'Guests on the lounge sofas' },
+  { src: gamers, alt: 'Players at the PCs with headsets on' },
+  { src: dj, alt: 'DJ at the decks' },
+  { src: emotions, alt: 'Team in a group hug' },
+  { src: team, alt: 'Players standing in front of the stage screen' },
+  { src: screen, alt: 'Crowd watching the match on the big screen' },
+  { src: prize, alt: 'Winner holding a red plush prize overhead' },
+  { src: stage2, alt: 'Host on stage in front of the match screen' },
+  { src: crowd2, alt: 'Two guests on a red sofa' },
+  { src: gamers2, alt: 'Player at a match PC' },
+  { src: girls, alt: 'Two guests posing on a sofa' },
+  { src: emotions2, alt: 'Team celebrating with raised fists' },
+  { src: team2, alt: 'Five players posing in gaming chairs' },
+  { src: screen2, alt: 'Crowd watching a close view of the match' },
+  { src: emotionsTeam, alt: 'Team in matching jerseys celebrating' },
+  { src: crowd3, alt: 'Guests watching from the lounge chairs' },
+  { src: gamers3, alt: 'Players at the rigs, one standing by' },
+  { src: emotions3, alt: 'Guest cheering with both fists' },
+  { src: crowd4, alt: 'Guests seated around the lounge tables' },
+  { src: emotions4, alt: 'Guest sitting on the floor among the crowd' },
+  { src: emotions5, alt: 'Guest posing in an armchair' },
+  { src: emotions6, alt: 'Guest laughing on a sofa' },
+  { src: emotions7, alt: 'Guests watching from the front row' },
+  { src: emotions8, alt: 'Guest smiling in the front row' },
+]
+
+const linkClass =
+  'inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none sm:tracking-[var(--cs-track-micro)]'
+
+export default function SceneEvents() {
+  const ref = useRef<HTMLElement>(null)
+  const [live, setLive] = useState(false)
+
+  useEffect(() => {
+    if (live) return
+    const el = ref.current
+    if (!el) return
+    return observeSnapPort(el, hit => {
+      if (hit) setLive(true)
+    })
+  }, [live])
+
+  return (
+    <section
+      ref={ref}
+      aria-labelledby="cs-events-title"
+      data-scene="events"
+      className="cs-scene relative flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+    >
+      <header className="shrink-0 px-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-center sm:px-8 sm:pt-10">
+        <h2 id="cs-events-title" className={lockupClass}>
+          Prime time
+        </h2>
+        <p className={`mt-3 sm:mt-4 ${supportClass}`}>Pull up for events.</p>
+      </header>
+      <div className="relative min-h-0 flex-1">
+        {live ? (
+          <FlexCarousel
+            items={PHOTOS}
+            fit="portrait"
+            intro="spin"
+            autoplay
+            liquid={0.84}
+            reach={0.37}
+            radius={10}
+            squeeze={0.35}
+            dispersion={1.76}
+            bend={0.08}
+            gap={57}
+            tilt={126}
+            captions={false}
+            captureWheel={false}
+            className="absolute inset-0"
+          />
+        ) : null}
+      </div>
+      <div className="shrink-0 px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-8">
+        <a href={GALLERY} target="_blank" rel="noreferrer" className={linkClass}>
+          View all photos &gt;
+        </a>
+      </div>
+    </section>
+  )
+}

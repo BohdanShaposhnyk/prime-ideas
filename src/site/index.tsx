@@ -15,6 +15,7 @@ import { bindTouchSnap } from './lib/touch-snap'
 
 const SceneExperienceV2 = lazy(() => import('./sections/scene-experience-v2'))
 const SceneScreen = lazy(() => import('./sections/scene-screen'))
+const SceneEvents = lazy(() => import('./sections/scene-events'))
 const SceneShowcase = lazy(() => import('./sections/scene-showcase'))
 const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
@@ -25,6 +26,7 @@ const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', node: <SceneExperienceV2 /> },
   { key: 'showcase', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
   { key: 'screen', node: <SceneScreen /> },
+  { key: 'events', node: <SceneEvents /> },
   { key: 'locations', node: <SceneLocations /> },
   { key: 'app', node: <SceneApp /> },
   { key: 'franchise', node: <SceneFranchiseV2 /> },

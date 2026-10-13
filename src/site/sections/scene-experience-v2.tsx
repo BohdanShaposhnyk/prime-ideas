@@ -44,7 +44,7 @@ const GLOW = {
 } as const
 
 /** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
-const VENUE_VERBS = ['PLAY', 'DRINK', 'EAT', 'CHILL', 'SING'] as const
+const VENUE_VERBS = ['PLAY', 'WATCH', 'REFILL', 'CHILL', 'SING'] as const
 
 const glassClass =
   'bg-[color-mix(in_srgb,#07060C_62%,transparent)] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
@@ -63,13 +63,13 @@ function ExperienceCopy() {
         Everything a good night out needs, brought together under one roof.
       </p>
       <div className="mt-5 w-fit max-w-full sm:mt-6">
-        <p className="sr-only">Play, drink, eat, chill, sing</p>
+        <p className="sr-only">Play, watch, refill, chill, sing</p>
         <SplitFlapText
           aria-hidden
           words={[...VENUE_VERBS]}
           loop
           charset="alpha"
-          padTo={5}
+          padTo={6}
           flipsPerChar={5}
           flipDuration={0.1}
           stagger={0.045}

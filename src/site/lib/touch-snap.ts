@@ -87,7 +87,9 @@ export function bindTouchSnap(port: HTMLElement) {
   let held = port.scrollTop
   let epoch = 0
   let stops: number[] = []
+  let startClientX = 0
   let startClientY = 0
+  let xPan = false
   let armed = false
 
   const killTween = () => {
@@ -141,10 +143,21 @@ export function bindTouchSnap(port: HTMLElement) {
     tween = created
   }
 
-  const follow = (clientY: number) => {
+  const follow = (clientX: number, clientY: number) => {
+    const travelX = startClientX - clientX
     const travel = startClientY - clientY
     if (!armed) {
-      if (Math.abs(travel) < TAP_SLOP) return
+      if (xPan) {
+        const absX = Math.abs(travelX)
+        const absY = Math.abs(travel)
+        if (absX < TAP_SLOP && absY < TAP_SLOP) return
+        // A sideways swipe stays on the carousel. A vertical flick still changes scenes.
+        if (absX >= absY) {
+          dragging = false
+          pointerId = -1
+          return
+        }
+      } else if (Math.abs(travel) < TAP_SLOP) return
       armed = true
       port.classList.add(COAST)
     }
@@ -214,12 +227,15 @@ export function bindTouchSnap(port: HTMLElement) {
     originY = port.scrollTop
     originIndex = nearestIndex(stops, originY)
     held = originY
+    startClientX = event.clientX
     startClientY = event.clientY
+    const target = event.target
+    xPan = target instanceof Element && Boolean(target.closest('[data-cs-x-pan]'))
   }
 
   const onPointerMove = (event: PointerEvent) => {
     if (!dragging || event.pointerId !== pointerId) return
-    follow(event.clientY)
+    follow(event.clientX, event.clientY)
   }
 
   const onPointerUp = (event: PointerEvent) => {
