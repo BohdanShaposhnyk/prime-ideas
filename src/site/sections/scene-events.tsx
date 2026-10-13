@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
-import { observeSnapPort } from '../hooks/snap-in-view'
+import { GoldWord } from '../components/gold-word'
+import { useSnapInView } from '../hooks/snap-in-view'
 import { lockupClass, supportClass } from '../lib/palette'
 import crowd from '../assets/event-cs6/carousel/crowd.webp'
 import crowd2 from '../assets/event-cs6/carousel/crowd-2.webp'
@@ -62,18 +63,12 @@ const PHOTOS: FlexCarouselItem[] = [
 const linkClass =
   'inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none sm:tracking-[var(--cs-track-micro)]'
 
+/** Gallery exists only while the scene owns the port, so the intro restarts on each visit. */
+const ENTER_AT = 0.6
+
 export default function SceneEvents() {
   const ref = useRef<HTMLElement>(null)
-  const [live, setLive] = useState(false)
-
-  useEffect(() => {
-    if (live) return
-    const el = ref.current
-    if (!el) return
-    return observeSnapPort(el, hit => {
-      if (hit) setLive(true)
-    })
-  }, [live])
+  const live = useSnapInView(ref, { threshold: ENTER_AT })
 
   return (
     <section
@@ -84,7 +79,7 @@ export default function SceneEvents() {
     >
       <header className="shrink-0 px-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-center sm:px-8 sm:pt-10">
         <h2 id="cs-events-title" className={lockupClass}>
-          Prime time
+          <GoldWord>Prime</GoldWord> time
         </h2>
         <p className={`mt-3 sm:mt-4 ${supportClass}`}>Pull up for events.</p>
       </header>
