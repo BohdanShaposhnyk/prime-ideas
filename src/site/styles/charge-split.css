@@ -114,11 +114,15 @@ html.cs-snap-root body {
     --v-cap-b: 315px;
   }
 }
-/* Landscape reel in a portrait frame. Same element through the letter mask
-   and the full bleed, so the dive scale never has to retarget. */
+/* Framing comes from the active reel (`hero/media.ts`), inherited as
+   --hero-focus. Same element through the letter mask and the full bleed,
+   so the dive scale never has to retarget. */
+[data-scene="hero"] video {
+  object-position: var(--hero-focus, center);
+}
 @media (orientation: portrait) {
   [data-scene="hero"] video {
-    object-position: 75% 50%;
+    object-position: var(--hero-focus-portrait, var(--hero-focus, center));
   }
 }
 /* Enter / leave parallax. --cs-in scrubs 1→0 as the scene rises into the

@@ -9,6 +9,7 @@
  */
 import { execFile } from 'node:child_process'
 import fs from 'node:fs/promises'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
@@ -26,7 +27,27 @@ const TARGETS = [
   /** Portrait cards, not full-bleed. A shorter edge keeps the carousel textures small. */
   { from: 'event-cs6/carousel', to: 'src/site/assets/event-cs6/carousel', longEdge: 960 },
 ]
-const VIDEOS = [{ from: 'video/night-reel.mp4', to: 'src/site/assets/night-reel.mp4' }]
+/**
+ * Hero loops. `start` / `duration` trim the original (seconds).
+ * `posterAt` is seconds into the encoded file — the still the hero paints for LCP.
+ * Which file the page uses is `src/site/sections/hero/media.ts`.
+ */
+const VIDEOS = [
+  {
+    from: 'video/night-reel.mp4',
+    to: 'src/site/assets/night-reel.mp4',
+    poster: 'src/site/assets/night-reel-poster.webp',
+    posterAt: 1,
+  },
+  {
+    from: 'video/cs6.MP4',
+    to: 'src/site/assets/cs6-reel.mp4',
+    start: 15,
+    duration: 14.6,
+    poster: 'src/site/assets/cs6-reel-poster.webp',
+    posterAt: 0,
+  },
+]
 
 /** Named event stills. The numbered dump in event-cs6 stays out of the encode. */
 const EXTRAS = [
@@ -104,13 +125,30 @@ async function processImage(file, outDir, srcDir, longEdge = LONG_EDGE) {
   report(relFromRoot, size, info.size)
 }
 
-async function processVideo({ from, to }) {
+async function writePoster(videoPath, posterRel, at) {
+  const frame = path.join(os.tmpdir(), `prime-poster-${path.basename(posterRel)}.png`)
+  const posterPath = path.join(root, posterRel)
+  const args = ['-y', '-loglevel', 'error', '-i', videoPath]
+  if (at > 0) args.push('-ss', String(at))
+  args.push('-frames:v', '1', frame)
+  await run(ffmpegPath, args)
+  await fs.mkdir(path.dirname(posterPath), { recursive: true })
+  const info = await sharp(frame).webp({ quality: 82, effort: 6, smartSubsample: true }).toFile(posterPath)
+  await fs.unlink(frame)
+  report(posterRel, info.size, info.size, '(poster)')
+}
+
+async function processVideo({ from, to, start, duration, poster, posterAt = 0 }) {
   const input = path.join(srcRoot, from)
   const output = path.join(root, to)
   await fs.mkdir(path.dirname(output), { recursive: true })
-  await run(ffmpegPath, ['-y', '-loglevel', 'error', '-i', input, ...VIDEO_ARGS, output])
+  const trim = []
+  if (start != null) trim.push('-ss', String(start))
+  if (duration != null) trim.push('-t', String(duration))
+  await run(ffmpegPath, ['-y', '-loglevel', 'error', '-i', input, ...trim, ...VIDEO_ARGS, output])
   const [a, b] = await Promise.all([fs.stat(input), fs.stat(output)])
   report(from, a.size, b.size)
+  if (poster) await writePoster(output, poster, posterAt)
 }
 
 for (const { from, to, longEdge } of TARGETS) {

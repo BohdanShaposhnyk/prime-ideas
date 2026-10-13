@@ -1,11 +1,11 @@
 import { useRef, type CSSProperties } from 'react'
 import MaskedHeading from '@/site/bits/MaskedHeading'
 import MoltenMetal from '@/site/bits/MoltenMetal'
-import nightReel from '@/site/assets/night-reel.mp4'
 import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
 import { BLUR_PX, MOLTEN_VIOLET, REVEAL_S, useHeroIntro } from './intro'
 import { HeroMark } from './mark'
+import { heroFocusStyle, heroReel } from './media'
 import { ReducedHeroVideo } from './reduced'
 import { useHeroScrollOut } from './scroll-out'
 import { VIGNETTE_BG, VIGNETTE_FROM, vignetteVars } from './vignette'
@@ -35,8 +35,9 @@ export default function HeroV2() {
       data-scene="hero"
       data-hero-blur=""
       className="cs-scene cs-hero-track relative bg-[var(--cs-pitch)]"
-      style={{ '--cs-hero-blur': `${BLUR_PX}px` } as CSSProperties}
+      style={{ '--cs-hero-blur': `${BLUR_PX}px`, ...heroFocusStyle() } as CSSProperties}
     >
+      <link rel="preload" as="image" href={heroReel.poster} fetchPriority="high" />
       <div data-hero-frame="" className="cs-hero-frame relative isolate bg-[var(--cs-pitch)]">
         {moltenLive ? (
           <div
@@ -73,7 +74,8 @@ export default function HeroV2() {
               text="PRIME"
               tag="h1"
               mediaType="video"
-              src={nightReel}
+              src={heroReel.src}
+              poster={heroReel.poster}
               trigger="mount"
               reveal="rise"
               duration={REVEAL_S}

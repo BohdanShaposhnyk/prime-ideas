@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import nightReel from '@/site/assets/night-reel.mp4'
 import { VIGNETTE_BG, VIGNETTE_TO, vignetteVars } from './vignette'
 import { HeroCopy } from './copy'
 import { HeroMark } from './mark'
+import { heroFocusStyle, heroReel } from './media'
 
 export function ReducedHeroVideo() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -51,11 +51,14 @@ export function ReducedHeroVideo() {
       data-scroll="split-hold"
       data-scene="hero"
       className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
+      style={heroFocusStyle()}
     >
+      <link rel="preload" as="image" href={heroReel.poster} fetchPriority="high" />
       <video
         ref={videoRef}
         className="absolute inset-0 size-full object-cover"
-        src={nightReel}
+        src={heroReel.src}
+        poster={heroReel.poster}
         autoPlay
         muted
         loop
