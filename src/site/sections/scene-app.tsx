@@ -1,8 +1,11 @@
+import { useRef } from 'react'
 import SideRays from '@/site/bits/SideRays'
 import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
 import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
+import { usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, supportClass } from '../lib/palette'
 
 const APP_STORE =
@@ -72,13 +75,18 @@ function StoreBadges() {
 }
 
 export default function SceneApp() {
+  const rootRef = useRef<HTMLElement>(null)
+  const reduced = usePrefersReducedMotion()
+  useSceneParallax(rootRef, !reduced)
+
   return (
     <section
+      ref={rootRef}
       aria-label="Ready when you are"
       data-scene="app"
-      className="cs-scene relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      className="cs-scene cs-px relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
-      <div data-placeholder="visual" className="pointer-events-none absolute inset-0" aria-hidden>
+      <div data-placeholder="visual" className="cs-px-ground pointer-events-none absolute inset-0" aria-hidden>
         <SideRays
           speed={2.4}
           rayColor1="#7EA0FF"
@@ -94,14 +102,16 @@ export default function SceneApp() {
         />
       </div>
 
+      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+
       {/* Desktop padded layout */}
-      <div className="relative z-10 mx-auto hidden h-full max-w-[88rem] px-5 py-10 sm:px-8 sm:py-12 md:flex lg:px-12 lg:py-14">
+      <div className="relative mx-auto hidden h-full max-w-[88rem] px-5 py-10 sm:px-8 sm:py-12 md:flex lg:px-12 lg:py-14">
         <div className="grid h-auto w-full grid-cols-2 items-stretch gap-12 self-center lg:gap-16">
-          <div className="flex min-w-0 flex-col justify-center gap-10 lg:gap-12">
+          <div className="cs-px-copy relative z-20 flex min-w-0 flex-col justify-center gap-10 lg:gap-12">
             <AppCopy supportClassName={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`} />
           </div>
 
-          <div className="relative min-h-0">
+          <div className="cs-px-plane relative z-10 min-h-0">
             <img
               src={mockupDesktop}
               alt="SENET ID login on iPhone"
@@ -115,15 +125,15 @@ export default function SceneApp() {
       </div>
 
       {/* Mobile — padded copy, full-bleed mockup on bottom edge */}
-      <div className="relative z-10 flex h-full flex-col md:hidden">
-        <div className="shrink-0 px-5 pt-10 sm:px-8">
+      <div className="relative flex h-full flex-col md:hidden">
+        <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-10 sm:px-8">
           <AppCopy
             supportClassName={`mt-4 max-w-[22rem] ${supportClass}`}
             badgesClassName="mt-6"
           />
         </div>
 
-        <div className="mt-auto w-full shrink-0 overflow-hidden">
+        <div className="cs-px-plane relative z-10 mt-auto w-full shrink-0 overflow-hidden">
           <img
             src={mockupPortrait}
             alt="SENET ID on iPhone"

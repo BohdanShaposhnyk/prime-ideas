@@ -5,6 +5,7 @@ import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
 import { usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { kickerClass, lockupClass, supportClass, violet } from '../lib/palette'
 
 const OFFERS = [
@@ -51,7 +52,7 @@ const glassClass =
 
 function ExperienceCopy() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col justify-center py-8 pl-5 pr-5 sm:py-10 sm:pl-8 sm:pr-8 md:h-full md:flex-none md:py-8 md:pr-6 lg:pl-12 lg:pr-10">
+    <div className="cs-px-copy relative z-20 flex min-w-0 flex-1 flex-col justify-center py-8 pl-5 pr-5 sm:py-10 sm:pl-8 sm:pr-8 md:h-full md:flex-none md:py-8 md:pr-6 lg:pl-12 lg:pr-10">
       <h2 id="cs-experience-offers-title" className={lockupClass}>
         <span className="block">
           The <GoldWord>prime</GoldWord>
@@ -131,6 +132,7 @@ function OfferCard({
 export default function SceneExperienceV2() {
   const reduced = usePrefersReducedMotion()
   const [rootRef, seen] = useInView<HTMLElement>({ once: true, threshold: 0.45 })
+  useSceneParallax(rootRef, !reduced)
   const sweep = seen && !reduced
 
   return (
@@ -138,10 +140,10 @@ export default function SceneExperienceV2() {
       ref={rootRef}
       aria-labelledby="cs-experience-offers-title"
       data-scene="experience-offers"
-      className="cs-scene relative isolate overflow-hidden text-[var(--cs-ice)]"
+      className="cs-scene cs-px relative isolate overflow-hidden text-[var(--cs-ice)]"
       style={{ backgroundColor: SLAT_BG }}
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="cs-px-plane pointer-events-none absolute inset-0">
         <MicroSlats
           preset="tide"
           color="#241C3A"
@@ -156,9 +158,10 @@ export default function SceneExperienceV2() {
           intro={!reduced}
         />
       </div>
-      <div className="relative z-10 flex h-full min-h-0 flex-col md:grid md:grid-cols-2">
+      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <div className="relative flex h-full min-h-0 flex-col md:grid md:grid-cols-2">
         <ExperienceCopy />
-        <ul className="flex shrink-0 flex-row gap-2 px-5 pb-5 sm:gap-3 sm:px-8 sm:pb-8 md:h-full md:min-h-0 md:flex-col md:gap-4 md:py-6 md:pr-8 md:pl-6 lg:py-8 lg:pr-12 lg:pl-8">
+        <ul className="cs-px-mid relative z-20 flex shrink-0 flex-row gap-2 px-5 pb-5 sm:gap-3 sm:px-8 sm:pb-8 md:h-full md:min-h-0 md:flex-col md:gap-4 md:py-6 md:pr-8 md:pl-6 lg:py-8 lg:pr-12 lg:pl-8">
           {OFFERS.map((offer) => (
             <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">
               <OfferCard offer={offer} animated={sweep} />

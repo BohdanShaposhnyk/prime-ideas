@@ -121,6 +121,60 @@ html.cs-snap-root body {
     object-position: 75% 50%;
   }
 }
+/* Enter / leave parallax. --cs-in scrubs 1→0 as the scene rises into the
+   port. --cs-out scrubs 0→1 as it leaves. Copy leads and fades. The plane
+   lags and scales. Same split as the hero, on the way in and the way out.
+   At rest both are 0, so a snapped scene sits exactly where it was drawn. */
+.cs-px {
+  --cs-in: 0;
+  --cs-out: 0;
+}
+.cs-px-copy {
+  transform: translate3d(0, calc(var(--cs-out, 0) * -28vh + var(--cs-in, 0) * 22vh), 0);
+  opacity: max(0, calc(1 - var(--cs-out, 0) * 1.25 - var(--cs-in, 0) * 1.15));
+}
+.cs-px-mid {
+  transform: translate3d(0, calc(var(--cs-out, 0) * -13vh + var(--cs-in, 0) * 10vh), 0);
+  opacity: max(0, calc(1 - var(--cs-out, 0) * 0.72 - var(--cs-in, 0) * 0.55));
+}
+.cs-px-plane {
+  transform: translate3d(0, calc(var(--cs-out, 0) * 9% + var(--cs-in, 0) * -7%), 0) scale(calc(1 + var(--cs-out, 0) * 0.32 + var(--cs-in, 0) * 0.14));
+  transform-origin: var(--cs-px-origin, 50% 38%);
+}
+.cs-px-ground {
+  transform: translate3d(0, calc(var(--cs-out, 0) * 14% + var(--cs-in, 0) * -10%), 0) scale(calc(1 + var(--cs-out, 0) * 0.18 + var(--cs-in, 0) * 0.08));
+  transform-origin: 50% 38%;
+}
+.cs-px-veil {
+  opacity: calc(var(--cs-out, 0) * 0.32 + var(--cs-in, 0) * 0.22);
+}
+[data-scene='app'] .cs-px-ground {
+  transform-origin: 100% 0%;
+}
+@media (min-width: 768px) {
+  [data-scene='app'] .cs-px-plane {
+    --cs-px-origin: 84% 8%;
+  }
+  [data-scene='franchise-v2'] .cs-px-plane {
+    --cs-px-origin: 74% 22%;
+  }
+}
+.cs-px[data-cs-away] .cs-px-copy,
+.cs-px[data-cs-away] .cs-px-mid {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-px-copy,
+  .cs-px-mid,
+  .cs-px-plane,
+  .cs-px-ground {
+    transform: none;
+    opacity: 1;
+  }
+  .cs-px-veil {
+    opacity: 0;
+  }
+}
 
 /* Overview deck. Centering is a fixed `translate` on the card and does
    not run. The plate's `translate` is only the slot offset, so iOS never

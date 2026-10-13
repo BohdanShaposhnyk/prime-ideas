@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { ArrowRight } from 'lucide-react'
 import DriftWall, { type DriftWallItem } from '@/site/bits/DriftWall'
 import crowdHookah from '../assets/event-cs6/crowd-hookah.webp'
@@ -13,7 +13,8 @@ import lounge from '../assets/showcase/lounge-3-ls.webp'
 import outside from '../assets/showcase/outside-dude.webp'
 import rigs from '../assets/showcase/rigs-2-ls.webp'
 import screen from '../assets/showcase/screen-cs.webp'
-import { useMediaQuery } from '../hooks/media'
+import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, supportClass } from '../lib/palette'
 
@@ -83,14 +84,18 @@ const PROOF_ROW = 1
 const NARROW_WALL = '(max-width: 767px)'
 
 export default function SceneFranchiseV2() {
+  const rootRef = useRef<HTMLElement>(null)
+  const reduced = usePrefersReducedMotion()
+  useSceneParallax(rootRef, !reduced)
   const narrow = useMediaQuery(NARROW_WALL)
   const columns = narrow ? 4 : 3
   const items = useMemo(() => buildWallItems(columns, PROOF_ROW), [columns])
   return (
     <section
+      ref={rootRef}
       aria-labelledby="cs-franchise-v2-title"
       data-scene="franchise-v2"
-      className="cs-scene relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)] md:block"
+      className="cs-scene cs-px relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)] md:block"
     >
       {/* Desktop veil opens the top-right so the wall reads beside the lockup. */}
       <div
@@ -102,9 +107,11 @@ export default function SceneFranchiseV2() {
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[88rem] shrink-0 items-start px-5 pt-10 sm:px-8 md:h-full md:items-center md:py-12 lg:px-12 lg:py-14">
+      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+
+      <div className="relative z-20 mx-auto flex w-full max-w-[88rem] shrink-0 items-start px-5 pt-10 sm:px-8 md:h-full md:items-center md:py-12 lg:px-12 lg:py-14">
         <div className="grid w-full grid-cols-1 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <div className="flex min-w-0 flex-col items-start gap-6 md:gap-10 lg:gap-12">
+          <div className="cs-px-copy flex min-w-0 flex-col items-start gap-6 md:gap-10 lg:gap-12">
             <div>
               <h2 id="cs-franchise-v2-title" className={lockupClass}>
                 <span className="block">Make</span>
@@ -127,7 +134,7 @@ export default function SceneFranchiseV2() {
       </div>
 
       {/* Mobile: horizontal band in the space under the CTA. Desktop: full-bleed wall. */}
-      <div data-placeholder="visual" className="relative min-h-0 flex-1 md:absolute md:inset-0" aria-hidden>
+      <div data-placeholder="visual" className="cs-px-plane relative min-h-0 flex-1 md:absolute md:inset-0" aria-hidden>
         <DriftWall
           items={items}
           columns={columns}
