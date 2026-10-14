@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { Renderer, Program, Mesh, Triangle, RenderTarget, Texture } from 'ogl';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 type SwellPreset = 'swell' | 'tide' | 'storm' | 'signal';
 type Rgba = [number, number, number, number];
@@ -139,8 +141,6 @@ const PRESSURE_STEPS = 16;
 const SPLAT_FORCE = 6900;
 const SPLASH_JETS = 3;
 const PIXEL_BUDGET = 4.5e6;
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 const parseColor = (value: string, fallback: Rgba): Rgba => {
   try {
@@ -638,7 +638,7 @@ const MicroSlats = ({
     });
     const scalePass = fluidPass(scaleFragment, { uSource: { value: blank }, uValue: { value: 0 } });
 
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const reducedMotion = prefersReducedMotion();
 
     let width = 1;
     let height = 1;

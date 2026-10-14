@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion, subscribeReducedMotion } from '@/site/lib/motion';
 export interface ParticleTextProps {
   text?: string;
   particleSize?: number;
@@ -57,7 +59,6 @@ const mixRgb = (from: Rgb, to: Rgb, amount: number): Rgb => ({
 
 const rgbToCss = (rgb: Rgb): string => `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
-const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
 const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
 
 const resolveFontSize = (
@@ -134,7 +135,7 @@ const ParticleText = ({
     let gathering = false;
     let visible = intersectsSnapPort(container);
     let gatherStart = 0;
-    let reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    let reducedMotion = prefersReducedMotion();
     let width = 0;
     let height = 0;
     let dpr = 1;
@@ -413,13 +414,10 @@ const ParticleText = ({
       if (trigger === 'click') startGather(true);
     };
 
-    const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    const handleReduceMotionChange = (event: MediaQueryListEvent): void => {
-      reducedMotion = event.matches;
+    const stopReduced = subscribeReducedMotion(matches => {
+      reducedMotion = matches;
       void sampleText();
-    };
-
-    reduceMotionQuery?.addEventListener('change', handleReduceMotionChange);
+    });
     canvas.addEventListener('pointerenter', handlePointerEnter);
     canvas.addEventListener('pointermove', handlePointerMove);
     canvas.addEventListener('pointerleave', handlePointerLeave);
@@ -441,7 +439,7 @@ const ParticleText = ({
       stopWatch();
       buildId += 1;
       resizeObserver.disconnect();
-      reduceMotionQuery?.removeEventListener('change', handleReduceMotionChange);
+      stopReduced();
       canvas.removeEventListener('pointerenter', handlePointerEnter);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);

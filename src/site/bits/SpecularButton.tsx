@@ -1,6 +1,7 @@
 import { useRef, useEffect, type CSSProperties, type ReactNode, type MouseEventHandler } from 'react';
 import { Renderer, Program, Mesh, Triangle, Color } from 'ogl';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 type ButtonSize = 'sm' | 'md' | 'lg';
 
@@ -175,7 +176,7 @@ const SpecularButton = ({
     const fx = fxRef.current;
     if (!btn || !fx) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = prefersReducedMotion();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: false, dpr });
     const gl = renderer.gl;
@@ -221,7 +222,7 @@ const SpecularButton = ({
     let contextLost = false;
     let angle = 2.4;
     let idleAngle = 2.4;
-    let bright = prefersReducedMotion ? (autoAnimate ? 1 : 0) : 0;
+    let bright = reduced ? (autoAnimate ? 1 : 0) : 0;
     let last = performance.now();
     let raf = 0;
     let revealRaf = 0;
@@ -231,7 +232,7 @@ const SpecularButton = ({
     const lineC = new Color();
     const baseC = new Color();
 
-    const canRun = () => !contextLost && inView && tabVisible && !prefersReducedMotion;
+    const canRun = () => !contextLost && inView && tabVisible && !reduced;
 
     const paint = () => {
       const p = propsRef.current;
@@ -341,7 +342,7 @@ const SpecularButton = ({
       program.uniforms.uHalfSize.value = [(w / 2) * dpr, (h / 2) * dpr];
       paint();
       revealCanvas();
-      if (started && !prefersReducedMotion) kick();
+      if (started && !reduced) kick();
     };
     const ro = new ResizeObserver(resize);
     ro.observe(btn);
@@ -379,7 +380,7 @@ const SpecularButton = ({
       lastW = 0;
       lastH = 0;
       resize();
-      if (prefersReducedMotion) {
+      if (reduced) {
         bright = propsRef.current.autoAnimate ? 1 : 0;
         paint();
       } else {
@@ -409,7 +410,7 @@ const SpecularButton = ({
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    if (prefersReducedMotion) {
+    if (reduced) {
       bright = autoAnimate ? 1 : 0;
       paint();
       started = true;

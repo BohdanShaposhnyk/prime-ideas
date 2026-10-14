@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import React, { useEffect, useMemo, useRef, type CSSProperties } from 'react';
+import { usePrefersReducedMotion } from '@/site/hooks/media';
+import { clamp } from '@/site/lib/math';
 
 type Direction = 'right' | 'left' | 'up' | 'down' | 'diagonal';
 type Mode = 'entrance' | 'pointer' | 'both';
@@ -36,8 +38,6 @@ export interface EchoTextProps {
   className?: string;
   style?: CSSProperties;
 }
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 const directionVectors: Record<Direction, Vector> = {
   right: { x: 1, y: 0 },
@@ -77,21 +77,10 @@ const EchoText: React.FC<EchoTextProps> = ({
   const copyRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const frameRef = useRef<number | null>(null);
   const stateRef = useRef<AnimationState | null>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const echoCount = prefersReducedMotion ? 0 : clamp(Math.round(echoes), 0, 24);
   const copyIndexes = useMemo(() => Array.from({ length: echoCount + 1 }, (_, index) => index), [echoCount]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updateMotionPreference = () => setPrefersReducedMotion(media.matches);
-    updateMotionPreference();
-
-    media.addEventListener?.('change', updateMotionPreference);
-    return () => media.removeEventListener?.('change', updateMotionPreference);
-  }, []);
 
   useEffect(() => {
     const root = rootRef.current;

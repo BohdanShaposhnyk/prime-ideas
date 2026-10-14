@@ -1,6 +1,8 @@
 import { useRef, useEffect } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 import { observeSnapPort } from '@/site/hooks/snap-in-view';
+import { hexToRgb } from '@/site/lib/palette';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 type Origin = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 
@@ -18,11 +20,6 @@ interface SideRaysProps {
   opacity?: number;
   className?: string;
 }
-
-const hexToRgb = (hex: string): [number, number, number] => {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return m ? [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255] : [1, 1, 1];
-};
 
 const originToFlip = (origin: Origin): [number, number] => {
   switch (origin) {
@@ -54,7 +51,7 @@ const SideRays = ({
     const container = containerRef.current;
     if (!container) return;
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = prefersReducedMotion();
 
     const renderer = new Renderer({
       dpr: Math.min(window.devicePixelRatio, 2),
@@ -194,7 +191,7 @@ void main() {
     };
 
     const kick = () => {
-      if (contextLost || !inView || !tabVisible || prefersReducedMotion) return;
+      if (contextLost || !inView || !tabVisible || reduced) return;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(loop);
     };
@@ -209,7 +206,7 @@ void main() {
       painted = false;
       gl.canvas.style.opacity = '0';
       updateSize();
-      if (prefersReducedMotion) {
+      if (reduced) {
         paint(0);
       } else {
         kick();
@@ -225,7 +222,7 @@ void main() {
       inView = hit;
       if (inView && !wasInView) {
         updateSize();
-        if (prefersReducedMotion) {
+        if (reduced) {
           paint(performance.now());
         } else {
           kick();

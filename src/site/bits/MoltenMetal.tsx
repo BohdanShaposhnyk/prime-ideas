@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Renderer, Program, Mesh, Triangle } from 'ogl'
+import { prefersReducedMotion } from '@/site/lib/motion'
+import { hexToRgb } from '@/site/lib/palette'
 
 export type MoltenMetalColorMode = 'molten' | 'ember' | 'frost'
 
@@ -31,16 +33,6 @@ export interface MoltenMetalProps {
   /** Animation frame budget. Default 30. */
   targetFps?: number
   className?: string
-}
-
-const hexToRgb = (hex: string): [number, number, number] => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  if (!result) return [1, 1, 1]
-  return [
-    parseInt(result[1], 16) / 255,
-    parseInt(result[2], 16) / 255,
-    parseInt(result[3], 16) / 255,
-  ]
 }
 
 const colorModeToFloat = (mode: MoltenMetalColorMode): number =>
@@ -194,9 +186,7 @@ const MoltenMetal: React.FC<MoltenMetalProps> = ({
     const container = containerRef.current
     if (!container) return
 
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    const prefersReduced = prefersReducedMotion()
 
     let renderer: Renderer
     try {

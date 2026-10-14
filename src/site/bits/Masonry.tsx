@@ -173,26 +173,33 @@ const Masonry: React.FC<MasonryProps> = ({
     const fracSum = fractions.reduce((sum, value) => sum + value, 0) || columns;
     const usable = width - totalGaps;
     const colWidths = fractions.map(value => (usable * value) / fracSum);
-    const colX: number[] = [];
-    let cursor = 0;
-    for (let i = 0; i < columns; i += 1) {
-      colX[i] = cursor;
-      cursor += colWidths[i] + gap;
-    }
+    const colX = colWidths.map((_, index) =>
+      colWidths.slice(0, index).reduce((sum, value) => sum + value + gap, 0),
+    );
 
-    return items.map(child => {
-      const pinned =
-        typeof child.column === 'number'
-          ? Math.min(Math.max(0, child.column), columns - 1)
-          : colHeights.indexOf(Math.min(...colHeights));
-      const columnWidth = colWidths[pinned];
-      const x = colX[pinned];
-      const height = exactHeight ? child.height : child.height / 2;
-      const y = colHeights[pinned];
+    const { placed } = items.reduce<{ heights: number[]; placed: GridItem[] }>(
+      (state, child) => {
+        const pinned =
+          typeof child.column === 'number'
+            ? Math.min(Math.max(0, child.column), columns - 1)
+            : state.heights.indexOf(Math.min(...state.heights));
+        const height = exactHeight ? child.height : child.height / 2;
+        const next: GridItem = {
+          ...child,
+          x: colX[pinned],
+          y: state.heights[pinned],
+          w: colWidths[pinned],
+          h: height,
+        };
+        return {
+          heights: state.heights.map((value, index) => (index === pinned ? value + height + gap : value)),
+          placed: [...state.placed, next],
+        };
+      },
+      { heights: colHeights, placed: [] },
+    );
 
-      colHeights[pinned] += height + gap;
-      return { ...child, x, y, w: columnWidth, h: height };
-    });
+    return placed;
   }, [columnFractions, columns, exactHeight, gap, items, width]);
 
   useLayoutEffect(() => {

@@ -56,28 +56,18 @@ function proofLabel(title: string) {
  * with no wrap, so the repeated copy is that same four.
  */
 function buildWallItems(columns: number, proofRow: number): DriftWallItem[] {
-  const perBelt = PROOFS.length
-  const total = columns * perBelt
-  const items: DriftWallItem[] = []
-  let imageIndex = 0
-  let proofIndex = 0
-
-  for (let i = 0; i < total; i++) {
-    if (i % columns === proofRow) {
-      const title = PROOFS[proofIndex]
-      items.push({
-        label: proofLabel(title),
-        title,
-      })
-      proofIndex += 1
-    } else {
-      const media = WALL_IMAGES[imageIndex]
-      items.push({ image: media.src, title: media.title })
-      imageIndex += 1
+  const total = columns * PROOFS.length
+  return Array.from({ length: total }, (_, index): DriftWallItem => {
+    const belt = Math.floor(index / columns)
+    const slot = index % columns
+    if (slot === proofRow) {
+      const title = PROOFS[belt]
+      return { label: proofLabel(title), title }
     }
-  }
-
-  return items
+    const imageIndex = belt * (columns - 1) + (slot < proofRow ? slot : slot - 1)
+    const media = WALL_IMAGES[imageIndex]
+    return { image: media.src, title: media.title }
+  })
 }
 
 const PROOF_ROW = 1

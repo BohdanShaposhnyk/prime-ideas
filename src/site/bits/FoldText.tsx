@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -39,8 +41,6 @@ const HINGE_CONFIG: Record<Hinge, HingeConfig> = {
   left: { origin: '0% 50%', rotateX: 0, rotateY: 92 },
   right: { origin: '100% 50%', rotateX: 0, rotateY: -92 }
 };
-
-const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 
 const renderWhitespace = (value: string, key: string): ReactNode[] =>
   value.split(/(\n)/).map((part, index) => {
@@ -224,7 +224,7 @@ const FoldText = ({
     const pieces = Array.from(root.querySelectorAll<HTMLElement>('.fold-text-piece'));
     if (!pieces.length) return undefined;
 
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const reduceMotion = prefersReducedMotion();
     const activeDuration = reduceMotion ? Math.min(duration, 0.22) : duration;
     const activeStagger = reduceMotion ? Math.min(stagger, 0.02) : stagger;
     const fromVars = {

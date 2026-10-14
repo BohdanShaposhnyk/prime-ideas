@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
+import { usePrefersReducedMotion } from '@/site/hooks/media';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 
 type TileState = {
@@ -91,32 +92,10 @@ const createTiles = (phrase: string): TileState[] =>
 
 const sampleChar = (charset: string) => charset.charAt(Math.floor(Math.random() * charset.length)) || ' ';
 
-const buildSequence = (target: string, flips: number, charset: string) => {
-  const steps: string[] = [];
-  for (let i = 0; i < flips; i += 1) {
-    steps.push(sampleChar(charset));
-  }
-  steps.push(target);
-  return steps;
-};
-
-const usePrefersReducedMotion = () => {
-  const [prefersReduced, setPrefersReduced] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handleChange = () => setPrefersReduced(mediaQuery.matches);
-
-    handleChange();
-    mediaQuery.addEventListener('change', handleChange);
-
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  return prefersReduced;
-};
+const buildSequence = (target: string, flips: number, charset: string) => [
+  ...Array.from({ length: flips }, () => sampleChar(charset)),
+  target,
+];
 
 const SplitFlapText = ({
   words = ['LAUNCH READY', 'SYNC ONLINE', 'SIGNAL LIVE'],

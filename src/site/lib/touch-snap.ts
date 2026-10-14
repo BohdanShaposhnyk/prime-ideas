@@ -25,35 +25,20 @@ function locked(port: HTMLElement) {
 function measureStops(port: HTMLElement) {
   const portTop = port.getBoundingClientRect().top
   const scrollTop = port.scrollTop
-  const tops: number[] = []
-  const push = (el: HTMLElement) => {
-    tops.push(Math.round(el.getBoundingClientRect().top - portTop + scrollTop))
-  }
-  port.querySelectorAll<HTMLElement>('[data-scene]').forEach((el) => {
-    if (el.dataset.scene === 'showcase' && el.querySelector('[data-showcase-stop]')) return
-    push(el)
-  })
-  port.querySelectorAll<HTMLElement>('[data-showcase-stop]').forEach(push)
-  tops.sort((a, b) => a - b)
-  const stops: number[] = []
-  for (const top of tops) {
-    const prev = stops[stops.length - 1]
-    if (prev === undefined || top - prev > 8) stops.push(top)
-  }
-  return stops
+  const topOf = (el: HTMLElement) =>
+    Math.round(el.getBoundingClientRect().top - portTop + scrollTop)
+  const scenes = [...port.querySelectorAll<HTMLElement>('[data-scene]')].filter(
+    (el) => !(el.dataset.scene === 'showcase' && el.querySelector('[data-showcase-stop]')),
+  )
+  const showcase = [...port.querySelectorAll<HTMLElement>('[data-showcase-stop]')]
+  const tops = [...scenes, ...showcase].map(topOf).toSorted((a, b) => a - b)
+  return tops.filter((top, index) => index === 0 || top - tops[index - 1] > 8)
 }
 
 function nearestIndex(stops: number[], y: number) {
-  let best = 0
-  let bestDist = Infinity
-  for (let i = 0; i < stops.length; i++) {
-    const dist = Math.abs(stops[i] - y)
-    if (dist < bestDist) {
-      bestDist = dist
-      best = i
-    }
-  }
-  return best
+  return stops.reduce((best, stop, index) => {
+    return Math.abs(stop - y) < Math.abs(stops[best] - y) ? index : best
+  }, 0)
 }
 
 function windowFor(stops: number[], index: number) {

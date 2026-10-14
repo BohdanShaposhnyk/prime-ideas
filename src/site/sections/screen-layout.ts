@@ -74,8 +74,27 @@ function splitHeights(parts: number[], total: number) {
   const sum = parts.reduce((acc, value) => acc + value, 0) || 1
   const heights = parts.map(value => Math.round((value / sum) * total))
   const drift = total - heights.reduce((acc, value) => acc + value, 0)
-  heights[heights.length - 1] += drift
-  return heights
+  return heights.map((value, index) => (index === heights.length - 1 ? value + drift : value))
+}
+
+function columnHeights(col: Tile[], stageH: number, lockupH: number): [string, number][] {
+  if (col.length === 0) return []
+  const available = Math.max(stageH - GAP * (col.length - 1), 1)
+  const lockupAt = col.findIndex(tile => tile.id === 'lockup')
+  if (lockupAt === -1) {
+    const heights = splitHeights(
+      col.map(tile => tile.fr),
+      available,
+    )
+    return col.map((tile, index): [string, number] => [tile.id, heights[index]])
+  }
+  const others = col.filter(tile => tile.id !== 'lockup')
+  const leftover = Math.max(available - lockupH, 1)
+  const heights = splitHeights(
+    others.map(tile => tile.fr),
+    leftover,
+  )
+  return [...others.map((tile, index) => [tile.id, heights[index]] as [string, number]), ['lockup', lockupH]]
 }
 
 function tileHeights(
@@ -83,32 +102,8 @@ function tileHeights(
   stageH: number,
   lockupH: number,
 ): Map<string, number> {
-  const byCol: Tile[][] = [[], [], []]
-  for (const tile of tiles) byCol[tile.col].push(tile)
-
-  const result = new Map<string, number>()
-  for (const col of byCol) {
-    if (col.length === 0) continue
-    const available = Math.max(stageH - GAP * (col.length - 1), 1)
-    const lockupAt = col.findIndex(tile => tile.id === 'lockup')
-    if (lockupAt === -1) {
-      const heights = splitHeights(
-        col.map(tile => tile.fr),
-        available,
-      )
-      col.forEach((tile, i) => result.set(tile.id, heights[i]))
-      continue
-    }
-    const others = col.filter(tile => tile.id !== 'lockup')
-    const leftover = Math.max(available - lockupH, 1)
-    const heights = splitHeights(
-      others.map(tile => tile.fr),
-      leftover,
-    )
-    others.forEach((tile, i) => result.set(tile.id, heights[i]))
-    result.set('lockup', lockupH)
-  }
-  return result
+  const columns = ([0, 1, 2] as const).map(col => tiles.filter(tile => tile.col === col))
+  return new Map(columns.flatMap(col => columnHeights(col, stageH, lockupH)))
 }
 
 export function screenLayout(stage: { w: number; h: number }): ScreenLayout | null {

@@ -63,13 +63,11 @@ const GRADIENT_POSITIONS = ['80% 55%', '69% 34%', '8% 6%', '41% 38%', '86% 85%',
 const COLOR_MAP = [0, 1, 2, 0, 1, 2, 1];
 
 function buildMeshGradients(colors: string[]): string[] {
-  const gradients: string[] = [];
-  for (let i = 0; i < 7; i++) {
-    const c = colors[Math.min(COLOR_MAP[i], colors.length - 1)];
-    gradients.push(`radial-gradient(at ${GRADIENT_POSITIONS[i]}, ${c} 0px, transparent 50%)`);
-  }
-  gradients.push(`linear-gradient(${colors[0]} 0 100%)`);
-  return gradients;
+  const mesh = COLOR_MAP.map((slot, index) => {
+    const color = colors[Math.min(slot, colors.length - 1)];
+    return `radial-gradient(at ${GRADIENT_POSITIONS[index]}, ${color} 0px, transparent 50%)`;
+  });
+  return [...mesh, `linear-gradient(${colors[0]} 0 100%)`];
 }
 
 function isLightColor(color: string): boolean {

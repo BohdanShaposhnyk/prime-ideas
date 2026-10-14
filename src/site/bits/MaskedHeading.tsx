@@ -2,8 +2,8 @@ import { useCallback, useEffect, useId, useMemo, useRef, type FC } from 'react';
 import type { CSSProperties, ElementType } from 'react';
 import { gsap } from 'gsap';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
-
-const clamp = (v: number, a: number, b: number): number => (v < a ? a : v > b ? b : v);
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 type Reveal = 'rise' | 'wipe' | 'fade' | 'none';
 type Trigger = 'view' | 'mount' | 'hover';
@@ -147,7 +147,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     ro.observe(root);
     if (document.fonts?.ready) document.fonts.ready.then(sync).catch(() => {});
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = prefersReducedMotion();
     let raf = 0;
     let last = performance.now();
     let clock = 0;
@@ -159,14 +159,14 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     const syncMedia = () => {
       const video = videoEl();
       if (!video) return;
-      if (inView && tabVisible && !prefersReducedMotion) {
+      if (inView && tabVisible && !reduced) {
         void video.play().catch(() => {});
       } else {
         video.pause();
       }
     };
 
-    const canRun = () => inView && tabVisible && !prefersReducedMotion;
+    const canRun = () => inView && tabVisible && !reduced;
 
     const frame = (now: number) => {
       if (!canRun()) {
@@ -296,7 +296,7 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
       }
     };
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduce = prefersReducedMotion();
     if (reveal === 'none' || reduce) {
       settle();
       return;

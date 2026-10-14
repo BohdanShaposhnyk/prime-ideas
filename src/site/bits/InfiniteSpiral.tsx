@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
 import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view';
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 export interface InfiniteSpiralItem {
   id?: string | number;
@@ -37,7 +39,6 @@ export interface InfiniteSpiralProps {
 
 type NormalizedItem = InfiniteSpiralItem & { alt: string };
 
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 const modulo = (value: number, divisor: number) => ((value % divisor) + divisor) % divisor;
 const smoothstep = (min: number, max: number, value: number) => {
   const x = clamp((value - min) / (max - min || 1), 0, 1);
@@ -96,7 +97,6 @@ const InfiniteSpiral = ({
     let previousTime = performance.now();
     let paintedProgress = Number.NaN;
     let bounds = root.getBoundingClientRect();
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const driven = Boolean(drivenProgressRef);
     const scrollEnabled = !driven && (animationMode === 'scroll' || animationMode === 'all');
     const scrollSpeedMultiplier = Math.max(speed, 0) / 0.55;
@@ -127,7 +127,7 @@ const InfiniteSpiral = ({
         const motionPaused = draggingRef.current || (pauseOnHover && hoveredRef.current);
         const directionMultiplier = direction === 'down' ? -1 : 1;
         const desiredAutoSpeed =
-          autoEnabled && visibleRef.current && !reducedMotion.matches && !motionPaused
+          autoEnabled && visibleRef.current && !prefersReducedMotion() && !motionPaused
             ? speed * directionMultiplier
             : 0;
         const speedBlend = 1 - Math.exp(-delta * 7);

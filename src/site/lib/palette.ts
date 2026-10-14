@@ -46,6 +46,13 @@ export const cssTokens = {
   '--cs-radius-panel': '1.35rem',
 } as CSSProperties
 
+/** `#rrggbb` to unit RGB. A missing or short hex falls back to white. */
+export function hexToRgb(hex: string): [number, number, number] {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!match?.[1] || !match[2] || !match[3]) return [1, 1, 1]
+  return [parseInt(match[1], 16) / 255, parseInt(match[2], 16) / 255, parseInt(match[3], 16) / 255]
+}
+
 export const specularInk = {
   textColor: palette.ice,
   lineColor: palette.gold,

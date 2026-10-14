@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Renderer, Program, Mesh, Triangle, Plane, Texture, RenderTarget } from 'ogl';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
+import { clamp01 } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 type BendPreset = 'liquid' | 'ribbon' | 'vortex' | 'arch';
 type CurlMode = 'twist' | 'rise' | 'fall';
@@ -233,7 +235,6 @@ const ringDistance = (a: number, b: number, count: number) => {
   const d = Math.abs(a - b) % count;
   return Math.min(d, count - d);
 };
-const clamp01 = (value: number) => Math.min(Math.max(value, 0), 1);
 const easeOut = (value: number) => 1 - Math.pow(1 - clamp01(value), 3);
 const easeOutQuint = (value: number) => 1 - Math.pow(1 - clamp01(value), 5);
 const easeInOut = (value: number) => {
@@ -554,7 +555,7 @@ const FlexCarousel = ({
       })
     });
 
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const reducedMotion = prefersReducedMotion();
     const anisotropy = renderer.getExtension('EXT_texture_filter_anisotropic') ? 8 : 0;
 
     let slots: Slot[] = [];

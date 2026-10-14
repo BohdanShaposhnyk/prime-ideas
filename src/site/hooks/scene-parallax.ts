@@ -1,8 +1,5 @@
 import { useEffect, type RefObject } from 'react'
-
-function clamp01(n: number) {
-  return n < 0 ? 0 : n > 1 ? 1 : n
-}
+import { clamp01 } from '@/site/lib/math'
 
 /** Front-loaded so the zoom and the type lift read while the scene is still on screen. */
 function shape(raw: number) {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-
-const clamp = (v: number, a: number, b: number): number => (v < a ? a : v > b ? b : v);
+import { clamp } from '@/site/lib/math';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 /** Page scroller for window-scroll mode. An overflow ancestor wins; otherwise the document. */
 function pageScroller(node: HTMLElement, useWindow: boolean): HTMLElement | Window {
@@ -196,7 +196,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const stage = stageRef.current;
     if (!root || !track || !stage) return;
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduceMotion = prefersReducedMotion();
 
     let raf = 0;
     let current = 0;

@@ -41,9 +41,8 @@ const TYPE_LOOP = Array.from({ length: 4 }, () => LINE).flat()
 const CARD_COUNT = CARDS.length
 
 function slotOf(cardIndex: number, current: number) {
-  let delta = ((cardIndex - current) % CARD_COUNT + CARD_COUNT) % CARD_COUNT
-  if (delta > CARD_COUNT / 2) delta -= CARD_COUNT
-  return delta
+  const wrapped = ((cardIndex - current) % CARD_COUNT + CARD_COUNT) % CARD_COUNT
+  return wrapped > CARD_COUNT / 2 ? wrapped - CARD_COUNT : wrapped
 }
 
 function useOverviewFrame() {

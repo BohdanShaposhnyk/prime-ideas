@@ -7,6 +7,8 @@ import controllerDark from '../assets/gaming/controller-dark-purple.webp'
 import hookahCoal from '../assets/hookah/hookah-coal.webp'
 import micPurple from '../assets/karaoke/mic-purple-2.webp'
 import { FilmGrain } from '../components/grain'
+import { clamp } from '../lib/math'
+import { prefersReducedMotion } from '../lib/motion'
 import { lockupClass, supportClass } from '../lib/palette'
 import { SHOWCASE_MIN_HEIGHT } from './showcase-span'
 
@@ -62,10 +64,6 @@ const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   label: word,
 }))
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max)
-}
-
 function easeRoll(u: number) {
   const x = clamp(u, 0, 1)
   return x * x * (3 - 2 * x)
@@ -96,7 +94,6 @@ export default function SceneShowcase() {
     const sticky = stickyRef.current
     if (!section || !sticky) return
 
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
     const port = snapScrollRoot(section)
     let frame = 0
     let lastIndex = -1
@@ -114,7 +111,7 @@ export default function SceneShowcase() {
 
     const publish = () => {
       const motion = read()
-      const progress = reduced.matches ? Math.round(motion.progress) : motion.progress
+      const progress = prefersReducedMotion() ? Math.round(motion.progress) : motion.progress
       if (progress === lastProgress && motion.word === lastIndex) return
       lastProgress = progress
       drivenProgressRef.current = progress
@@ -127,7 +124,7 @@ export default function SceneShowcase() {
     const onScroll = () => {
       if (!visible) return
       const motion = read()
-      const progress = reduced.matches ? Math.round(motion.progress) : motion.progress
+      const progress = prefersReducedMotion() ? Math.round(motion.progress) : motion.progress
       if (progress !== lastProgress) {
         lastProgress = progress
         drivenProgressRef.current = progress

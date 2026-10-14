@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { gsap } from 'gsap';
+import { prefersReducedMotion } from '@/site/lib/motion';
 
 export interface AccordionGalleryItem {
   id?: string;
@@ -100,10 +101,7 @@ const AccordionGallery = ({
     onActiveChange?.(active);
   }, [active, onActiveChange]);
 
-  const prefersReduced =
-    typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false;
+  const prefersReduced = prefersReducedMotion();
 
   const overlayBg = `linear-gradient(180deg, transparent 35%, color-mix(in srgb, ${overlayColor} 82%, transparent) 100%), color-mix(in srgb, ${overlayColor} calc(var(--ag-dim, 0.35) * 100%), transparent)`;
 
