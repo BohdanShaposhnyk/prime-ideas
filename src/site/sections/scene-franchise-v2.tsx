@@ -18,7 +18,7 @@ import { useSceneParallax } from '../hooks/scene-parallax'
 import { GoldWord } from '../components/gold-word'
 import { ctaClass, lockupClass, supportClass } from '../lib/palette'
 
-const FRANCHISE_MAIL = 'mailto:abc@xyz.com'
+const FRANCHISE_MAIL = 'mailto:franchise@premiumlounge.club'
 
 const PROOFS = ['Established concept', 'Full brand support', 'Your city, your Prime', 'Navi partner'] as const
 
