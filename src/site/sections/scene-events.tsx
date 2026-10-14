@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import DotField from '@/site/bits/DotField'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
 import { GoldWord } from '../components/gold-word'
 import { useSnapInView } from '../hooks/snap-in-view'
@@ -49,8 +50,16 @@ export default function SceneEvents() {
       ref={ref}
       aria-labelledby="cs-events-title"
       data-scene="events"
-      className="cs-scene relative flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      className="cs-scene relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <DotField
+          className="size-full"
+          gradientFrom="rgba(207, 181, 59, 0.8)"
+          gradientTo="rgba(169, 187, 224, 0.5)"
+          glowColor="rgba(207, 181, 59, 0.45)"
+        />
+      </div>
       <header className="shrink-0 px-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-center sm:px-8 sm:pt-10">
         <h2 id="cs-events-title" className={lockupClass}>
           <GoldWord>Prime</GoldWord> time
