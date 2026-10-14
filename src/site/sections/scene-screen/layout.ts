@@ -1,10 +1,10 @@
-import hookahStill from '../assets/event-cs6/crowd-hookah-2.webp'
-import gamersStill from '../assets/event-cs6/gamers.webp'
-import facesStill from '../assets/showcase/faces.webp'
-import micStill from '../assets/showcase/mic.webp'
-import outsideStill from '../assets/showcase/outside-dude.webp'
-import rigsStill from '../assets/showcase/rigs.webp'
-import screenStill from '../assets/showcase/screen-cs-2.webp'
+import hookahStill from '../../assets/event-cs6/crowd-hookah-2.webp'
+import gamersStill from '../../assets/event-cs6/gamers.webp'
+import facesStill from '../../assets/showcase/faces.webp'
+import micStill from '../../assets/showcase/mic.webp'
+import outsideStill from '../../assets/showcase/outside-dude.webp'
+import rigsStill from '../../assets/showcase/rigs.webp'
+import screenStill from '../../assets/showcase/screen-cs-2.webp'
 
 export const GAP = 8
 export const MASONRY_DURATION = 0.78
