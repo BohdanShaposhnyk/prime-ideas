@@ -2,8 +2,7 @@ import { useRef } from 'react'
 import SideRays from '@/site/bits/SideRays'
 import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
-import mockupDesktop from '../assets/mockup-iphone-desktop.webp'
-import mockupPortrait from '../assets/mockup-iphone-portrait.webp'
+import mockup from '../assets/senet-mockup.webp'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, supportClass } from '../lib/palette'
@@ -104,27 +103,24 @@ export default function SceneApp() {
 
       <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
 
-      {/* Desktop padded layout */}
-      <div className="relative mx-auto hidden h-full max-w-[88rem] px-5 py-10 sm:px-8 sm:py-12 md:flex lg:px-12 lg:py-14">
-        <div className="grid h-auto w-full grid-cols-2 items-stretch gap-12 self-center lg:gap-16">
-          <div className="cs-px-copy relative z-20 flex min-w-0 flex-col justify-center gap-10 lg:gap-12">
-            <AppCopy supportClassName={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`} />
-          </div>
-
-          <div className="cs-px-plane relative z-10 min-h-0">
-            <img
-              src={mockupDesktop}
-              alt="SENET ID login on iPhone"
-              className="absolute top-0 right-0 h-[160%] w-auto max-w-none select-none"
-              decoding="async"
-              loading="lazy"
-              draggable={false}
-            />
-          </div>
+      {/* Desktop — phone on the right, bottom third past the scene edge */}
+      <div className="relative mx-auto hidden h-full w-full max-w-[88rem] md:block">
+        <div className="cs-px-copy relative z-20 flex h-full w-1/2 flex-col justify-center gap-10 px-8 py-12 lg:gap-12 lg:px-12 lg:py-14">
+          <AppCopy supportClassName={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`} />
+        </div>
+        <div className="cs-px-plane pointer-events-none absolute inset-y-0 right-0 z-10 w-1/2">
+          <img
+            src={mockup}
+            alt="SENET app on iPhone"
+            className="absolute right-4 bottom-0 w-[min(86%,62svh)] max-w-none translate-y-[33%] select-none lg:right-8"
+            decoding="async"
+            loading="lazy"
+            draggable={false}
+          />
         </div>
       </div>
 
-      {/* Mobile — padded copy, full-bleed mockup on bottom edge */}
+      {/* Mobile — page padding on three sides, phone cut by the bottom edge */}
       <div className="relative flex h-full flex-col md:hidden">
         <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-10 sm:px-8">
           <AppCopy
@@ -133,12 +129,11 @@ export default function SceneApp() {
           />
         </div>
 
-        <div className="cs-px-plane relative z-10 mt-auto w-full shrink-0 overflow-hidden">
+        <div className="cs-px-plane relative z-10 mt-5 shrink-0 px-5 sm:mt-8 sm:px-8">
           <img
-            src={mockupPortrait}
-            alt="SENET ID on iPhone"
-            className="block h-auto w-full max-w-none select-none"
-            style={{ marginBottom: '-48%' }}
+            src={mockup}
+            alt="SENET app on iPhone"
+            className="block h-auto w-full select-none"
             decoding="async"
             loading="lazy"
             draggable={false}
