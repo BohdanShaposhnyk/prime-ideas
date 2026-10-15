@@ -7,9 +7,11 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 export default function LazyScene({
   children,
   minHeight = 'var(--cs-h, 100svh)',
+  id,
 }: {
   children: ReactNode
   minHeight?: string
+  id?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [show, setShow] = useState(false)
@@ -49,7 +51,7 @@ export default function LazyScene({
   }, [])
 
   return (
-    <div ref={ref} style={{ minHeight } as CSSProperties}>
+    <div ref={ref} id={id} style={{ minHeight } as CSSProperties}>
       {show ? children : null}
     </div>
   )

@@ -2,9 +2,9 @@
 
 export const SITE_ORIGIN = 'https://primelounge.club'
 export const SITE_URL = `${SITE_ORIGIN}/`
-export const SITE_TITLE = 'Prime Warsaw — gaming, karaoke, cinema, hookah, bar'
+export const SITE_TITLE = 'Prime — cyber club in Warsaw and Wrocław'
 export const SITE_DESCRIPTION =
-  'Prime Warsaw is a gaming lounge, cinema, karaoke, hookah, and bar in Warsaw and Wrocław. Visit Prime Mennica, Prime Mokotów, or Prime Wrocław tonight.'
+  'Prime is a cyber club in Warsaw and Wrocław, with cinema, karaoke, hookah, and a bar. Book a night at Mennica, Mokotów, or Wrocław.'
 
 export const COMPANY_NAME = 'Prime Cyber Lounge Sp. z o.o.'
 /** Polish NIP, confirmed on the live footer, written as the VAT id. */

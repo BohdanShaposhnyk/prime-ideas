@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import DotField from '@/site/bits/DotField'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
+import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useSnapInView } from '../hooks/snap-in-view'
 import { lockupClass, supportClass } from '../lib/palette'
@@ -64,7 +65,7 @@ export default function SceneEvents() {
         <h2 id="cs-events-title" className={lockupClass}>
           <GoldWord>Prime</GoldWord> time
         </h2>
-        <p className={`mt-3 sm:mt-4 ${supportClass}`}>Pull up for events.</p>
+        <p className={`mt-3 sm:mt-4 ${supportClass}`}>Tournaments and watch nights.</p>
       </header>
       <div className="relative min-h-0 flex-1">
         {live ? (
@@ -87,7 +88,8 @@ export default function SceneEvents() {
           />
         ) : null}
       </div>
-      <div className="shrink-0 px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-8">
+      <div className="flex shrink-0 flex-col items-center gap-4 px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-8">
+        <BookNightButton section="events" />
         <a href={GALLERY} target="_blank" rel="noreferrer" className={linkClass}>
           View all photos &gt;
         </a>

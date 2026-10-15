@@ -9,7 +9,7 @@ import micPurple from '../assets/karaoke/mic-purple-2.webp'
 import { FilmGrain } from '../components/grain'
 import { clamp } from '../lib/math'
 import { prefersReducedMotion } from '../lib/motion'
-import { lockupClass, supportClass } from '../lib/palette'
+import { kickerClass, lockupClass, supportClass } from '../lib/palette'
 import { SHOWCASE_MIN_HEIGHT } from './showcase-span'
 
 export { SHOWCASE_MIN_HEIGHT }
@@ -21,13 +21,6 @@ const STEP_HOLD = HOLD_W / (HOLD_W + ROLL_W)
 
 const CARDS = [
   {
-    id: 'bar',
-    word: 'BAR',
-    line: 'Eat well. Drink better.',
-    alt: 'Bar',
-    src: bottles,
-  },
-  {
     id: 'play',
     word: 'PLAY ZONE',
     line: 'Built for serious play.',
@@ -35,11 +28,11 @@ const CARDS = [
     src: controllerDark,
   },
   {
-    id: 'hookah',
-    word: 'HOOKAH',
-    line: 'Your late-night ritual.',
-    alt: 'Hookah',
-    src: hookahCoal,
+    id: 'cinema',
+    word: 'CINEMA',
+    line: 'Settle in. The night is on.',
+    alt: 'Cinema',
+    src: seats,
   },
   {
     id: 'karaoke',
@@ -49,11 +42,18 @@ const CARDS = [
     src: micPurple,
   },
   {
-    id: 'cinema',
-    word: 'CINEMA',
-    line: 'Settle in. The night is on.',
-    alt: 'Cinema',
-    src: seats,
+    id: 'hookah',
+    word: 'HOOKAH',
+    line: 'Your late-night ritual.',
+    alt: 'Hookah',
+    src: hookahCoal,
+  },
+  {
+    id: 'bar',
+    word: 'BAR',
+    line: 'Eat well. Drink better.',
+    alt: 'Bar',
+    src: bottles,
   },
 ] as const
 
@@ -204,12 +204,17 @@ export default function SceneShowcase() {
         <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
 
         <h2 id="cs-showcase-title" className="sr-only">
-          Bar. Play zone. Hookah. Karaoke. Cinema.
+          Play zone. Cinema. Karaoke. Hookah. Bar.
         </h2>
         <div
           aria-live="polite"
           className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]"
         >
+          {wordIndex > 0 ? (
+            <p className={`mb-2 [text-shadow:0_1px_12px_rgba(0,0,0,0.55)] ${kickerClass}`}>
+              The rest of the night
+            </p>
+          ) : null}
           <p
             data-copy="caption"
             className={`${lockupClass} [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]`}

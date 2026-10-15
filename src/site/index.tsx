@@ -9,6 +9,7 @@ import HeroV2 from './sections/hero'
 import SceneOverview from './sections/scene-overview'
 import { SHOWCASE_MIN_HEIGHT } from './sections/showcase-span'
 import LazyScene from './components/lazy-scene'
+import { PersistentBook } from './components/persistent-book'
 import { usePrefersReducedMotion } from './hooks/media'
 import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
@@ -19,17 +20,15 @@ const SceneEvents = lazy(() => import('./sections/scene-events'))
 const SceneShowcase = lazy(() => import('./sections/scene-showcase'))
 const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
-const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
 const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
-const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
+const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', node: <SceneExperienceV2 /> },
-  { key: 'showcase', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
+  { key: 'showcase', id: 'play', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'events', node: <SceneEvents /> },
   { key: 'locations', node: <SceneLocations /> },
   { key: 'app', node: <SceneApp /> },
-  { key: 'franchise', node: <SceneFranchiseV2 /> },
   { key: 'basement', node: <SceneBasement /> },
 ]
 
@@ -76,7 +75,7 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, overview carousel, experience split, screen masonry, showcase spiral.
+ * Charge Split — book lockup, overview carousel, experience split, screen masonry, showcase spiral.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {
@@ -91,11 +90,12 @@ export default function ChargeSplitPage() {
         fontFamily: 'var(--cs-body)',
       }}
     >
+      <PersistentBook />
       <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
         <HeroV2 />
         <SceneOverview />
         {scenes.map((scene) => (
-          <LazyScene key={scene.key} minHeight={scene.minHeight}>
+          <LazyScene key={scene.key} id={scene.id} minHeight={scene.minHeight}>
             <Suspense fallback={null}>{scene.node}</Suspense>
           </LazyScene>
         ))}

@@ -5,6 +5,7 @@ import { InstagramIcon, TelegramIcon } from '../components/icons'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
 import { lockupClass, palette } from '../lib/palette'
 import { INSTAGRAMS } from '../lib/seo'
+import { trackClick } from '../lib/track'
 import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.webp'
 import { stayFold, useBasementIntro } from './basement-intro'
@@ -168,6 +169,20 @@ export default function SceneBasement() {
           )}
         </h2>
       </div>
+
+      <a
+        href="mailto:franchise@premiumlounge.club"
+        onClick={() =>
+          trackClick({
+            action: 'franchise',
+            section: 'basement',
+            label: 'Open a Prime in your city',
+          })
+        }
+        className={`absolute bottom-[calc(25%+0.85rem)] left-1/2 z-20 -translate-x-1/2 whitespace-nowrap px-4 text-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[0.14em] uppercase sm:tracking-[var(--cs-track-micro)] ${linkClass}`}
+      >
+        Open a Prime in your city
+      </a>
 
       <div
         className="absolute inset-x-0 bottom-0 z-10 flex h-1/4 items-center border-t border-[color-mix(in_srgb,var(--cs-ice)_16%,transparent)] backdrop-blur-md"

@@ -3,17 +3,23 @@ import SpecularButton, { type SpecularButtonProps } from '@/site/bits/SpecularBu
 import { useCoarsePointer } from '../hooks/media'
 import { BOOKING_URL } from '../lib/booking'
 import { ctaClass, specularInk } from '../lib/palette'
+import { trackClick } from '../lib/track'
 
 export function BookNightButton({
   size = 'md',
   className = ctaClass,
   children = 'Book a night',
+  section,
+  venue,
 }: {
   size?: SpecularButtonProps['size']
   className?: string
   children?: ReactNode
+  section: string
+  venue?: string
 }) {
   const coarse = useCoarsePointer()
+  const label = typeof children === 'string' ? children : 'Book a night'
 
   return (
     <SpecularButton
@@ -27,6 +33,11 @@ export function BookNightButton({
       autoAnimate={!coarse}
       className={className}
       onClick={() => {
+        trackClick({ action: 'book', section, label, venue })
+        if (coarse) {
+          window.location.assign(BOOKING_URL)
+          return
+        }
         window.open(BOOKING_URL, '_blank', 'noopener,noreferrer')
       }}
     >

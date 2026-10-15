@@ -2,6 +2,7 @@ import { MapPin, Phone } from 'lucide-react'
 import { BookNightButton } from '../../components/book-night'
 import { TelegramIcon } from '../../components/icons'
 import { cardTitleClass, ctaClass, palette } from '../../lib/palette'
+import { trackClick } from '../../lib/track'
 import type { Venue } from '../../lib/venues'
 
 const actionClass =
@@ -46,12 +47,22 @@ export function VenuePanel({
         <div className="flex flex-nowrap items-center gap-2.5 sm:gap-4">
           <BookNightButton
             size="sm"
+            section="locations"
+            venue={venue.id}
             className={`shrink-0 ${ctaClass} !backdrop-filter-none !bg-[color-mix(in_srgb,var(--cs-void)_72%,transparent)]`}
           />
           <a
             href={`tel:${venue.phone}`}
             className={`${actionClass} ${iconBtnClass}`}
             aria-label={`Call ${venue.phoneLabel}`}
+            onClick={() =>
+              trackClick({
+                action: 'call',
+                section: 'locations',
+                label: venue.phoneLabel,
+                venue: venue.id,
+              })
+            }
           >
             <Phone className="size-[1.05em] shrink-0 text-[#34C759]" strokeWidth={2.25} aria-hidden />
             <span className="sr-only sm:not-sr-only">Call</span>
@@ -62,6 +73,14 @@ export function VenuePanel({
             rel="noreferrer"
             className={`${actionClass} ${iconBtnClass}`}
             aria-label="Telegram"
+            onClick={() =>
+              trackClick({
+                action: 'telegram',
+                section: 'locations',
+                label: 'Telegram',
+                venue: venue.id,
+              })
+            }
           >
             <TelegramIcon className="size-[1.1em] shrink-0 text-[#2AABEE]" />
             <span className="sr-only sm:not-sr-only">Telegram</span>
@@ -72,6 +91,14 @@ export function VenuePanel({
             rel="noreferrer"
             className={`${actionClass} ${iconBtnClass}`}
             aria-label="Maps"
+            onClick={() =>
+              trackClick({
+                action: 'maps',
+                section: 'locations',
+                label: 'Maps',
+                venue: venue.id,
+              })
+            }
           >
             <MapPin className="size-[1.05em] shrink-0 text-[var(--cs-ice)]" strokeWidth={2.25} aria-hidden />
             <span className="sr-only sm:not-sr-only">Maps</span>

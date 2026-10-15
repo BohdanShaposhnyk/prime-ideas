@@ -6,6 +6,7 @@ import mockup from '../assets/senet-mockup.webp'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, supportClass } from '../lib/palette'
+import { trackClick } from '../lib/track'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
@@ -30,7 +31,7 @@ function AppCopy({
           <span className="block">you are</span>
         </h2>
         <p className={supportClassName}>
-          Book ahead, check availability and keep Prime with you.
+          For your next visit. Check what&apos;s free and keep Prime on your phone.
         </p>
       </div>
       <div className={badgesClassName}>
@@ -48,6 +49,7 @@ function StoreBadges() {
         target="_blank"
         rel="noopener noreferrer"
         className={badgeLinkClass}
+        onClick={() => trackClick({ action: 'store', section: 'app', label: 'App Store' })}
       >
         <img
           src={badgeAppStore}
@@ -61,6 +63,7 @@ function StoreBadges() {
         target="_blank"
         rel="noopener noreferrer"
         className={badgeLinkClass}
+        onClick={() => trackClick({ action: 'store', section: 'app', label: 'Google Play' })}
       >
         <img
           src={badgeGooglePlay}

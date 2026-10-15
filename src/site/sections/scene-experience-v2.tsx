@@ -13,7 +13,7 @@ const OFFERS = [
     id: 'welcome',
     kicker: 'New guests',
     amount: '50',
-    lead: 'On your account,',
+    lead: 'Play credit,',
     rest: 'or your first hour free.',
     note: 'For every new guest.',
   },
@@ -45,7 +45,7 @@ const GLOW = {
 } as const
 
 /** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
-const VENUE_VERBS = ['PLAY', 'WATCH', 'REFILL', 'CHILL', 'SING'] as const
+const VENUE_VERBS = ['PLAY', 'WATCH', 'CHILL', 'SING'] as const
 
 const glassClass =
   'bg-[color-mix(in_srgb,#07060C_62%,transparent)] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
@@ -59,18 +59,18 @@ function ExperienceCopy() {
         </span>
         <span className="block">experience</span>
       </h2>
-      <p className={`mt-4 max-w-[20rem] sm:mt-5 ${supportClass}`}>One place. Your kind of night.</p>
+      <p className={`mt-4 max-w-[20rem] sm:mt-5 ${supportClass}`}>Play leads the night.</p>
       <p className="mt-3 max-w-[26rem] font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mt-4 sm:text-[1.02rem]">
-        Everything a good night out needs, brought together under one roof.
+        Cinema, karaoke, hookah, and the bar are in the same building.
       </p>
       <div className="mt-5 w-fit max-w-full sm:mt-6">
-        <p className="sr-only">Play, watch, refill, chill, sing</p>
+        <p className="sr-only">Play, watch, chill, sing</p>
         <SplitFlapText
           aria-hidden
           words={[...VENUE_VERBS]}
           loop
           charset="alpha"
-          padTo={6}
+          padTo={5}
           flipsPerChar={5}
           flipDuration={0.1}
           stagger={0.045}
@@ -84,7 +84,7 @@ function ExperienceCopy() {
         />
       </div>
       <div className="mt-5 sm:mt-6">
-        <BookNightButton />
+        <BookNightButton section="experience">Claim your first hour</BookNightButton>
       </div>
     </div>
   )

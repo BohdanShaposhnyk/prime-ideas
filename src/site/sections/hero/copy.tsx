@@ -5,6 +5,7 @@ import { BookNightButton } from '../../components/book-night'
 import { useGoldShine } from '../../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { kickerClass, lockupClass, supportClass } from '../../lib/palette'
+import { scrollPortTo } from '../../lib/scroll-port'
 
 export function HeroCopy() {
   const copyRef = useRef<HTMLDivElement>(null)
@@ -63,15 +64,22 @@ export function HeroCopy() {
         />
         <p
           data-hero-extra=""
-          className={`mt-3 max-w-[24rem] sm:mt-4 ${supportClass} ${quiet}`}
+          className={`mt-3 max-w-[28rem] sm:mt-4 ${supportClass} ${quiet}`}
         >
-          One night. Five ways to make it yours.
+          A cyber club, with cinema, karaoke, hookah, and a bar.
         </p>
         <div
           data-hero-extra=""
-          className={`pointer-events-auto mt-6 sm:mt-8 ${quiet}`}
+          className={`pointer-events-auto mt-6 flex flex-col items-center sm:mt-8 ${quiet}`}
         >
-          <BookNightButton />
+          <BookNightButton section="hero" />
+          <button
+            type="button"
+            onClick={() => scrollPortTo('play')}
+            className={`mt-4 bg-transparent p-0 ${kickerClass} text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none`}
+          >
+            See the night
+          </button>
         </div>
       </div>
     </div>
