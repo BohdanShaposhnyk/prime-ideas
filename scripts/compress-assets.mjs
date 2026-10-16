@@ -42,7 +42,7 @@ const VIDEOS = [
   {
     from: 'video/cs6.MP4',
     to: 'src/site/assets/cs6-reel.mp4',
-    start: 15,
+    start: 8,
     duration: 14.6,
     poster: 'src/site/assets/cs6-reel-poster.webp',
     posterAt: 0,
