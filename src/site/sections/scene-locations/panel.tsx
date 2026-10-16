@@ -40,9 +40,20 @@ export function VenuePanel({
       />
 
       <div className="order-2 flex shrink-0 flex-col gap-3 sm:order-3">
-        <p className="font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] sm:text-[0.85rem]">
+        <a
+          href={venue.appleMaps}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Open ${venue.address} in Maps`}
+          className="inline-flex items-start gap-1.5 font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none sm:text-[0.85rem]"
+        >
+          <MapPin
+            className="mt-px size-[1.05em] shrink-0 text-[var(--cs-ice)]"
+            strokeWidth={2.25}
+            aria-hidden
+          />
           {venue.address}
-        </p>
+        </a>
         <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <BookNightButton className="shrink-0" />
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -63,16 +74,6 @@ export function VenuePanel({
             >
               <TelegramIcon className="size-[1.1em] shrink-0 text-[#2AABEE]" />
               <span className="sr-only sm:not-sr-only">Telegram</span>
-            </a>
-            <a
-              href={venue.appleMaps}
-              target="_blank"
-              rel="noreferrer"
-              className={`${actionClass} ${iconBtnClass}`}
-              aria-label="Maps"
-            >
-              <MapPin className="size-[1.05em] shrink-0 text-[var(--cs-ice)]" strokeWidth={2.25} aria-hidden />
-              <span className="sr-only sm:not-sr-only">Maps</span>
             </a>
           </div>
         </div>

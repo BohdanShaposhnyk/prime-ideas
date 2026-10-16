@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { createPortal } from 'react-dom'
 import AccordionGallery from '@/site/bits/AccordionGallery'
-import { useCoarsePointer, usePrefersReducedMotion } from '../../hooks/media'
+import { usePrefersReducedMotion } from '../../hooks/media'
 import { palette } from '../../lib/palette'
 import { VENUES } from '../../lib/venues'
 import { CARD_OPEN_S, DEFAULT_INDEX, GALLERY_ITEMS } from './config'
@@ -14,10 +14,8 @@ export default function SceneLocations() {
   const reduced = usePrefersReducedMotion()
   const openMs = reduced ? 0 : CARD_OPEN_S * 1000
   const sectionRef = useRef<HTMLElement>(null)
-  const coarse = useCoarsePointer()
   const expandRatio = useExpandRatio(sectionRef)
   const { center, lockedWidth, revealed, setPark, setSlot, target } = useVenueMap(openMs)
-  const interactive = !coarse
 
   return (
     <section
@@ -34,12 +32,7 @@ export default function SceneLocations() {
       />
       {target && lockedWidth > 0
         ? createPortal(
-            <VenueMap
-              center={center}
-              revealed={revealed}
-              width={lockedWidth}
-              interactive={interactive}
-            />,
+            <VenueMap center={center} revealed={revealed} width={lockedWidth} />,
             target,
           )
         : null}
