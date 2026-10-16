@@ -168,6 +168,7 @@ export default function SceneShowcase() {
   return (
     <section
       ref={sectionRef}
+      id="cs-nav-photos"
       aria-labelledby="cs-showcase-title"
       data-scene="showcase"
       data-scroll="showcase-spiral"

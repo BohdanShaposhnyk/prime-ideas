@@ -6,8 +6,7 @@ import './styles/charge-split.css'
 
 import { lazy, Suspense, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
 import HeroV2 from './sections/hero'
-import SceneOverview from './sections/scene-overview'
-import { SHOWCASE_MIN_HEIGHT } from './sections/showcase-span'
+import SceneShowcase from './sections/scene-showcase'
 import LazyScene from './components/lazy-scene'
 import { SiteHeader } from './components/site-header'
 import { usePrefersReducedMotion } from './hooks/media'
@@ -15,9 +14,9 @@ import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
 
 const SceneExperienceV2 = lazy(() => import('./sections/scene-experience-v2'))
+const SceneOverview = lazy(() => import('./sections/scene-overview'))
 const SceneScreen = lazy(() => import('./sections/scene-screen'))
 const SceneEvents = lazy(() => import('./sections/scene-events'))
-const SceneShowcase = lazy(() => import('./sections/scene-showcase'))
 const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
 const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
@@ -25,7 +24,7 @@ const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
 const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', id: 'cs-nav-experience', node: <SceneExperienceV2 /> },
-  { key: 'showcase', id: 'cs-nav-photos', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
+  { key: 'overview', id: 'cs-nav-night', node: <SceneOverview /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'events', node: <SceneEvents /> },
   { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
@@ -39,8 +38,8 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
  * Scene height is the port's clientHeight, so iOS cannot undershoot by the URL bar.
  * One-screen scenes use scroll-snap-stop: always. Showcase cards are shorter stops.
  * Touch eases to one stop in either direction. Mouse and trackpad stay on CSS snap.
- * Overview is one screen. Its expand plays after the flick settles, so the hero
- * exit parallax is not sharing frames with the clip.
+ * Showcase follows the hero and stays mounted, so its card stops exist before the
+ * first flick. Overview is one screen. Its expand plays after the flick settles.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -77,7 +76,7 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, overview carousel, experience split, screen masonry, showcase spiral.
+ * Charge Split — 50/50 charge cell, book lockup, showcase spiral, experience split, overview carousel, screen masonry.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {
@@ -95,7 +94,7 @@ export default function ChargeSplitPage() {
       <SiteHeader portRef={portRef} />
       <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
         <HeroV2 />
-        <SceneOverview />
+        <SceneShowcase />
         {scenes.map((scene) => (
           <LazyScene key={scene.key} id={scene.id} minHeight={scene.minHeight}>
             <Suspense fallback={null}>{scene.node}</Suspense>

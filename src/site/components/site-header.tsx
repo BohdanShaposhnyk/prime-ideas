@@ -3,9 +3,9 @@ import { usePrefersReducedMotion } from '../hooks/media'
 import { HeroMark } from '../sections/hero/mark'
 
 const LINKS = [
-  { id: 'cs-nav-night', label: 'The night' },
-  { id: 'cs-nav-experience', label: 'Experience' },
   { id: 'cs-nav-photos', label: 'Photos' },
+  { id: 'cs-nav-experience', label: 'Experience' },
+  { id: 'cs-nav-night', label: 'The night' },
   { id: 'cs-nav-addresses', label: 'Addresses' },
   { id: 'cs-nav-app', label: 'App' },
   { id: 'cs-nav-franchise', label: 'Franchise' },
