@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import DotField from '@/site/bits/DotField'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
+import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useSnapInView } from '../hooks/snap-in-view'
 import { lockupClass, supportClass } from '../lib/palette'
@@ -17,8 +18,6 @@ import stage from '../assets/event-cs6/carousel/stage.webp'
 import stage2 from '../assets/event-cs6/carousel/stage-2.webp'
 import team from '../assets/event-cs6/carousel/team.webp'
 
-const GALLERY = 'https://gregoryvyshnevetsky63.pixieset.com/affiliatecs6/'
-
 /** Mixed so autoplay does not sit on one kind of shot. */
 const PHOTOS: FlexCarouselItem[] = [
   { src: stage, alt: 'Host with a microphone addressing the room' },
@@ -34,9 +33,6 @@ const PHOTOS: FlexCarouselItem[] = [
   { src: gamers2, alt: 'Player at a match PC' },
   { src: girls, alt: 'Two guests posing on a sofa' },
 ]
-
-const linkClass =
-  'inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none sm:tracking-[var(--cs-track-micro)]'
 
 /** Gallery exists only while the scene owns the port, so the intro restarts on each visit. */
 const ENTER_AT = 0.6
@@ -88,9 +84,7 @@ export default function SceneEvents() {
         ) : null}
       </div>
       <div className="shrink-0 px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-8">
-        <a href={GALLERY} target="_blank" rel="noreferrer" className={linkClass}>
-          View all photos &gt;
-        </a>
+        <BookNightButton />
       </div>
     </section>
   )

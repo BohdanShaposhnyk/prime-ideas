@@ -240,7 +240,7 @@ export default function SceneShowcase() {
             </p>
           </div>
           <div className="pointer-events-auto mt-4 sm:mt-5">
-            <BookNightButton size="sm" />
+            <BookNightButton />
           </div>
         </div>
 
