@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view'
 import InfiniteSpiral from '@/site/bits/InfiniteSpiral'
-import bottles from '../assets/bar/bottles.webp'
-import seats from '../assets/cinema/seats.webp'
-import controllerDark from '../assets/gaming/controller-dark-purple.webp'
-import hookahCoal from '../assets/hookah/hookah-coal.webp'
-import micPurple from '../assets/karaoke/mic-purple-2.webp'
+import barContrast from '../assets/bar/bar-contrast.webp'
+import carsimTilted from '../assets/gaming/carsim-tilted.webp'
+import hookahPurple from '../assets/hookah/hookah-purple.webp'
+import guestRoom from '../assets/showcase/guest-room-3-ls.webp'
+import loungeHall from '../assets/showcase/lounge-2.webp'
+import mic from '../assets/showcase/mic.webp'
+import rigs from '../assets/showcase/rigs.webp'
+import { BookNightButton } from '../components/book-night'
 import { FilmGrain } from '../components/grain'
 import { clamp } from '../lib/math'
 import { prefersReducedMotion } from '../lib/motion'
 import { lockupClass, supportClass } from '../lib/palette'
-import { SHOWCASE_MIN_HEIGHT } from './showcase-span'
-
-export { SHOWCASE_MIN_HEIGHT }
+import { showcaseMinHeight } from './showcase-span'
 
 const HOLD_W = 1
 const ROLL_W = 1.85
@@ -21,41 +22,57 @@ const STEP_HOLD = HOLD_W / (HOLD_W + ROLL_W)
 
 const CARDS = [
   {
-    id: 'bar',
-    word: 'BAR',
-    line: 'Eat well. Drink better.',
-    alt: 'Bar',
-    src: bottles,
-  },
-  {
     id: 'play',
     word: 'PLAY ZONE',
-    line: 'Built for serious play.',
+    line: 'PC rooms for one, two, four, or five.',
     alt: 'Play zone',
-    src: controllerDark,
+    src: rigs,
   },
   {
-    id: 'hookah',
-    word: 'HOOKAH',
-    line: 'Your late-night ritual.',
-    alt: 'Hookah',
-    src: hookahCoal,
+    id: 'sim',
+    word: 'SIM RACING',
+    line: 'Motorsport simulators.',
+    alt: 'Sim racing',
+    src: carsimTilted,
+  },
+  {
+    id: 'bar',
+    word: 'BAR',
+    line: 'A restaurant kitchen and bar.',
+    alt: 'Bar',
+    src: barContrast,
   },
   {
     id: 'karaoke',
     word: 'KARAOKE',
-    line: 'No stage fright allowed.',
+    line: 'A room for your group to sing.',
     alt: 'Karaoke',
-    src: micPurple,
+    src: mic,
   },
   {
-    id: 'cinema',
-    word: 'CINEMA',
-    line: 'Settle in. The night is on.',
-    alt: 'Cinema',
-    src: seats,
+    id: 'room',
+    word: 'PRIVATE ROOM',
+    line: 'A private cinema for your group.',
+    alt: 'Private room',
+    src: guestRoom,
+  },
+  {
+    id: 'hall',
+    word: 'CINEMA HALL',
+    line: 'The large hall. PlayStation 5 in every cinema and lounge.',
+    alt: 'Cinema hall',
+    src: loungeHall,
+  },
+  {
+    id: 'hookah',
+    word: 'HOOKAH',
+    line: 'Its own lounge, clear of the other rooms.',
+    alt: 'Hookah',
+    src: hookahPurple,
   },
 ] as const
+
+const SHOWCASE_MIN_HEIGHT = showcaseMinHeight(CARDS.length)
 
 const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   id,
@@ -205,24 +222,26 @@ export default function SceneShowcase() {
         <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
 
         <h2 id="cs-showcase-title" className="sr-only">
-          Bar. Play zone. Hookah. Karaoke. Cinema.
+          Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah.
         </h2>
-        <div
-          aria-live="polite"
-          className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]"
-        >
-          <p
-            data-copy="caption"
-            className={`${lockupClass} [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]`}
-          >
-            {card.word}
-          </p>
-          <p
-            data-copy="support"
-            className={`-mt-0.5 [text-shadow:0_1px_12px_rgba(0,0,0,0.55)] ${supportClass}`}
-          >
-            {card.line}
-          </p>
+        <div className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
+          <div aria-live="polite">
+            <p
+              data-copy="caption"
+              className={`${lockupClass} [text-shadow:0_2px_22px_rgba(0,0,0,0.45)]`}
+            >
+              {card.word}
+            </p>
+            <p
+              data-copy="support"
+              className={`-mt-0.5 [text-shadow:0_1px_12px_rgba(0,0,0,0.55)] ${supportClass}`}
+            >
+              {card.line}
+            </p>
+          </div>
+          <div className="pointer-events-auto mt-4 sm:mt-5">
+            <BookNightButton size="sm" />
+          </div>
         </div>
 
         <div className="absolute inset-0 z-20">
