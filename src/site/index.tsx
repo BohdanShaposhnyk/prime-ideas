@@ -14,7 +14,8 @@ import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
 
 const SceneExperienceV2 = lazy(() => import('./sections/scene-experience-v2'))
-const SceneOverview = lazy(() => import('./sections/scene-overview'))
+// Parked. The night carousel stays in scene-overview until it comes back.
+// const SceneOverview = lazy(() => import('./sections/scene-overview'))
 const SceneScreen = lazy(() => import('./sections/scene-screen'))
 const SceneEvents = lazy(() => import('./sections/scene-events'))
 const SceneLocations = lazy(() => import('./sections/scene-locations'))
@@ -25,7 +26,7 @@ const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
 const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', id: 'cs-nav-experience', node: <SceneExperienceV2 /> },
-  { key: 'overview', id: 'cs-nav-night', node: <SceneOverview /> },
+  // { key: 'overview', id: 'cs-nav-night', node: <SceneOverview /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'events', node: <SceneEvents /> },
   { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
@@ -40,7 +41,7 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
  * One-screen scenes use scroll-snap-stop: always. Showcase cards are shorter stops.
  * Touch eases to one stop in either direction. Mouse and trackpad stay on CSS snap.
  * Showcase follows the hero and stays mounted, so its card stops exist before the
- * first flick. Overview is one screen. Its expand plays after the flick settles.
+ * first flick. The night carousel is parked, so experience snaps straight to screen.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -77,8 +78,9 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, showcase spiral, experience split, overview carousel, screen masonry.
- * Franchise is a mailto in the basement. The full scene stays commented out above.
+ * Charge Split — 50/50 charge cell, book lockup, showcase spiral, experience split, screen masonry.
+ * The night carousel and the franchise scene stay commented out above.
+ * Franchise is a mailto in the basement.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {

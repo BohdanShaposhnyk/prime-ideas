@@ -17,7 +17,7 @@ The Prime Warsaw landing page: gaming, cinema, karaoke, hookah, and bar. Brand: 
 
 The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets` live in `assets-src`.
 
-Franchise is a mailto in the basement. The full scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.
+The night carousel stays in `src/site/sections/scene-overview` and is commented out of `src/site/index.tsx`. Franchise is a mailto in the basement. The full scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.
 
 ## Commands
 

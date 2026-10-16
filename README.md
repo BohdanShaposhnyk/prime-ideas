@@ -30,6 +30,8 @@ pnpm assets
 
 ## Page
 
-Snap scenes: hero, photos, experience, the night, screen, events, locations, app, basement.
+Snap scenes: hero, photos, experience, screen, events, locations, app, basement.
+
+The night carousel stays in `src/site/sections/scene-overview` and is commented out of `src/site/index.tsx`. The header link to it is commented out with the scene.
 
 Franchise is a mailto in the basement (`franchise@premiumlounge.club`), styled like the events gallery link. The full franchise scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.
