@@ -9,6 +9,7 @@ import HeroV2 from './sections/hero'
 import SceneOverview from './sections/scene-overview'
 import { SHOWCASE_MIN_HEIGHT } from './sections/showcase-span'
 import LazyScene from './components/lazy-scene'
+import { SiteHeader } from './components/site-header'
 import { usePrefersReducedMotion } from './hooks/media'
 import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
@@ -22,15 +23,15 @@ const SceneApp = lazy(() => import('./sections/scene-app'))
 const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
 const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
-const scenes: { key: string; minHeight?: string; node: ReactNode }[] = [
-  { key: 'experience', node: <SceneExperienceV2 /> },
-  { key: 'showcase', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
+const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
+  { key: 'experience', id: 'cs-nav-experience', node: <SceneExperienceV2 /> },
+  { key: 'showcase', id: 'cs-nav-photos', minHeight: SHOWCASE_MIN_HEIGHT, node: <SceneShowcase /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'events', node: <SceneEvents /> },
-  { key: 'locations', node: <SceneLocations /> },
-  { key: 'app', node: <SceneApp /> },
-  { key: 'franchise', node: <SceneFranchiseV2 /> },
-  { key: 'basement', node: <SceneBasement /> },
+  { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
+  { key: 'app', id: 'cs-nav-app', node: <SceneApp /> },
+  { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
+  { key: 'basement', id: 'cs-nav-contact', node: <SceneBasement /> },
 ]
 
 /**
@@ -91,11 +92,12 @@ export default function ChargeSplitPage() {
         fontFamily: 'var(--cs-body)',
       }}
     >
+      <SiteHeader portRef={portRef} />
       <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
         <HeroV2 />
         <SceneOverview />
         {scenes.map((scene) => (
-          <LazyScene key={scene.key} minHeight={scene.minHeight}>
+          <LazyScene key={scene.key} id={scene.id} minHeight={scene.minHeight}>
             <Suspense fallback={null}>{scene.node}</Suspense>
           </LazyScene>
         ))}

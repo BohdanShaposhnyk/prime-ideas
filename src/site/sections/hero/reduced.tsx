@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { VIGNETTE_BG, VIGNETTE_TO, vignetteVars } from './vignette'
 import { HeroCopy } from './copy'
-import { HeroMark } from './mark'
 import { heroFocusStyle, heroReel } from './media'
 
 export function ReducedHeroVideo() {
@@ -47,6 +46,7 @@ export function ReducedHeroVideo() {
   return (
     <section
       ref={sectionRef}
+      id="cs-nav-hero"
       aria-label="PRIME"
       data-scroll="split-hold"
       data-scene="hero"
@@ -71,7 +71,6 @@ export function ReducedHeroVideo() {
         className="pointer-events-none absolute inset-0"
         style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
       />
-      <HeroMark visible />
       <HeroCopy />
     </section>
   )

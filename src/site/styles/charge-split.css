@@ -51,10 +51,6 @@ html.cs-snap-root body {
   transform: translate3d(0, calc(var(--cs-out, 0) * -28vh), 0);
   opacity: max(0, calc(1 - var(--cs-out, 0) * 1.25));
 }
-.cs-hero-mark {
-  transform: translate3d(0, calc(var(--cs-out, 0) * -1.25rem), 0);
-  opacity: max(0, calc(1 - var(--cs-out, 0) * 1.15));
-}
 .cs-hero-veil {
   opacity: calc(var(--cs-out, 0) * 0.32);
 }
@@ -87,16 +83,6 @@ html.cs-snap-root body {
   .cs-prime-field {
     animation: none;
   }
-}
-/* Hero intro eats scroll until the dive ends. Snap stays off while a leftover
-   flick would otherwise carry the page into the next scene. */
-.cs-snap-port.cs-hero-lock {
-  overflow: hidden !important;
-  scroll-snap-type: none !important;
-  touch-action: none;
-}
-.cs-snap-port.cs-snap-pause {
-  scroll-snap-type: none !important;
 }
 
 [data-hero-vignette] {

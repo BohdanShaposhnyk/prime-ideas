@@ -44,10 +44,7 @@ export function VenuePanel({
           {venue.address}
         </p>
         <div className="flex flex-nowrap items-center gap-2.5 sm:gap-4">
-          <BookNightButton
-            size="sm"
-            className={`shrink-0 ${ctaClass} !backdrop-filter-none !bg-[color-mix(in_srgb,var(--cs-void)_72%,transparent)]`}
-          />
+          <BookNightButton size="sm" className="shrink-0" />
           <a
             href={`tel:${venue.phone}`}
             className={`${actionClass} ${iconBtnClass}`}

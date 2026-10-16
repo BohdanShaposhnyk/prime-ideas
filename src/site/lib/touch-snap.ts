@@ -12,15 +12,10 @@ import { gsap } from './gsap'
  */
 
 const COAST = 'cs-snap-coast'
-const LOCKS = ['cs-hero-lock', 'cs-snap-pause']
 const MAX_S = 0.32
 const MIN_S = 0.2
 /** Chrome's touch slop. Shorter travel is a tap, not the next scene. */
 const TAP_SLOP = 16
-
-function locked(port: HTMLElement) {
-  return LOCKS.some((name) => port.classList.contains(name))
-}
 
 function measureStops(port: HTMLElement) {
   const portTop = port.getBoundingClientRect().top
@@ -146,7 +141,7 @@ export function bindTouchSnap(port: HTMLElement) {
       armed = true
       port.classList.add(COAST)
     }
-    if (locked(port) || stops.length === 0) return
+    if (stops.length === 0) return
     const { prev, next } = windowFor(stops, originIndex)
     writeScroll(Math.min(next, Math.max(prev, originY + travel)))
   }
@@ -156,7 +151,7 @@ export function bindTouchSnap(port: HTMLElement) {
     dragging = false
     pointerId = -1
 
-    if (locked(port) || stops.length === 0) {
+    if (stops.length === 0) {
       release()
       return
     }
@@ -196,11 +191,6 @@ export function bindTouchSnap(port: HTMLElement) {
 
   const onPointerDown = (event: PointerEvent) => {
     if (event.pointerType !== 'touch' || !event.isPrimary) return
-    if (locked(port)) {
-      killTween()
-      release()
-      return
-    }
     killTween()
     thaw()
     epoch += 1

@@ -1,17 +1,11 @@
 import { useWordmark } from '../../hooks/wordmark'
 
-/**
- * Crop to the wordmark and lift the black plate so the letters sit on the video.
- */
-export function HeroMark({ visible }: { visible: boolean }) {
+/** Cropped wordmark. The header places it; the black plate is already punched out. */
+export function HeroMark({ className = '' }: { className?: string }) {
   const src = useWordmark()
-  if (!src || !visible) return null
+  if (!src) {
+    return <span aria-hidden className={`inline-block h-5 w-[4.3rem] sm:h-6 sm:w-[5.2rem] ${className}`} />
+  }
 
-  return (
-    <img
-      src={src}
-      alt="Prime"
-      className="cs-hero-mark pointer-events-none absolute top-4 left-4 z-30 h-5 w-auto sm:top-5 sm:left-6 sm:h-6"
-    />
-  )
+  return <img src={src} alt="" className={`h-5 w-auto sm:h-6 ${className}`} />
 }

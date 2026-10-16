@@ -4,7 +4,6 @@ import MoltenMetal from '@/site/bits/MoltenMetal'
 import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
 import { BLUR_PX, MOLTEN_VIOLET, REVEAL_S, useHeroIntro } from './intro'
-import { HeroMark } from './mark'
 import { heroFocusStyle, heroReel } from './media'
 import { ReducedHeroVideo } from './reduced'
 import { useHeroScrollOut } from './scroll-out'
@@ -31,6 +30,7 @@ export default function HeroV2() {
     <section
       ref={rootRef}
       aria-labelledby="cs-hero-v2-brand"
+      id="cs-nav-hero"
       data-scroll="split-hold"
       data-scene="hero"
       data-hero-blur=""
@@ -99,7 +99,6 @@ export default function HeroV2() {
           style={{ ...vignetteVars(VIGNETTE_FROM), background: VIGNETTE_BG }}
         />
         <div aria-hidden className="cs-hero-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
-        <HeroMark visible={copyReady} />
         {copyReady ? <HeroCopy /> : null}
       </div>
     </section>

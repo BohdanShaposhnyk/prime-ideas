@@ -15,6 +15,7 @@ export default function SceneOverview() {
   return (
     <section
       ref={sectionRef}
+      id="cs-nav-night"
       aria-labelledby="cs-overview-title"
       data-scene="overview"
       data-scroll="overview-recut"
