@@ -27,3 +27,9 @@ pnpm assets
 - `src/site/assets` — images and video the page imports
 - `assets-src` — full-quality originals for the compress script
 - `instagram_ref/` — moodboard only; do not import it
+
+## Page
+
+Snap scenes: hero, photos, experience, the night, screen, events, locations, app, basement.
+
+Franchise is a mailto in the basement (`franchise@premiumlounge.club`), styled like the events gallery link. The full franchise scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.

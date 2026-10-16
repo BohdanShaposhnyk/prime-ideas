@@ -9,8 +9,13 @@ import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.webp'
 import { stayFold, useBasementIntro } from './basement-intro'
 
+const FRANCHISE_MAIL = 'mailto:franchise@premiumlounge.club'
+
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
+
+/** Same treatment as the events gallery link. */
+const textLinkClass = `inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] sm:tracking-[var(--cs-track-micro)] ${linkClass}`
 
 const lockupSize = 'clamp(4rem, 9vw, 5.4rem)'
 
@@ -80,6 +85,7 @@ function Logo() {
 /**
  * Closing viewport — dimmed star field, centered lockup, translucent contact band.
  * Enter timeline: veil fades, STAY unfolds, then PRIME assembles. PRIME unmounts on leave.
+ * Franchise is a mailto just above the contact band, over the stars.
  */
 export default function SceneBasement() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -168,6 +174,13 @@ export default function SceneBasement() {
           )}
         </h2>
       </div>
+
+      <a
+        href={FRANCHISE_MAIL}
+        className={`absolute bottom-[calc(25%+0.85rem)] left-1/2 z-20 -translate-x-1/2 ${textLinkClass}`}
+      >
+        Open a franchise &gt;
+      </a>
 
       <div
         className="absolute inset-x-0 bottom-0 z-10 flex h-1/4 items-center border-t border-[color-mix(in_srgb,var(--cs-ice)_16%,transparent)] backdrop-blur-md"

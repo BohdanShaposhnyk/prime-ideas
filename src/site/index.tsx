@@ -19,7 +19,8 @@ const SceneScreen = lazy(() => import('./sections/scene-screen'))
 const SceneEvents = lazy(() => import('./sections/scene-events'))
 const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
-const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
+// Parked. Franchise is a mailto in the basement until this scene comes back.
+// const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
 const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
 const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
@@ -29,7 +30,7 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
   { key: 'events', node: <SceneEvents /> },
   { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
   { key: 'app', id: 'cs-nav-app', node: <SceneApp /> },
-  { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
+  // { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
   { key: 'basement', id: 'cs-nav-contact', node: <SceneBasement /> },
 ]
 
@@ -77,6 +78,7 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 
 /**
  * Charge Split — 50/50 charge cell, book lockup, showcase spiral, experience split, overview carousel, screen masonry.
+ * Franchise is a mailto in the basement. The full scene stays commented out above.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {

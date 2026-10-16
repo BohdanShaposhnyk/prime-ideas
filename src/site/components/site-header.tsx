@@ -8,7 +8,6 @@ const LINKS = [
   { id: 'cs-nav-night', label: 'The night' },
   { id: 'cs-nav-addresses', label: 'Addresses' },
   { id: 'cs-nav-app', label: 'App' },
-  { id: 'cs-nav-franchise', label: 'Franchise' },
   { id: 'cs-nav-contact', label: 'Contact' },
 ] as const
 
