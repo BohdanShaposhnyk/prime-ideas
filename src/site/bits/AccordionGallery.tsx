@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { gsap } from 'gsap';
+import { FilmGrain } from '@/site/components/grain';
 import { prefersReducedMotion } from '@/site/lib/motion';
 
 export interface AccordionGalleryItem {
@@ -103,7 +104,7 @@ const AccordionGallery = ({
 
   const prefersReduced = prefersReducedMotion();
 
-  const overlayBg = `linear-gradient(180deg, transparent 35%, color-mix(in srgb, ${overlayColor} 82%, transparent) 100%), color-mix(in srgb, ${overlayColor} calc(var(--ag-dim, 0.35) * 100%), transparent)`;
+  const overlayBg = `color-mix(in srgb, ${overlayColor} calc(var(--ag-dim, 0.84) * 100%), transparent)`;
 
   const applyLayout = useCallback(
     (animate: boolean) => {
@@ -128,7 +129,17 @@ const AccordionGallery = ({
         const rot = isActive ? 0 : i < active ? tilt : -tilt;
         const rotProp = vertical ? { rotateX: -rot } : { rotateY: rot };
 
-        tl.to(panel, { flexGrow: isActive ? grow : 1, ...rotProp, duration: dur, ease }, 0);
+        tl.to(
+          panel,
+          {
+            flexGrow: isActive ? grow : 1,
+            ...rotProp,
+            '--ag-dim': isActive ? activeDim : inactiveDim,
+            duration: dur,
+            ease
+          },
+          0
+        );
 
         if (media) {
           const drift = Math.max(-1.5, Math.min(1.5, active - i));
@@ -142,7 +153,6 @@ const AccordionGallery = ({
               x: vertical ? 0 : isActive ? 0 : shift,
               y: vertical ? (isActive ? 0 : shift) : 0,
               '--ag-gray': gray,
-              '--ag-dim': isActive ? activeDim : inactiveDim,
               duration: dur,
               ease
             },
@@ -272,7 +282,7 @@ const AccordionGallery = ({
             aria-current={isActive ? 'true' : undefined}
             aria-label={item.label}
           >
-            <span className="absolute inset-0 overflow-hidden [border-radius:inherit]">
+            <div className="absolute inset-0 overflow-hidden [border-radius:inherit]">
               <span
                 ref={(el: HTMLElement | null) => {
                   mediaRefs.current[i] = el;
@@ -296,7 +306,8 @@ const AccordionGallery = ({
                 style={{ background: overlayBg }}
                 aria-hidden="true"
               />
-            </span>
+              <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
+            </div>
             {showLabels && (
               <span
                 className="pointer-events-none absolute bottom-5 left-5 right-5 z-[2] flex items-center gap-3"

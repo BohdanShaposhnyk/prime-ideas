@@ -3,7 +3,7 @@ import SideRays from '@/site/bits/SideRays'
 import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockup from '../assets/senet-mockup.webp'
-import { usePrefersReducedMotion } from '../hooks/media'
+import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, supportClass } from '../lib/palette'
 
@@ -11,6 +11,13 @@ const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
 const PLAY_STORE =
   'https://play.google.com/store/apps/details?id=com.enestech.senetid'
+
+/** Same breakpoint as the desktop layout below. */
+const DESKTOP_QUERY = '(min-width: 768px)'
+// Distance in the ray shader is divided by height, so a portrait screen
+// stays bright into the lower left. A steeper curve restores that corner.
+const RAY_FALLOFF_DESKTOP = 1.05
+const RAY_FALLOFF_MOBILE = 2.65
 
 const badgeLinkClass =
   'inline-block transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)]'
@@ -76,6 +83,7 @@ function StoreBadges() {
 export default function SceneApp() {
   const rootRef = useRef<HTMLElement>(null)
   const reduced = usePrefersReducedMotion()
+  const desktop = useMediaQuery(DESKTOP_QUERY)
   useSceneParallax(rootRef, !reduced)
 
   return (
@@ -96,7 +104,7 @@ export default function SceneApp() {
           tilt={-12}
           saturation={1.4}
           blend={0.65}
-          falloff={1.05}
+          falloff={desktop ? RAY_FALLOFF_DESKTOP : RAY_FALLOFF_MOBILE}
           opacity={1}
         />
       </div>

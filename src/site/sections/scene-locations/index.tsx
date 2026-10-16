@@ -59,8 +59,8 @@ export default function SceneLocations() {
           textColor={palette.ice}
           grayscale
           showLabels={false}
-          activeDim={0.28}
-          inactiveDim={0.62}
+          activeDim={0.84}
+          inactiveDim={0.84}
           tilt={5}
           className="h-full"
           renderPanelContent={(index) => {
