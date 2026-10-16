@@ -260,6 +260,7 @@ export default function SceneShowcase() {
             centerScale={1.42}
             edgeFade={0.34}
             edgeBlur={0}
+            finite
             cardRadius={14}
             cardTilt={4}
             pauseOnHover={false}

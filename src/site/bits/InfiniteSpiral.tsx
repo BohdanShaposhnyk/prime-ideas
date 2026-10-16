@@ -35,6 +35,8 @@ export interface InfiniteSpiralProps {
   className?: string;
   /** When set, the helix follows this value (card index) instead of auto / window-scroll. */
   drivenProgressRef?: RefObject<number>;
+  /** Keep the first card at the top and the last at the bottom. No wrap past either end. */
+  finite?: boolean;
 }
 
 type NormalizedItem = InfiniteSpiralItem & { alt: string };
@@ -66,7 +68,8 @@ const InfiniteSpiral = ({
   imageFit = 'cover',
   grayscale = 0,
   className = '',
-  drivenProgressRef
+  drivenProgressRef,
+  finite = false
 }: InfiniteSpiralProps) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLAnchorElement | HTMLDivElement | null>>([]);
@@ -159,9 +162,11 @@ const InfiniteSpiral = ({
 
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
-        const offset = modulo(index - progressRef.current + half, count) - half;
+        const wrapped = modulo(index - progressRef.current + half, count) - half;
+        const offset = finite ? index - progressRef.current : wrapped;
+        const offStack = finite && Math.abs(offset) >= Math.max(half, 1);
         const edge = Math.min(Math.abs(offset) / Math.max(half, 1), 1);
-        const opacity = 1 - smoothstep(fadeStart, 1, edge);
+        const opacity = offStack ? 0 : 1 - smoothstep(fadeStart, 1, edge);
         const focus = 1 - Math.min(Math.abs(offset) / Math.max(turnSize * 0.65, 1), 1);
         const scale = (1 + (centerScale - 1) * focus) * fit;
         const angle = offset * (360 / turnSize) + rotation;
@@ -254,7 +259,8 @@ const InfiniteSpiral = ({
     edgeFade,
     edgeBlur,
     pauseOnHover,
-    drivenProgressRef
+    drivenProgressRef,
+    finite
   ]);
 
   const rootStyle = {
@@ -331,7 +337,7 @@ const InfiniteSpiral = ({
         dragMovedRef.current = false;
       }}
     >
-      <div className="absolute inset-0 [transform-style:preserve-3d]" role="list" aria-label="Infinite spiral gallery">
+      <div className="absolute inset-0 [transform-style:preserve-3d]" role="list" aria-label={finite ? 'Spiral gallery' : 'Infinite spiral gallery'}>
         {normalizedItems.map((item, index) => {
           const content = (
             <img
