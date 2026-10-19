@@ -76,16 +76,23 @@ function Logo() {
       src={src ?? undefined}
       alt="Prime"
       draggable={false}
-      className="h-[clamp(1.55rem,4.6vh,2.7rem)] w-auto shrink-0"
+      className="block h-[clamp(1.55rem,3.8vh,2.7rem)] w-auto max-w-none shrink-0 self-start object-contain"
       style={{ aspectRatio: wordmarkAspect, visibility: src ? 'visible' : 'hidden' }}
     />
   )
 }
 
+/** Sky above, contact band below. STAY is centered in the sky, not the viewport. */
+const basementSplit = {
+  '--basement-sky': '60%',
+  '--basement-band': '40%',
+} as CSSProperties
+
 /**
  * Closing viewport — dimmed star field, centered lockup, translucent contact band.
  * Enter timeline: veil fades, STAY unfolds, then PRIME assembles. PRIME unmounts on leave.
  * Franchise is a mailto just above the contact band, over the stars.
+ * The veil fades out inside the sky so the band stays clear while STAY arrives.
  */
 export default function SceneBasement() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -100,6 +107,7 @@ export default function SceneBasement() {
       aria-labelledby="cs-basement-title"
       data-scene="basement"
       className="cs-scene relative isolate overflow-hidden bg-black text-[var(--cs-ice)]"
+      style={basementSplit}
     >
       <img
         src={space}
@@ -112,14 +120,14 @@ export default function SceneBasement() {
         ref={veilRef}
         data-entry-veil=""
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[62%]"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[calc(var(--basement-sky)-10%)]"
         style={{
           background:
             'linear-gradient(to bottom, #000 0%, #000 22%, rgba(0,0,0,0.82) 48%, rgba(0,0,0,0.35) 72%, transparent 100%)',
         }}
       />
 
-      <div className="absolute inset-x-0 top-0 z-[1] flex h-3/4 items-center justify-center px-5">
+      <div className="absolute inset-x-0 top-0 z-[1] flex h-[var(--basement-sky)] items-center justify-center px-5">
         <h2
           id="cs-basement-title"
           className={`flex items-center justify-center gap-[0.12em] text-center ${lockupClass}`}
@@ -177,61 +185,57 @@ export default function SceneBasement() {
 
       <a
         href={FRANCHISE_MAIL}
-        className={`absolute bottom-[calc(25%+0.85rem)] left-1/2 z-20 -translate-x-1/2 ${textLinkClass}`}
+        className={`absolute bottom-[calc(var(--basement-band)+0.85rem)] left-1/2 z-20 -translate-x-1/2 ${textLinkClass}`}
       >
         Open a franchise &gt;
       </a>
 
       <div
-        className="absolute inset-x-0 bottom-0 z-10 flex h-1/4 items-center border-t border-[color-mix(in_srgb,var(--cs-ice)_16%,transparent)] backdrop-blur-md"
+        className="absolute inset-x-0 bottom-0 z-10 h-[var(--basement-band)] border-t border-[color-mix(in_srgb,var(--cs-ice)_16%,transparent)] backdrop-blur-md"
         style={{ background: 'rgba(0, 0, 0, 0.55)' }}
       >
-        <div className="mx-auto grid h-full w-full max-w-[88rem] grid-cols-[auto_1fr] content-center items-center gap-x-4 gap-y-2.5 px-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-8 sm:px-8 lg:px-12">
-          <Logo />
+        <div className="mx-auto flex h-full w-full max-w-[88rem] items-center justify-between gap-3 px-4 py-[clamp(0.6rem,2vh,1.6rem)] sm:gap-10 sm:px-8 lg:px-12">
+          <div className="flex min-w-0 shrink-0 flex-col items-start gap-3 sm:gap-4">
+            <Logo />
+            <nav aria-label="Social" className="flex flex-col items-start gap-2 sm:gap-2.5">
+              {INSTAGRAMS.map((profile) => (
+                <a
+                  key={profile.id}
+                  href={profile.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={profile.handle}
+                  className={`inline-flex items-center gap-2 font-[family-name:var(--cs-body)] text-[0.8rem] font-medium tracking-[0.12em] uppercase sm:text-[0.95rem] sm:tracking-[var(--cs-track-micro)] ${linkClass}`}
+                >
+                  <InstagramIcon className="size-4 shrink-0 sm:size-5" />
+                  <span className="md:hidden">{profile.city}</span>
+                  <span className="hidden md:inline">{profile.handle}</span>
+                </a>
+              ))}
+            </nav>
+          </div>
 
-          <nav
-            aria-label="Social"
-            className="flex items-center justify-end gap-4 sm:justify-center sm:gap-6"
-          >
-            {INSTAGRAMS.map((profile) => (
-              <a
-                key={profile.id}
-                href={profile.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={profile.handle}
-                className={`inline-flex items-center gap-2 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[0.14em] uppercase sm:tracking-[var(--cs-track-micro)] ${linkClass}`}
-              >
-                <InstagramIcon className="size-[1.25em] shrink-0" />
-                <span className="md:hidden">{profile.city}</span>
-                <span className="hidden md:inline">{profile.handle}</span>
-              </a>
-            ))}
-          </nav>
-
-          <ul className="col-span-2 flex flex-col gap-0.5 sm:col-span-1 sm:gap-1">
+          <ul className="grid grid-cols-[max-content_max-content_max-content] items-center gap-x-2 gap-y-2.5 font-[family-name:var(--cs-body)] text-[0.8rem] sm:gap-x-3 sm:gap-y-3.5 sm:text-[0.95rem] lg:text-[1.05rem]">
             {VENUES.map((venue) => (
-              <li
-                key={venue.id}
-                className="flex items-center justify-between gap-3 font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] sm:justify-end sm:gap-4"
-              >
-                <span className="tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]">
+              <li key={venue.id} className="col-span-3 grid grid-cols-subgrid items-center">
+                <span className="whitespace-nowrap tracking-[0.12em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]">
                   {venue.shortName}
                 </span>
-                <span className="inline-flex items-center gap-2">
-                  <a href={`tel:${venue.phone}`} className={`tabular-nums tracking-[0.04em] ${linkClass}`}>
-                    {venue.phoneLabel}
-                  </a>
-                  <a
-                    href={venue.telegram}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${venue.shortName} on Telegram`}
-                    className={`inline-flex ${linkClass}`}
-                  >
-                    <TelegramIcon className="size-[1.15em] shrink-0" />
-                  </a>
-                </span>
+                <a
+                  href={venue.telegram}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${venue.shortName} on Telegram`}
+                  className={`inline-flex shrink-0 ${linkClass}`}
+                >
+                  <TelegramIcon className="size-4 shrink-0 sm:size-5" />
+                </a>
+                <a
+                  href={`tel:${venue.phone}`}
+                  className={`whitespace-nowrap tabular-nums tracking-[0.02em] ${linkClass}`}
+                >
+                  {venue.phoneLabel}
+                </a>
               </li>
             ))}
           </ul>
