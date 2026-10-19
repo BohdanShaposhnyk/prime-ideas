@@ -48,8 +48,14 @@ export interface AccordionGalleryProps {
   /** Dim on the active panel (0–1) — useful when overlaying UI. */
   activeDim?: number;
   /** Renders inside the active panel, above the image. */
-  renderPanelContent?: (index: number) => ReactNode;
+  renderPanelContent?: (index: number, nav: AccordionPanelNav) => ReactNode;
 }
+
+export type AccordionPanelNav = {
+  index: number;
+  count: number;
+  select: (index: number) => void;
+};
 
 const DEFAULT_ITEMS: AccordionGalleryItem[] = [
   { image: 'https://picsum.photos/id/1015/900/1200', label: 'Canyon', link: '#' },
@@ -357,7 +363,7 @@ const AccordionGallery = ({
                 onClick={e => e.stopPropagation()}
                 onKeyDown={e => e.stopPropagation()}
               >
-                {renderPanelContent(i)}
+                {renderPanelContent(i, { index: i, count, select: setActive })}
               </span>
             ) : null}
           </Tag>

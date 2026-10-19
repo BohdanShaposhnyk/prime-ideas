@@ -56,10 +56,10 @@ export default function SceneLocations() {
           inactiveDim={0.84}
           tilt={5}
           className="h-full"
-          renderPanelContent={(index) => {
+          renderPanelContent={(index, nav) => {
             const venue = VENUES[index]
             if (!venue) return null
-            return <VenuePanel venue={venue} slotRef={setSlot} />
+            return <VenuePanel venue={venue} slotRef={setSlot} nav={nav} />
           }}
         />
       </div>
