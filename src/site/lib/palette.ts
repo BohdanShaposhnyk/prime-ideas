@@ -73,5 +73,8 @@ export const cardTitleClass =
 export const supportClass =
   'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-support)] font-medium leading-snug text-[var(--cs-caption)]'
 
+/** Space from a scene lockup down to its support line. */
+export const lockupToSupportClass = 'mt-4 sm:mt-5'
+
 export const ctaClass =
   'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[var(--cs-track-micro)] uppercase'

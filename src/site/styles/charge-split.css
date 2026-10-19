@@ -1,3 +1,9 @@
+/* Closed header bar: safe area plus the logo, locations, and burger row. */
+:root {
+  --cs-header-bar: 4.25rem;
+  --cs-header-h: calc(env(safe-area-inset-top, 0px) + var(--cs-header-bar));
+}
+
 /* Document stays still. The port is the only scroller, and every full-screen
    scene is exactly one port tall, so iOS snap is not short by the URL bar. */
 html.cs-snap-root,

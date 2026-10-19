@@ -12,7 +12,7 @@ import { BookNightButton } from '../components/book-night'
 import { FilmGrain } from '../components/grain'
 import { clamp } from '../lib/math'
 import { prefersReducedMotion } from '../lib/motion'
-import { lockupClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 import { showcaseMinHeight } from './showcase-span'
 
 const HOLD_W = 1
@@ -234,7 +234,7 @@ export default function SceneShowcase() {
             </p>
             <p
               data-copy="support"
-              className={`-mt-0.5 [text-shadow:0_1px_12px_rgba(0,0,0,0.55)] ${supportClass}`}
+              className={`${lockupToSupportClass} [text-shadow:0_1px_12px_rgba(0,0,0,0.55)] ${supportClass}`}
             >
               {card.line}
             </p>

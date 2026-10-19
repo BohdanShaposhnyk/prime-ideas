@@ -4,7 +4,7 @@ import { gsap, useGSAP } from '@/site/lib/gsap'
 import { BookNightButton } from '../../components/book-night'
 import { useGoldShine } from '../../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../../hooks/media'
-import { kickerClass, lockupClass, supportClass } from '../../lib/palette'
+import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../../lib/palette'
 
 export function HeroCopy() {
   const copyRef = useRef<HTMLDivElement>(null)
@@ -67,7 +67,7 @@ export function HeroCopy() {
         />
         <p
           data-hero-extra=""
-          className={`mt-3 max-w-[36rem] sm:mt-4 ${supportClass} ${quiet}`}
+          className={`${lockupToSupportClass} max-w-[36rem] ${supportClass} ${quiet}`}
         >
           Gaming, cinema, karaoke, hookah, and bar
         </p>

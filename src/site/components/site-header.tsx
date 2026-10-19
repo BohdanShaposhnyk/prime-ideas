@@ -83,7 +83,7 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
       <header
         className={`fixed inset-x-0 top-0 z-50 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.62),rgba(0,0,0,0.28)_55%,transparent)] pt-[env(safe-area-inset-top)] transition-transform duration-300 ease-out motion-reduce:transition-none ${tucked ? '-translate-y-full' : 'translate-y-0'}`}
       >
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-3 sm:px-6">
+        <div className="grid h-[var(--cs-header-bar)] grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6">
           <button
             type="button"
             aria-label="Prime"

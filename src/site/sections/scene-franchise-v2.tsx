@@ -16,7 +16,7 @@ import screen from '../assets/showcase/screen-cs.webp'
 import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { GoldWord } from '../components/gold-word'
-import { ctaClass, lockupClass, supportClass } from '../lib/palette'
+import { ctaClass, lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 
 const FRANCHISE_MAIL = 'mailto:franchise@premiumlounge.club'
 
@@ -108,7 +108,7 @@ export default function SceneFranchiseV2() {
                 <GoldWord block>Prime</GoldWord>
                 <span className="block">yours</span>
               </h2>
-              <p className={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`}>
+              <p className={`${lockupToSupportClass} max-w-[22rem] ${supportClass}`}>
                 Bring the Prime experience to your city.
               </p>
             </div>

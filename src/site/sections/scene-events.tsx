@@ -4,7 +4,7 @@ import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
 import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useSnapInView } from '../hooks/snap-in-view'
-import { lockupClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 import crowd from '../assets/event-cs6/carousel/crowd.webp'
 import crowd2 from '../assets/event-cs6/carousel/crowd-2.webp'
 import dj from '../assets/event-cs6/carousel/dj.webp'
@@ -56,11 +56,11 @@ export default function SceneEvents() {
           glowColor="rgba(207, 181, 59, 0.45)"
         />
       </div>
-      <header className="shrink-0 px-5 pt-[max(1.25rem,env(safe-area-inset-top))] text-center sm:px-8 sm:pt-10">
+      <header className="shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-events-title" className={lockupClass}>
           <GoldWord>Prime</GoldWord> time
         </h2>
-        <p className={`mt-3 sm:mt-4 ${supportClass}`}>Pull up for events.</p>
+        <p className={`${lockupToSupportClass} ${supportClass}`}>Pull up for events.</p>
       </header>
       <div className="relative min-h-0 flex-1">
         {live ? (
@@ -83,7 +83,7 @@ export default function SceneEvents() {
           />
         ) : null}
       </div>
-      <div className="shrink-0 px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-8">
+      <div className="shrink-0 px-5 pt-2 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-[max(calc(var(--cs-h,100svh)*0.12),env(safe-area-inset-bottom))]">
         <BookNightButton />
       </div>
     </section>

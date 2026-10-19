@@ -5,7 +5,7 @@ import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockup from '../assets/senet-mockup.webp'
 import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
-import { lockupClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
@@ -114,7 +114,7 @@ export default function SceneApp() {
       {/* Desktop — phone on the right, bottom third past the scene edge */}
       <div className="relative mx-auto hidden h-full w-full max-w-[88rem] md:block">
         <div className="cs-px-copy relative z-20 flex h-full w-1/2 flex-col justify-center gap-10 px-8 py-12 lg:gap-12 lg:px-12 lg:py-14">
-          <AppCopy supportClassName={`mt-4 max-w-[22rem] sm:mt-5 ${supportClass}`} />
+          <AppCopy supportClassName={`${lockupToSupportClass} max-w-[22rem] ${supportClass}`} />
         </div>
         <div className="cs-px-plane pointer-events-none absolute inset-y-0 right-0 z-10 w-1/2">
           <img
@@ -132,7 +132,7 @@ export default function SceneApp() {
       <div className="relative flex h-full flex-col md:hidden">
         <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-10 sm:px-8">
           <AppCopy
-            supportClassName={`mt-4 max-w-[22rem] ${supportClass}`}
+            supportClassName={`${lockupToSupportClass} max-w-[22rem] ${supportClass}`}
             badgesClassName="mt-6"
           />
         </div>
