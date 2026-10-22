@@ -37,7 +37,7 @@ function AppCopy({
           <span className="block">you are</span>
         </h2>
         <p className={supportClassName}>
-          Book ahead, check availability and keep Prime with you.
+          SENET is the partner app for Prime. New guests get 50 zł on their account, or their first hour free.
         </p>
       </div>
       <div className={badgesClassName}>
@@ -119,7 +119,7 @@ export default function SceneApp() {
         <div className="cs-px-plane pointer-events-none absolute inset-y-0 right-0 z-10 w-1/2">
           <img
             src={mockup}
-            alt="SENET app on iPhone"
+            alt="SENET, the partner app, on iPhone"
             className="absolute right-4 bottom-0 w-[min(86%,62svh)] max-w-none translate-y-[33%] select-none lg:right-8"
             decoding="async"
             loading="lazy"
@@ -140,7 +140,7 @@ export default function SceneApp() {
         <div className="cs-px-plane relative z-10 mt-5 shrink-0 px-5 sm:mt-8 sm:px-8">
           <img
             src={mockup}
-            alt="SENET app on iPhone"
+            alt="SENET, the partner app, on iPhone"
             className="block h-auto w-full select-none"
             decoding="async"
             loading="lazy"
