@@ -9,6 +9,7 @@ import loungeHall from '../assets/showcase/lounge-2.webp'
 import mic from '../assets/showcase/mic.webp'
 import rigs from '../assets/showcase/rigs.webp'
 import { BookNightButton } from '../components/book-night'
+import { TypeScrim } from '../components/type-scrim'
 import { FilmGrain } from '../components/grain'
 import { clamp } from '../lib/math'
 import { prefersReducedMotion } from '../lib/motion'
@@ -230,6 +231,7 @@ export default function SceneShowcase() {
           Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah.
         </h2>
         <div className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
+          <TypeScrim />
           <div aria-live="polite">
             <p
               data-copy="caption"

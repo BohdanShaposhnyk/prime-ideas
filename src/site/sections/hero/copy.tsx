@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import SplitText from '@/site/bits/SplitText'
 import { gsap, useGSAP } from '@/site/lib/gsap'
 import { BookNightButton } from '../../components/book-night'
+import { TypeScrim } from '../../components/type-scrim'
 import { useGoldShine } from '../../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../../lib/palette'
@@ -41,10 +42,7 @@ export function HeroCopy() {
       className={`pointer-events-none absolute bottom-[max(6rem,env(safe-area-inset-bottom))] left-1/2 z-20 w-[min(92vw,40rem)] -translate-x-1/2 px-4 sm:bottom-[max(3rem,env(safe-area-inset-bottom))]${goldLive ? ' cs-gold-live' : ''}`}
     >
       <div className="cs-hero-copy relative flex flex-col items-center text-center">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[160%] w-[min(130%,42rem)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.5)_46%,transparent_74%)]"
-        />
+        <TypeScrim />
         <p
           data-hero-extra=""
           className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
