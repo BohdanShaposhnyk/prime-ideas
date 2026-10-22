@@ -45,7 +45,7 @@ const GLOW = {
 } as const
 
 /** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
-const VENUE_VERBS = ['PLAY', 'WATCH', 'REFILL', 'CHILL', 'SING'] as const
+const VENUE_VERBS = ['PLAY', 'WATCH', 'DRINK', 'CHILL', 'SING'] as const
 
 const glassClass =
   'bg-[color-mix(in_srgb,#07060C_62%,transparent)] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
@@ -55,22 +55,27 @@ function ExperienceCopy() {
     <div className="cs-px-copy relative z-20 flex min-w-0 flex-1 flex-col justify-start pt-[var(--cs-header-h)] pb-8 pl-5 pr-5 sm:pb-10 sm:pl-8 sm:pr-8 md:h-full md:min-h-0 md:flex-none md:pb-8 md:pr-6 lg:pl-12 lg:pr-10">
       <h2 id="cs-experience-offers-title" className={lockupClass}>
         <span className="block">
-          The <GoldWord>prime</GoldWord>
+          <GoldWord>Prime</GoldWord>
         </span>
-        <span className="block">experience</span>
+        <span className="block">welcome</span>
       </h2>
-      <p className={`${lockupToSupportClass} max-w-[20rem] ${supportClass}`}>One place. Your kind of night.</p>
-      <p className="mt-3 max-w-[26rem] font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mt-4 sm:text-[1.02rem]">
-        Everything a good night out needs, brought together under one roof.
+      <p className={`${lockupToSupportClass} max-w-[24rem] ${supportClass}`}>
+        New guests and birthdays, on the house.
       </p>
       <div className="mt-5 w-fit max-w-full sm:mt-6">
-        <p className="sr-only">Play, watch, refill, chill, sing</p>
+        <p className="sr-only">Come on in and play, watch, drink, chill, or sing</p>
+        <p
+          aria-hidden
+          className="mb-2 font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mb-2.5 sm:text-[1.02rem]"
+        >
+          Come on in and
+        </p>
         <SplitFlapText
           aria-hidden
           words={[...VENUE_VERBS]}
           loop
           charset="alpha"
-          padTo={6}
+          padTo={5}
           flipsPerChar={5}
           flipDuration={0.1}
           stagger={0.045}

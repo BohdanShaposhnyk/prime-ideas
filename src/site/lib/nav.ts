@@ -4,7 +4,7 @@
  */
 export const PAGE_LINKS = [
   { id: 'cs-nav-zones', label: 'Zones' },
-  { id: 'cs-nav-experience', label: 'Experience' },
+  { id: 'cs-nav-experience', label: 'Offers' },
   // { id: 'cs-nav-night', label: 'The night' },
   { id: 'cs-nav-addresses', label: 'Addresses' },
   { id: 'cs-nav-app', label: 'App' },

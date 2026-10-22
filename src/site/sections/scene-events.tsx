@@ -58,9 +58,9 @@ export default function SceneEvents() {
       </div>
       <header className="shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-events-title" className={lockupClass}>
-          <GoldWord>Prime</GoldWord> time
+          <GoldWord>Prime</GoldWord> night
         </h2>
-        <p className={`${lockupToSupportClass} ${supportClass}`}>Pull up for events.</p>
+        <p className={`${lockupToSupportClass} ${supportClass}`}>Tournaments, parties, and match nights.</p>
       </header>
       <div className="relative min-h-0 flex-1">
         {live ? (
