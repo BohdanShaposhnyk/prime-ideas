@@ -4,7 +4,7 @@ import { usePrefersReducedMotion } from '../../hooks/media'
 import { violet } from '../../lib/palette'
 import { applyVignette, VIGNETTE_FROM, VIGNETTE_TO, type Vignette } from './vignette'
 
-/** Glyph rise. Molten starts when this ends. */
+/** Glyph rise for MaskedHeading. */
 export const REVEAL_S = 0.7
 export const BLUR_PX = 5.5
 
@@ -13,9 +13,9 @@ const DIVE_S = 0.9
 const DIVE_SCALE = 22
 const CRISP_S = 0.7
 
-/** Molten beat — after PRIME settles, before the dive. */
+/** Molten beat — in with the word, a short hold, then the dive. */
 const MOLTEN_IN_S = 0.45
-const MOLTEN_HOLD_S = 0.6
+const MOLTEN_HOLD_S = 0.2
 const MOLTEN_OUT_S = 0.35
 
 /** Colder violet — blue-shifted from the screen caption’s warmer lilac. */
@@ -82,7 +82,7 @@ export function useHeroIntro({
   /** Don't mount MaskedHeading until display font is live — avoids glyph teleport. */
   const [fontReady, setFontReady] = useState(reduced)
   const [copyReady, setCopyReady] = useState(reduced)
-  /** Mount MoltenMetal only for the mid-hold beat — not during initial load. */
+  /** Mount as soon as the intro is armed so the shader compiles while the word is hidden. */
   const [moltenLive, setMoltenLive] = useState(false)
 
   useEffect(() => {
@@ -112,6 +112,9 @@ export function useHeroIntro({
       gsap.set(brand, { autoAlpha: 0 })
 
       const look: Look = { molten: 0, scale: 1, blur: BLUR_PX, ...VIGNETTE_FROM }
+
+      // In the tree before the clock, still at molten 0, so the first fade frame is already drawn.
+      setMoltenLive(true)
 
       const paint = (tl: gsap.core.Timeline, glyphs: SVGTextElement[], origin: { x: number; y: number }) => {
         root.style.setProperty('--cs-hero-blur', `${look.blur}px`)
@@ -162,24 +165,19 @@ export function useHeroIntro({
           tl.addLabel('fade', 0)
           tl.to(brand, { autoAlpha: 1, duration: FADE_S, ease: 'power2.out' }, 'fade')
 
-          tl.addLabel('molten', REVEAL_S)
+          tl.addLabel('molten', 0)
           tl.to(
             look,
             {
               molten: 1,
               duration: MOLTEN_IN_S,
               ease: 'power2.out',
-              onStart: () => {
-                if (cancelled) return
-                if (tl.time() >= tl.labels.dive + MOLTEN_OUT_S) return
-                setMoltenLive(true)
-              },
             },
             'molten',
           )
 
-          // Hold is the gap after molten-in.
-          tl.addLabel('dive', `+=${MOLTEN_HOLD_S}`)
+          // Gap after molten is fully in, measured from the molten label.
+          tl.addLabel('dive', `molten+=${MOLTEN_IN_S + MOLTEN_HOLD_S}`)
           tl.call(() => {
             gsap.killTweensOf(targets)
             gsap.set(targets, { clearProps: 'transform' })
