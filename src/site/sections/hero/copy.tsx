@@ -67,7 +67,7 @@ export function HeroCopy() {
           data-hero-extra=""
           className={`${lockupToSupportClass} max-w-[36rem] ${supportClass} ${quiet}`}
         >
-          Gaming, cinema, karaoke, hookah, and bar
+          A cyber lounge with a bar, a cinema, and karaoke.
         </p>
         <div
           data-hero-extra=""
