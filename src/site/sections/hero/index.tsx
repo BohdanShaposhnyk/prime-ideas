@@ -1,13 +1,18 @@
 import { useRef, type CSSProperties } from 'react'
 import MaskedHeading from '@/site/bits/MaskedHeading'
-import MoltenMetal from '@/site/bits/MoltenMetal'
 import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
-import { BLUR_PX, MOLTEN_VIOLET, REVEAL_S, useHeroIntro } from './intro'
+import { HeroGalaxy } from './galaxy'
+import { BLUR_PX, REVEAL_S, useHeroIntro } from './intro'
 import { heroFocusStyle, heroReel } from './media'
+import { HeroMolten } from './molten'
 import { ReducedHeroVideo } from './reduced'
 import { useHeroScrollOut } from './scroll-out'
 import { VIGNETTE_BG, VIGNETTE_FROM, vignetteVars } from './vignette'
+
+const introFields = { molten: HeroMolten, galaxy: HeroGalaxy }
+const HeroField = introFields.molten
+// const HeroField = introFields.galaxy
 
 export default function HeroV2() {
   const rootRef = useRef<HTMLElement>(null)
@@ -45,26 +50,7 @@ export default function HeroV2() {
             aria-hidden
             className="pointer-events-none absolute inset-0 z-0 opacity-0"
           >
-            <MoltenMetal
-              color1={MOLTEN_VIOLET.color1}
-              color2={MOLTEN_VIOLET.color2}
-              color3={MOLTEN_VIOLET.color3}
-              colorMode="ember"
-              speed={MOLTEN_VIOLET.speed}
-              scale={3.4}
-              detail={2}
-              glow={1.45}
-              coreSize={0.12}
-              swirl={0.85}
-              brightness={1.15}
-              opacity={1}
-              mouseInteraction={false}
-              grain
-              grainIntensity={0.04}
-              renderScale={0.5}
-              maxDpr={1.25}
-              targetFps={30}
-            />
+            <HeroField />
           </div>
         ) : null}
         <div ref={brandRef} className="cs-hero-plane relative z-[1] h-full invisible opacity-0">
