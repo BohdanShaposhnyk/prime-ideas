@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { VIGNETTE_BG, VIGNETTE_TO, vignetteVars } from './vignette'
 import { HeroCopy } from './copy'
-import { heroFocusStyle, heroReel } from './media'
+import { heroFocusStyle, heroIntroReel } from './media'
+import { useHeroSequence } from './use-sequence'
 
 export function ReducedHeroVideo() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { reel, loop, onEnded } = useHeroSequence(sectionRef, true)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -41,7 +43,7 @@ export function ReducedHeroVideo() {
       document.removeEventListener('visibilitychange', onVisibility)
       video.pause()
     }
-  }, [])
+  }, [reel.src])
 
   return (
     <section
@@ -51,19 +53,20 @@ export function ReducedHeroVideo() {
       data-scroll="split-hold"
       data-scene="hero"
       className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
-      style={heroFocusStyle()}
+      style={heroFocusStyle(reel)}
     >
-      <link rel="preload" as="image" href={heroReel.poster} fetchPriority="high" />
+      <link rel="preload" as="image" href={heroIntroReel.poster} fetchPriority="high" />
       <video
         ref={videoRef}
         className="absolute inset-0 size-full object-cover"
-        src={heroReel.src}
-        poster={heroReel.poster}
+        src={reel.src}
+        poster={reel.poster}
         autoPlay
         muted
-        loop
+        loop={loop}
         playsInline
         preload="metadata"
+        onEnded={onEnded}
       />
       <div
         data-hero-vignette=""

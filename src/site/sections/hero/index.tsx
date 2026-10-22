@@ -4,10 +4,11 @@ import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
 import { HeroGalaxy } from './galaxy'
 import { BLUR_PX, REVEAL_S, useHeroIntro } from './intro'
-import { heroFocusStyle, heroReel } from './media'
+import { heroFocusStyle, heroIntroReel } from './media'
 import { HeroMolten } from './molten'
 import { ReducedHeroVideo } from './reduced'
 import { useHeroScrollOut } from './scroll-out'
+import { useHeroSequence } from './use-sequence'
 import { VIGNETTE_BG, VIGNETTE_FROM, vignetteVars } from './vignette'
 
 const introFields = { molten: HeroMolten, galaxy: HeroGalaxy }
@@ -26,6 +27,7 @@ export default function HeroV2() {
     moltenRef,
   })
   useHeroScrollOut(rootRef, !reduced)
+  const { reel, loop, onEnded } = useHeroSequence(rootRef, fontReady && !reduced)
 
   if (reduced) {
     return <ReducedHeroVideo />
@@ -40,9 +42,9 @@ export default function HeroV2() {
       data-scene="hero"
       data-hero-blur=""
       className="cs-scene cs-hero-track relative bg-[var(--cs-pitch)]"
-      style={{ '--cs-hero-blur': `${BLUR_PX}px`, ...heroFocusStyle() } as CSSProperties}
+      style={{ '--cs-hero-blur': `${BLUR_PX}px`, ...heroFocusStyle(reel) } as CSSProperties}
     >
-      <link rel="preload" as="image" href={heroReel.poster} fetchPriority="high" />
+      <link rel="preload" as="image" href={heroIntroReel.poster} fetchPriority="high" />
       <div data-hero-frame="" className="cs-hero-frame relative isolate bg-[var(--cs-pitch)]">
         {moltenLive ? (
           <div
@@ -60,8 +62,10 @@ export default function HeroV2() {
               text="PRIME"
               tag="h1"
               mediaType="video"
-              src={heroReel.src}
-              poster={heroReel.poster}
+              src={reel.src}
+              poster={reel.poster}
+              loop={loop}
+              onEnded={onEnded}
               trigger="mount"
               reveal="rise"
               duration={REVEAL_S}

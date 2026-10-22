@@ -6,7 +6,7 @@ import nightReel from '@/site/assets/night-reel.mp4'
 
 export type HeroReelId = 'night' | 'cs6'
 
-type HeroReel = {
+export type HeroReel = {
   id: HeroReelId
   src: string
   poster: string
@@ -17,8 +17,8 @@ type HeroReel = {
 }
 
 /**
- * Hero loops. Encodes live in `scripts/compress-assets.mjs` (`pnpm assets`).
- * Change `ACTIVE` to swap the reel, its LCP poster, and how it is framed.
+ * Hero film. Night plays once, then cs6 loops.
+ * Encodes live in `scripts/compress-assets.mjs` (`pnpm assets`).
  */
 const REELS = {
   night: {
@@ -37,13 +37,12 @@ const REELS = {
   },
 } as const satisfies Record<HeroReelId, HeroReel>
 
-const ACTIVE: HeroReelId = 'cs6'
+export const heroIntroReel: HeroReel = REELS.night
+export const heroLoopReel: HeroReel = REELS.cs6
 
-export const heroReel: HeroReel = REELS[ACTIVE]
-
-export function heroFocusStyle(): CSSProperties {
+export function heroFocusStyle(reel: HeroReel): CSSProperties {
   return {
-    '--hero-focus': heroReel.focus,
-    '--hero-focus-portrait': heroReel.focusPortrait,
+    '--hero-focus': reel.focus,
+    '--hero-focus-portrait': reel.focusPortrait,
   } as CSSProperties
 }

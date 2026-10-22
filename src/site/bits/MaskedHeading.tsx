@@ -14,6 +14,9 @@ export interface MaskedHeadingProps {
   mediaType?: 'image' | 'video';
   src?: string;
   poster?: string;
+  /** When false the video plays once and fires `onEnded`. Defaults to looping. */
+  loop?: boolean;
+  onEnded?: () => void;
   fillScale?: number;
   parallax?: number;
   drift?: number;
@@ -40,6 +43,8 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
   mediaType = 'image',
   src = '',
   poster = '',
+  loop = true,
+  onEnded,
   fillScale = 1.25,
   parallax = 26,
   drift = 18,
@@ -365,6 +370,23 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
     return () => tweenRef.current?.kill();
   }, [reveal, trigger, duration, stagger, words]);
 
+  // A src swap (hero handoff) does not rerun the drift listeners above.
+  useEffect(() => {
+    if (mediaType !== 'video') return;
+    const root = rootRef.current;
+    const video = mediaRef.current?.querySelector('video');
+    if (!root || !video || prefersReducedMotion()) return;
+    if (!intersectsSnapPort(root) || document.visibilityState === 'hidden') return;
+
+    const play = () => {
+      void video.play().catch(() => {});
+    };
+    // readyState can still describe the previous file for a tick after src changes.
+    video.addEventListener('loadeddata', play, { once: true });
+    play();
+    return () => video.removeEventListener('loadeddata', play);
+  }, [mediaType, src]);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const TagAny = tag as any;
 
@@ -432,9 +454,10 @@ const MaskedHeading: FC<MaskedHeadingProps> = ({
                 poster={poster}
                 autoPlay
                 muted
-                loop
+                loop={loop}
                 playsInline
                 preload="auto"
+                onEnded={onEnded}
               />
             ) : (
               <img className="block w-full h-full object-cover select-none" src={src} alt="" draggable={false} />
