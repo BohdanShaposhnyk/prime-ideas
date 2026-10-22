@@ -8,6 +8,10 @@ const FOLD_S = 0.3
 const FOLD_STAGGER = 0.06
 const PRIME_AT = STAY_AT
 
+/** Lockup word. Character count times the fold stagger is when the word has landed. */
+export const stayWord = 'Stay'
+const STAY_LAND_MS = (FOLD_S + FOLD_STAGGER * (stayWord.length - 1)) * 1000
+
 /** How much of the floor must be in the snap port before the intro plays. */
 const ENTER_AT = 0.45
 
@@ -21,6 +25,7 @@ export const stayFold = {
  * `veil` — entry veil fades out.
  * `stay` — one second after enter, FoldText mounts and unfolds.
  * `prime` — ParticleText mounts only after STAY has finished, and unmounts on leave.
+ * `cta` — Book a night fades in once STAY's fold has landed.
  */
 export function useBasementIntro(
   sectionRef: RefObject<HTMLElement | null>,
@@ -30,6 +35,7 @@ export function useBasementIntro(
   const [present, setPresent] = useState(false)
   const [stayOn, setStayOn] = useState(false)
   const [primeOn, setPrimeOn] = useState(false)
+  const [ctaOn, setCtaOn] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -42,6 +48,7 @@ export function useBasementIntro(
           setPresent(false)
           setStayOn(false)
           setPrimeOn(false)
+          setCtaOn(false)
           return
         }
         setPresent(true)
@@ -66,9 +73,11 @@ export function useBasementIntro(
         gsap.set(veil, { opacity: 0 })
         setStayOn(true)
         setPrimeOn(true)
+        setCtaOn(true)
         return () => {
           setStayOn(false)
           setPrimeOn(false)
+          setCtaOn(false)
         }
       }
 
@@ -96,5 +105,11 @@ export function useBasementIntro(
     { dependencies: [present, reduced] },
   )
 
-  return { stayOn: present && stayOn, primeOn: present && primeOn }
+  useEffect(() => {
+    if (reduced || !present || !stayOn) return
+    const id = window.setTimeout(() => setCtaOn(true), STAY_LAND_MS)
+    return () => window.clearTimeout(id)
+  }, [present, stayOn, reduced])
+
+  return { stayOn: present && stayOn, primeOn: present && primeOn, ctaOn: present && ctaOn }
 }

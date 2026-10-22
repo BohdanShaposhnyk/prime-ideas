@@ -30,7 +30,9 @@ pnpm assets
 
 ## Page
 
-Snap scenes: hero, photos, experience, screen, events, locations, app, basement.
+Snap scenes: hero, zones, experience, screen, events, locations, app, basement.
+
+Zones (`src/site/sections/scene-showcase.tsx`) is the main list of services: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The header and footer label it Zones.
 
 The night carousel stays in `src/site/sections/scene-overview` and is commented out of `src/site/index.tsx`. The header link to it is commented out with the scene.
 

@@ -1,15 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react'
 import { usePrefersReducedMotion } from '../hooks/media'
+import { PAGE_LINKS } from '../lib/nav'
 import { HeroMark } from '../sections/hero/mark'
-
-const LINKS = [
-  { id: 'cs-nav-photos', label: 'Photos' },
-  { id: 'cs-nav-experience', label: 'Experience' },
-  // { id: 'cs-nav-night', label: 'The night' },
-  { id: 'cs-nav-addresses', label: 'Addresses' },
-  { id: 'cs-nav-app', label: 'App' },
-  { id: 'cs-nav-contact', label: 'Contact' },
-] as const
 
 function MenuIcon({ open }: { open: boolean }) {
   return (
@@ -113,7 +105,7 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
           className="mx-4 mb-3 rounded-[var(--cs-radius-panel)] border border-[color-mix(in_srgb,var(--cs-ice)_14%,transparent)] bg-[var(--cs-pitch)] px-2 py-2 sm:mx-6"
         >
           <ul className="flex flex-col">
-            {LINKS.map((link) => (
+            {PAGE_LINKS.map((link) => (
               <li key={link.id}>
                 <button
                   type="button"

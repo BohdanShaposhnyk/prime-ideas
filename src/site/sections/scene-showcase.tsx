@@ -15,6 +15,11 @@ import { prefersReducedMotion } from '../lib/motion'
 import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 import { showcaseMinHeight } from './showcase-span'
 
+/**
+ * Zones. The main list of services, one card per stop:
+ * play zone, sim racing, bar, karaoke, private room, cinema hall, hookah.
+ */
+
 const HOLD_W = 1
 const ROLL_W = 1.85
 /** Share of each card step that rests before the roll. */
@@ -185,7 +190,7 @@ export default function SceneShowcase() {
   return (
     <section
       ref={sectionRef}
-      id="cs-nav-photos"
+      id="cs-nav-zones"
       aria-labelledby="cs-showcase-title"
       data-scene="showcase"
       data-scroll="showcase-spiral"

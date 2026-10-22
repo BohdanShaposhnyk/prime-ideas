@@ -78,7 +78,8 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 }
 
 /**
- * Charge Split — 50/50 charge cell, book lockup, showcase spiral, experience split, screen masonry.
+ * Charge Split — 50/50 charge cell, book lockup, zones list, experience split, screen masonry.
+ * Zones is the services list in scene-showcase: play zone through hookah.
  * The night carousel and the franchise scene stay commented out above.
  * Franchise is a mailto in the basement.
  * Split-hold pin / pane recut live later in motion/.

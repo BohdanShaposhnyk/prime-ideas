@@ -7,21 +7,22 @@ export const SITE_DESCRIPTION =
   'Prime Warsaw is a gaming lounge, cinema, karaoke, hookah, and bar in Warsaw and Wrocław. Visit Prime Mennica, Prime Mokotów, or Prime Wrocław tonight.'
 
 export const COMPANY_NAME = 'Prime Cyber Lounge Sp. z o.o.'
-/** Polish NIP, confirmed on the live footer, written as the VAT id. */
-export const COMPANY_VAT_ID = 'PL5273090507'
+/** Polish NIP. The VAT id is the same number with the PL prefix. */
+export const COMPANY_NIP = '5273090507'
+export const COMPANY_VAT_ID = `PL${COMPANY_NIP}`
 
 const ORGANIZATION_ID = `${SITE_URL}#organization`
 
 export const INSTAGRAMS = [
   {
     id: 'warsaw',
-    handle: '@prime_warsaw',
+    handle: 'prime_warsaw',
     city: 'Warsaw',
     href: 'https://www.instagram.com/prime_warsaw/',
   },
   {
     id: 'wroclaw',
-    handle: '@prime_wroclaw',
+    handle: 'prime_wroclaw',
     city: 'Wrocław',
     href: 'https://www.instagram.com/prime_wroclaw/',
   },
