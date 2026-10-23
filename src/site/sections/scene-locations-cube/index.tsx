@@ -4,11 +4,9 @@ import RubberSegment from '@/site/bits/RubberSegment'
 import { palette } from '../../lib/palette'
 import { LocationFrame } from './card'
 import { CUBE_LOCATIONS } from './config'
-import { useAppleMaps } from './use-apple-maps'
 import { VenueMapPark } from './map'
 
 export default function SceneLocationsCube() {
-  const apple = useAppleMaps()
   const [index, setIndex] = useState(0)
   const [settled, setSettled] = useState(true)
   const [slots, setSlots] = useState<(HTMLDivElement | null)[]>(() => CUBE_LOCATIONS.map(() => null))
@@ -82,7 +80,6 @@ export default function SceneLocationsCube() {
           overlay={
             <VenueMapPark
               venues={CUBE_LOCATIONS.map((item) => item.venue)}
-              apple={apple}
               slots={slots}
               index={index}
               settled={settled}

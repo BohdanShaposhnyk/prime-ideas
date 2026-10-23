@@ -4,8 +4,7 @@ import type { Venue } from '../../lib/venues'
 
 const FADE = 'opacity 450ms ease-out'
 
-function mapEmbedSrc(venue: Venue, apple: boolean) {
-  if (apple) return venue.appleMaps
+function mapEmbedSrc(venue: Venue) {
   const query = `${venue.lat},${venue.lng}`
   return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=16&hl=en&output=embed`
 }
@@ -21,13 +20,11 @@ function mapEmbedSrc(venue: Venue, apple: boolean) {
  */
 export function VenueMapPark({
   venues,
-  apple,
   slots,
   index,
   settled,
 }: {
   venues: Venue[]
-  apple: boolean
   slots: (HTMLDivElement | null)[]
   index: number
   settled: boolean
@@ -120,7 +117,7 @@ export function VenueMapPark({
     >
       <iframe
         title={`Map — ${venue.address}`}
-        src={mapEmbedSrc(venue, apple)}
+        src={mapEmbedSrc(venue)}
         className="h-full w-full border-0"
         loading="eager"
         referrerPolicy="no-referrer-when-downgrade"
