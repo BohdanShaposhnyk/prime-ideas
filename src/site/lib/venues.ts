@@ -13,7 +13,7 @@ export type Venue = {
   telegram: string
   lat: number
   lng: number
-  appleMaps: string
+  maps: string
   image: string
 }
 
@@ -23,13 +23,11 @@ const images: Record<SeoVenue['id'], string> = {
   wroclaw: barInterior,
 }
 
-const maps: Record<SeoVenue['id'], string> = {
-  mennica:
-    'https://maps.apple.com/?address=Walic%C3%B3w%2011,%20Warsaw,%20Poland&q=Prime%20Cyber%20Lounge&t=m',
-  mokotow:
-    'https://maps.apple.com/?address=W%20Rzymowskiego%2053,%2002-697%20Warsaw,%20Poland&auid=16981973767258967933&ll=52.176772,21.001543&lsp=9902&q=Prime%20Cyber%20Lounge&t=m',
-  wroclaw:
-    'https://maps.apple.com/?address=Plac%20Teatralny%206-8,%2050-051%20Wroc%C5%82aw,%20Poland&ll=51.105700,17.032400&q=PRIME%20CYBER%20LOUNGE&t=m',
+function googleMaps(venue: SeoVenue) {
+  const query = [venue.name, venue.streetAddress, venue.postalCode, venue.addressLocality, 'Poland']
+    .filter(Boolean)
+    .join(', ')
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
 }
 
 export const VENUES: Venue[] = SEO_VENUES.map((venue) => ({
@@ -42,6 +40,6 @@ export const VENUES: Venue[] = SEO_VENUES.map((venue) => ({
   telegram: venue.telegram,
   lat: venue.latitude,
   lng: venue.longitude,
-  appleMaps: maps[venue.id],
+  maps: googleMaps(venue),
   image: images[venue.id],
 }))

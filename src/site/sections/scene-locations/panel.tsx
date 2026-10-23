@@ -66,7 +66,7 @@ export function VenuePanel({
 
       <div className="order-2 flex shrink-0 flex-col gap-3 sm:order-3">
         <a
-          href={venue.appleMaps}
+          href={venue.maps}
           target="_blank"
           rel="noreferrer"
           aria-label={`Open ${venue.address} in Maps`}

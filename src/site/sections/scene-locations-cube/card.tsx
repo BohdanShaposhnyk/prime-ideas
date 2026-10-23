@@ -52,7 +52,7 @@ export function LocationFrame({
             <div className="min-h-0 min-w-0 flex-1">{map}</div>
             {overlay}
         <a
-          href={venue.appleMaps}
+          href={venue.maps}
           target="_blank"
           rel="noreferrer"
           aria-label={`Open ${venue.address} in Maps`}
