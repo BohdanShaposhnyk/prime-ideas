@@ -3,8 +3,35 @@ import Carousel from '@/site/bits/Carousel'
 import RubberSegment from '@/site/bits/RubberSegment'
 import { palette } from '../../lib/palette'
 import { LocationFrame } from './card'
-import { CUBE_LOCATIONS } from './config'
+import { CUBE_CITIES, CUBE_LOCATIONS } from './config'
 import { VenueMapPark } from './map'
+
+const segmentInset = 3
+
+function CityLabels({ activeCity }: { activeCity: string }) {
+  return (
+    <div
+      className="grid w-full"
+      style={{
+        gridTemplateColumns: `repeat(${CUBE_LOCATIONS.length}, minmax(0, 1fr))`,
+        paddingInline: segmentInset,
+      }}
+    >
+      {CUBE_CITIES.map((group) => (
+        <div
+          key={group.city}
+          className={`flex min-w-0 flex-col items-center gap-1 px-2 ${group.city === activeCity ? 'text-[var(--cs-gold)]' : 'text-white'}`}
+          style={{ gridColumn: `span ${group.span}` }}
+        >
+          <span className="font-[family-name:var(--cs-body)] text-[0.58rem] leading-none font-medium tracking-[0.16em] uppercase sm:text-[0.62rem]">
+            {group.city}
+          </span>
+          <span aria-hidden className="h-px w-full bg-current" />
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export default function SceneLocationsCube() {
   const [index, setIndex] = useState(0)
@@ -40,21 +67,24 @@ export default function SceneLocationsCube() {
           venues={CUBE_LOCATIONS.map((item) => item.venue)}
           index={index}
           picker={
-            <RubberSegment
-              className="w-full shrink-0 font-[family-name:var(--cs-body)]"
-              aria-label="Locations"
-              items={CUBE_LOCATIONS.map((item) => ({ value: item.id, label: item.label }))}
-              value={CUBE_LOCATIONS[index]?.id}
-              onChange={(_, next) => choose(next)}
-              wrap
-              equalSlots
-              size="sm"
-              radius={12}
-              trackColor="rgba(0, 0, 0, 0.72)"
-              thumbColor={palette.gold}
-              textColor="#ffffff"
-              activeTextColor={palette.pitch}
-            />
+            <div className="flex w-full shrink-0 flex-col gap-2 font-[family-name:var(--cs-body)]">
+              <CityLabels activeCity={CUBE_LOCATIONS[index]?.city ?? ''} />
+              <RubberSegment
+                className="w-full"
+                aria-label="Locations"
+                items={CUBE_LOCATIONS.map((item) => ({ value: item.id, label: item.label }))}
+                value={CUBE_LOCATIONS[index]?.id}
+                onChange={(_, next) => choose(next)}
+                equalSlots
+                size="sm"
+                radius={12}
+                inset={segmentInset}
+                trackColor="rgba(0, 0, 0, 0.72)"
+                thumbColor={palette.gold}
+                textColor="#ffffff"
+                activeTextColor={palette.pitch}
+              />
+            </div>
           }
           map={
             <Carousel

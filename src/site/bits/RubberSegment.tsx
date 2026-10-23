@@ -433,7 +433,7 @@ export default function RubberSegment({
           aria-checked={i === index}
           tabIndex={i === index ? 0 : -1}
           disabled={disabled}
-          className={`${itemClass} cursor-pointer [color:var(--rs-ink)] opacity-70 [transition:opacity_160ms_ease,transform_160ms_var(--rs-ease-out)] motion-reduce:[transition:opacity_160ms_ease] aria-checked:cursor-default group-data-[draggable]:aria-checked:cursor-grab group-data-[held]:cursor-grabbing data-[pressed]:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:[outline-color:var(--rs-thumb)] [@media(hover:hover)_and_(pointer:fine)]:[&[aria-checked=false]:hover]:opacity-90`}
+          className={`${itemClass} cursor-pointer [color:var(--rs-ink)] [transition:transform_160ms_var(--rs-ease-out)] aria-checked:cursor-default group-data-[draggable]:aria-checked:cursor-grab group-data-[held]:cursor-grabbing data-[pressed]:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:[outline-color:var(--rs-thumb)]`}
           onPointerDown={(e) => handlePointerDown(e, i)}
           onKeyDown={handleKeyDown}
         >
