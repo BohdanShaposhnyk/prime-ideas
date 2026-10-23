@@ -53,7 +53,7 @@ const glassClass =
 
 function ExperienceCopy() {
   return (
-    <div className="cs-px-copy relative z-20 flex min-w-0 flex-1 flex-col justify-start pt-[var(--cs-header-h)] pb-8 pl-5 pr-5 sm:pb-10 sm:pl-8 sm:pr-8 md:h-full md:min-h-0 md:flex-none md:pb-8 md:pr-6 lg:pl-12 lg:pr-10">
+    <div className="cs-px-copy relative z-20 flex min-w-0 flex-col justify-start pt-[var(--cs-header-h)] pb-5 pl-5 pr-5 sm:pb-6 sm:pl-8 sm:pr-8 md:h-full md:min-h-0 md:pb-8 md:pr-6 lg:pl-12 lg:pr-10">
       <h2 id="cs-experience-offers-title" className={lockupClass}>
         <span className="block">
           <GoldWord>Prime</GoldWord>
@@ -63,7 +63,7 @@ function ExperienceCopy() {
       <p className={`${lockupToSupportClass} max-w-[24rem] ${supportClass}`}>
         New guests and birthdays, on the house.
       </p>
-      <div className="mt-5 w-fit max-w-full sm:mt-6">
+      <div className="mt-5 flex w-fit max-w-full flex-col items-start sm:mt-6">
         <p className="sr-only">Come on in and play, watch, drink, chill, or sing</p>
         <p
           aria-hidden
