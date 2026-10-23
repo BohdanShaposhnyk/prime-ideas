@@ -66,6 +66,7 @@ export default function SceneLocationsCube() {
               onSettledChange={setSettled}
               radius={14}
               shade={0}
+              draggable={false}
               items={CUBE_LOCATIONS.map((item, itemIndex) => ({
                 id: item.id,
                 node: (

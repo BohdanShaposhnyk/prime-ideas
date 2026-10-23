@@ -16,7 +16,8 @@ function mapEmbedSrc(venue: Venue, apple: boolean) {
  * only changes opacity. The next map fades in after the turn lands.
  * They sit over the front well, outside the rotating face, because an iframe
  * paints flat through a CSS 3D transform.
- * Pointers pass through so a swipe still turns the cube.
+ * The settled map takes pointers so it can pan and zoom. The others stay
+ * inert, or a hidden frame would cover the one in front.
  */
 export function VenueMapPark({
   venues,
@@ -52,6 +53,10 @@ export function VenueMapPark({
           frame.dataset.ready = 'true'
         }
         const visible = show && usable && frameIndex === index
+        frame.style.pointerEvents = visible ? 'auto' : 'none'
+        if (frame.firstElementChild instanceof HTMLElement) {
+          frame.firstElementChild.style.pointerEvents = visible ? 'auto' : 'none'
+        }
         if (visible) {
           frame.removeAttribute('aria-hidden')
           if (shown.current[frameIndex]) return
@@ -116,7 +121,7 @@ export function VenueMapPark({
       <iframe
         title={`Map — ${venue.address}`}
         src={mapEmbedSrc(venue, apple)}
-        className="pointer-events-none h-full w-full border-0"
+        className="h-full w-full border-0"
         loading="eager"
         referrerPolicy="no-referrer-when-downgrade"
         allowFullScreen
