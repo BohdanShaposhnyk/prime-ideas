@@ -72,7 +72,7 @@ export default function SceneLocationsCube() {
                   <div
                     ref={setSlot[itemIndex]}
                     data-venue={item.id}
-                    className="h-full w-full bg-[#f2efe9] ring-1 ring-black/10 ring-inset"
+                    className="h-full w-full bg-[#d8e0e7] ring-1 ring-black/10 ring-inset"
                   />
                 ),
               }))}

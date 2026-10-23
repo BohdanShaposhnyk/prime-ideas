@@ -1,5 +1,8 @@
 import { useLayoutEffect, useRef } from 'react'
+import { prefersReducedMotion } from '../../lib/motion'
 import type { Venue } from '../../lib/venues'
+
+const FADE = 'opacity 450ms ease-out'
 
 function mapEmbedSrc(venue: Venue, apple: boolean) {
   if (apple) return venue.appleMaps
@@ -10,8 +13,9 @@ function mapEmbedSrc(venue: Venue, apple: boolean) {
 /**
  * All three embeds stay in this layer for the life of the scene.
  * Moving an iframe to a new parent makes the browser load it again, so a turn
- * only changes opacity. They sit over the front well, outside the rotating
- * face, because an iframe paints flat through a CSS 3D transform.
+ * only changes opacity. The next map fades in after the turn lands.
+ * They sit over the front well, outside the rotating face, because an iframe
+ * paints flat through a CSS 3D transform.
  * Pointers pass through so a swipe still turns the cube.
  */
 export function VenueMapPark({
@@ -28,6 +32,8 @@ export function VenueMapPark({
   settled: boolean
 }) {
   const frames = useRef<(HTMLDivElement | null)[]>([])
+  const shown = useRef<boolean[]>([])
+  const fades = useRef<number[]>([])
 
   useLayoutEffect(() => {
     const slot = slots[index] ?? null
@@ -46,9 +52,33 @@ export function VenueMapPark({
           frame.dataset.ready = 'true'
         }
         const visible = show && usable && frameIndex === index
-        frame.style.opacity = visible ? '1' : '0'
-        if (visible) frame.removeAttribute('aria-hidden')
-        else frame.setAttribute('aria-hidden', 'true')
+        if (visible) {
+          frame.removeAttribute('aria-hidden')
+          if (shown.current[frameIndex]) return
+          shown.current[frameIndex] = true
+          if (prefersReducedMotion()) {
+            frame.style.transition = 'none'
+            frame.style.opacity = '1'
+            return
+          }
+          frame.style.transition = 'none'
+          frame.style.opacity = '0'
+          const id = requestAnimationFrame(() => {
+            if (!shown.current[frameIndex]) return
+            frame.style.transition = FADE
+            frame.style.opacity = '1'
+          })
+          fades.current.push(id)
+          return
+        }
+        if (!shown.current[frameIndex] && frame.style.opacity === '0') {
+          frame.setAttribute('aria-hidden', 'true')
+          return
+        }
+        shown.current[frameIndex] = false
+        frame.style.transition = 'none'
+        frame.style.opacity = '0'
+        frame.setAttribute('aria-hidden', 'true')
       })
     }
 
@@ -63,6 +93,11 @@ export function VenueMapPark({
     window.addEventListener('resize', place)
 
     return () => {
+      fades.current.forEach((id) => cancelAnimationFrame(id))
+      fades.current = []
+      frames.current.forEach((frame, frameIndex) => {
+        if (frame && frame.style.opacity !== '1') shown.current[frameIndex] = false
+      })
       observer.disconnect()
       scroller?.removeEventListener('scroll', place)
       window.removeEventListener('resize', place)
