@@ -1,5 +1,6 @@
 /**
  * In-page scenes. The night carousel stays parked until it comes back.
+ * Addresses opens the locations cube.
  * Zones is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, hookah.
  */
 export const PAGE_LINKS = [
