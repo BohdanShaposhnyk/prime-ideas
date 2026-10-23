@@ -1,6 +1,7 @@
 import BorderGlow from '@/site/bits/BorderGlow'
 import MicroSlats from '@/site/bits/MicroSlats'
 import SplitFlapText from '@/site/bits/SplitFlapText'
+import { ExperiencePartners } from './experience-partners'
 import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
@@ -164,15 +165,18 @@ export default function SceneExperienceV2() {
         />
       </div>
       <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
-      <div className="relative flex h-full min-h-0 flex-col md:grid md:grid-cols-2">
-        <ExperienceCopy />
-        <ul className="cs-px-mid relative z-20 flex shrink-0 flex-row gap-2 px-5 pb-5 sm:gap-3 sm:px-8 sm:pb-8 md:h-full md:min-h-0 md:flex-col md:gap-4 md:pt-[var(--cs-header-h)] md:pr-8 md:pb-6 md:pl-6 lg:pr-12 lg:pb-8 lg:pl-8">
-          {OFFERS.map((offer) => (
-            <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <OfferCard offer={offer} animated={sweep} />
-            </li>
-          ))}
-        </ul>
+      <div className="relative z-20 flex h-full min-h-0 flex-col">
+        <div className="relative flex min-h-0 flex-1 flex-col md:grid md:grid-cols-2">
+          <ExperienceCopy />
+          <ul className="cs-px-mid relative flex shrink-0 flex-row gap-2 px-5 pb-2 sm:gap-3 sm:px-8 sm:pb-3 md:h-full md:min-h-0 md:flex-col md:gap-4 md:pt-[var(--cs-header-h)] md:pr-8 md:pb-3 md:pl-6 lg:pr-12 lg:pb-4 lg:pl-8">
+            {OFFERS.map((offer) => (
+              <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <OfferCard offer={offer} animated={sweep} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <ExperiencePartners />
       </div>
     </section>
   )
