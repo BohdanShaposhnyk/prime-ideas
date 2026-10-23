@@ -345,6 +345,37 @@ html.cs-snap-root body {
   }
 }
 
+/* Full-width bar. Same sweep as the heading word, painted across the band. */
+.cs-gold-band {
+  background-color: var(--cs-gold);
+}
+.cs-gold-band.cs-gold-live {
+  background-image: linear-gradient(
+    108deg,
+    var(--cs-gold) 0%,
+    var(--cs-gold) 42%,
+    #f6e4a4 47%,
+    #fff8e0 50%,
+    #f6e4a4 53%,
+    var(--cs-gold) 58%,
+    var(--cs-gold) 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-position: 0% center;
+  animation: cs-gold-shine 4.8s ease-in-out infinite;
+}
+.cs-gold-band:hover,
+.cs-gold-band:focus-visible {
+  filter: brightness(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-gold-band.cs-gold-live {
+    animation: none;
+    background-image: none;
+  }
+}
+
 /* Proof words in the franchise wall. The box is the card turned −90°, matching the
    photos, so each line runs along the long side and Bebas on the page can draw it. */
 [data-scene='franchise-v2'] .dw-label {

@@ -3,6 +3,7 @@ import FoldText from '@/site/bits/FoldText'
 import ParticleText from '@/site/bits/ParticleText'
 import { BookNightButton } from '../components/book-night'
 import { InstagramIcon, TelegramIcon } from '../components/icons'
+import { useGoldShine } from '../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
 import { FOOTER_LINKS } from '../lib/nav'
@@ -16,9 +17,6 @@ const FRANCHISE_MAIL = 'mailto:franchise@premiumlounge.club'
 
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
-
-/** Same treatment as the events gallery link. */
-const textLinkClass = `inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] sm:tracking-[var(--cs-track-micro)] ${linkClass}`
 
 const columnLinkClass = `font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.12em] lowercase sm:text-[0.68rem] ${linkClass}`
 
@@ -113,6 +111,25 @@ function VenueRow({ venue }: { venue: (typeof VENUES)[number] }) {
   )
 }
 
+/** Booking pill is 0.875rem padding plus a 0.75rem line. */
+const franchiseBandClass =
+  'cs-gold-band relative z-20 flex h-[2.5rem] w-full shrink-0 items-center justify-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] text-black no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-black sm:tracking-[var(--cs-track-micro)]'
+
+function FranchiseBand() {
+  const ref = useRef<HTMLAnchorElement>(null)
+  const live = useGoldShine(ref)
+
+  return (
+    <a
+      ref={ref}
+      href={FRANCHISE_MAIL}
+      className={`${franchiseBandClass}${live ? ' cs-gold-live' : ''}`}
+    >
+      Open a franchise &gt;
+    </a>
+  )
+}
+
 function Logo() {
   const src = useWordmark()
 
@@ -131,7 +148,7 @@ function Logo() {
  * Closing viewport — dimmed star field, centered lockup, contact band.
  * Enter timeline: veil fades, STAY unfolds, then PRIME assembles. PRIME unmounts on leave.
  * The booking CTA keeps its resting slot and fades in only after STAY has landed.
- * Franchise is a mailto at the bottom of the sky.
+ * Franchise is a full-width gold band at the top of the contact row.
  * The band is only as tall as its contents, so the sky keeps the rest.
  * Logo and nav sit on the left. Contacts sit on the right:
  * Warsaw sits on a rule above its venues, then a rule, Wrocław, then Instagram.
@@ -236,15 +253,13 @@ export default function SceneBasement() {
         </div>
         </div>
 
-        <a href={FRANCHISE_MAIL} className={`relative z-20 mb-[0.85rem] self-center ${textLinkClass}`}>
-          Open a franchise &gt;
-        </a>
       </div>
 
       <div
-        className="relative z-10 shrink-0 border-t border-[color-mix(in_srgb,var(--cs-ice)_16%,transparent)] backdrop-blur-md"
+        className="relative z-10 shrink-0 backdrop-blur-md"
         style={{ background: 'rgba(0, 0, 0, 0.55)' }}
       >
+        <FranchiseBand />
         <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-4 px-4 pt-[clamp(0.85rem,2.2vh,1.5rem)] pb-[max(0.85rem,env(safe-area-inset-bottom))] sm:px-8 lg:gap-6 lg:px-12">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 lg:grid-cols-[auto_1fr] lg:gap-x-16 lg:gap-y-5">
             <div className="flex min-w-0 flex-col items-start gap-3 sm:gap-4 lg:contents">
