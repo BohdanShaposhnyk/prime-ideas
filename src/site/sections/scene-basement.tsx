@@ -20,7 +20,17 @@ const linkClass =
 /** Same treatment as the events gallery link. */
 const textLinkClass = `inline-flex items-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] sm:tracking-[var(--cs-track-micro)] ${linkClass}`
 
-const columnLinkClass = `font-[family-name:var(--cs-body)] text-[0.8rem] font-medium tracking-[0.12em] uppercase sm:text-[0.95rem] sm:tracking-[var(--cs-track-micro)] ${linkClass}`
+const columnLinkClass = `font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.12em] lowercase sm:text-[0.68rem] ${linkClass}`
+
+const placeClass =
+  'whitespace-nowrap font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:text-[0.68rem]'
+
+const phoneClass = `whitespace-nowrap font-[family-name:var(--cs-body)] text-[0.75rem] font-medium tabular-nums tracking-[0.02em] sm:text-[0.82rem] ${linkClass}`
+
+const ruleClass = 'bg-[color-mix(in_srgb,var(--cs-ice)_22%,transparent)]'
+
+const warsawVenues = VENUES.filter((venue) => venue.id !== 'wroclaw')
+const wroclawVenue = VENUES.find((venue) => venue.id === 'wroclaw')
 
 const COPYRIGHT_YEAR = new Date().getFullYear()
 
@@ -83,6 +93,26 @@ function useDesktopCloud() {
   return desktop
 }
 
+function VenueRow({ venue }: { venue: (typeof VENUES)[number] }) {
+  return (
+    <li className="col-span-3 grid grid-cols-subgrid items-center">
+      <span className={placeClass}>{venue.shortName}</span>
+      <a
+        href={venue.telegram}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`${venue.shortName} on Telegram`}
+        className={`inline-flex shrink-0 ${linkClass}`}
+      >
+        <TelegramIcon className="size-3.5 shrink-0 sm:size-4" />
+      </a>
+      <a href={`tel:${venue.phone}`} className={phoneClass}>
+        {venue.phoneLabel}
+      </a>
+    </li>
+  )
+}
+
 function Logo() {
   const src = useWordmark()
 
@@ -103,8 +133,8 @@ function Logo() {
  * The booking CTA keeps its resting slot and fades in only after STAY has landed.
  * Franchise is a mailto at the bottom of the sky.
  * The band is only as tall as its contents, so the sky keeps the rest.
- * Phone: logo and nav on the left, phones then Instagram on the right.
- * Desktop: logo on its own row, then nav, Instagram, and phones.
+ * Logo and nav sit on the left. Contacts sit on the right:
+ * Warsaw sits on a rule above its venues, then a rule, Wrocław, then Instagram.
  * The veil fades out inside the sky so the band stays clear while STAY arrives.
  */
 export default function SceneBasement() {
@@ -216,12 +246,12 @@ export default function SceneBasement() {
         style={{ background: 'rgba(0, 0, 0, 0.55)' }}
       >
         <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-4 px-4 pt-[clamp(0.85rem,2.2vh,1.5rem)] pb-[max(0.85rem,env(safe-area-inset-bottom))] sm:px-8 lg:gap-6 lg:px-12">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 lg:grid-cols-[auto_1fr_auto] lg:gap-x-16 lg:gap-y-5">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 lg:grid-cols-[auto_1fr] lg:gap-x-16 lg:gap-y-5">
             <div className="flex min-w-0 flex-col items-start gap-3 sm:gap-4 lg:contents">
               <Logo />
               <nav
                 aria-label="Page"
-                className="flex flex-col items-start gap-2 sm:gap-2.5 lg:col-start-1 lg:row-start-2"
+                className="flex flex-col items-start gap-1.5 sm:gap-2 lg:col-start-1 lg:row-start-2"
               >
                 {FOOTER_LINKS.map((link) => (
                   <button
@@ -236,51 +266,44 @@ export default function SceneBasement() {
               </nav>
             </div>
 
-            <div className="flex flex-col items-start gap-3 justify-self-end sm:gap-4 lg:contents">
-              <ul className="grid grid-cols-[max-content_max-content_max-content] items-center gap-x-2 gap-y-2.5 font-[family-name:var(--cs-body)] text-[0.8rem] sm:gap-x-3 sm:gap-y-3.5 sm:text-[0.95rem] lg:col-start-3 lg:row-start-2 lg:justify-self-end lg:text-[1.05rem]">
-                {VENUES.map((venue) => (
-                  <li key={venue.id} className="col-span-3 grid grid-cols-subgrid items-center">
-                    <span className="whitespace-nowrap tracking-[0.12em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]">
-                      {venue.shortName}
-                    </span>
-                    <a
-                      href={venue.telegram}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`${venue.shortName} on Telegram`}
-                      className={`inline-flex shrink-0 ${linkClass}`}
-                    >
-                      <TelegramIcon className="size-4 shrink-0 sm:size-5" />
-                    </a>
-                    <a
-                      href={`tel:${venue.phone}`}
-                      className={`whitespace-nowrap tabular-nums tracking-[0.02em] ${linkClass}`}
-                    >
-                      {venue.phoneLabel}
-                    </a>
-                  </li>
+            <div className="grid w-max grid-cols-[max-content_max-content_max-content] items-center justify-self-end gap-x-2 sm:gap-x-2.5 lg:col-start-2 lg:row-start-2 lg:justify-self-end">
+              <p className="col-span-3 flex items-center gap-2.5">
+                <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+                <span className={placeClass}>Warsaw</span>
+                <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+              </p>
+              <ul className="col-span-3 mt-1.5 grid grid-cols-subgrid gap-y-1.5 sm:gap-y-2">
+                {warsawVenues.map((venue) => (
+                  <VenueRow key={venue.id} venue={venue} />
                 ))}
               </ul>
-
-              <nav
-                aria-label="Social"
-                className="flex flex-col items-start gap-2 sm:gap-2.5 lg:col-start-2 lg:row-start-2 lg:justify-self-center"
-              >
-                {INSTAGRAMS.map((profile) => (
-                  <a
-                    key={profile.id}
-                    href={profile.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${profile.city} on Instagram`}
-                    className={`inline-flex items-center gap-2 ${columnLinkClass}`}
-                  >
-                    <InstagramIcon className="size-4 shrink-0 sm:size-5" />
-                    <span className="lg:hidden">{profile.city}</span>
-                    <span className="hidden lg:inline">{profile.handle}</span>
-                  </a>
-                ))}
-              </nav>
+              <div aria-hidden className={`col-span-3 my-2 h-px sm:my-2.5 ${ruleClass}`} />
+              {wroclawVenue ? (
+                <ul className="col-span-3 grid grid-cols-subgrid">
+                  <VenueRow venue={wroclawVenue} />
+                </ul>
+              ) : null}
+              <div className="col-span-3 mt-2.5 flex flex-col items-center gap-1.5 sm:mt-3">
+                <span className="flex w-full items-center gap-2.5">
+                  <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+                  <InstagramIcon className="size-4 shrink-0" />
+                  <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+                </span>
+                <nav aria-label="Social" className="flex w-full items-center justify-between">
+                  {INSTAGRAMS.map((profile) => (
+                    <a
+                      key={profile.id}
+                      href={profile.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${profile.city} on Instagram`}
+                      className={`font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.14em] uppercase sm:text-[0.68rem] ${linkClass}`}
+                    >
+                      {profile.city}
+                    </a>
+                  ))}
+                </nav>
+              </div>
             </div>
           </div>
 
