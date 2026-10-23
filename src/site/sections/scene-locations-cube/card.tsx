@@ -45,7 +45,7 @@ export function LocationFrame({
         />
         <FilmGrain className="absolute inset-0 mix-blend-soft-light opacity-[0.14]" />
       </div>
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pt-[var(--cs-header-h)] pb-4 sm:px-10 sm:pb-8 lg:px-20 lg:pb-12">
+      <div className="relative z-10 flex h-full min-h-0 flex-col px-3 pt-[var(--cs-header-h)] pb-[max(2.5rem,env(safe-area-inset-bottom))] sm:px-10 sm:pb-[max(calc(var(--cs-h,100svh)*0.12),env(safe-area-inset-bottom))] lg:px-20">
         <div className="mx-auto flex min-h-0 w-full max-w-[42rem] flex-1 flex-col sm:max-w-[min(42rem,68vw)]">
           {picker}
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 pt-3 sm:gap-4 sm:pt-4 lg:gap-5 lg:pt-6">
