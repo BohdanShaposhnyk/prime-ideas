@@ -28,6 +28,11 @@ export const INSTAGRAMS = [
   },
 ] as const
 
+export const TIKTOK = {
+  label: 'TikTok',
+  href: 'https://www.tiktok.com/@primelounge.club',
+} as const
+
 export type SeoVenue = {
   id: 'mennica' | 'mokotow' | 'wroclaw'
   shortName: string
@@ -74,7 +79,7 @@ export const SEO_VENUES: SeoVenue[] = [
   },
   {
     id: 'wroclaw',
-    shortName: 'Wrocław',
+    shortName: 'Opera',
     name: 'Prime Wrocław',
     streetAddress: 'Plac Teatralny 6-8',
     addressLocality: 'Wrocław',
@@ -90,6 +95,7 @@ export const SEO_VENUES: SeoVenue[] = [
 
 const SAME_AS = [
   ...INSTAGRAMS.map((profile) => profile.href),
+  TIKTOK.href,
   ...SEO_VENUES.map((venue) => venue.telegram),
 ]
 

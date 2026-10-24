@@ -2,13 +2,13 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import FoldText from '@/site/bits/FoldText'
 import ParticleText from '@/site/bits/ParticleText'
 import { BookNightButton } from '../components/book-night'
-import { InstagramIcon, TelegramIcon } from '../components/icons'
+import { InstagramIcon, TelegramIcon, TikTokIcon } from '../components/icons'
 import { useGoldShine } from '../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useWordmark, wordmarkAspect } from '../hooks/wordmark'
 import { FOOTER_LINKS } from '../lib/nav'
 import { lockupClass, palette } from '../lib/palette'
-import { COMPANY_NAME, COMPANY_NIP, INSTAGRAMS } from '../lib/seo'
+import { COMPANY_NAME, COMPANY_NIP, INSTAGRAMS, TIKTOK } from '../lib/seo'
 import { VENUES } from '../lib/venues'
 import space from '../assets/stars/space.webp'
 import { stayFold, stayWord, useBasementIntro } from './basement-intro'
@@ -23,12 +23,15 @@ const columnLinkClass = `font-[family-name:var(--cs-body)] text-[0.62rem] font-m
 const placeClass =
   'whitespace-nowrap font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:text-[0.68rem]'
 
+const socialLinkClass = `whitespace-nowrap font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.14em] uppercase sm:text-[0.68rem] ${linkClass}`
+
 const phoneClass = `whitespace-nowrap font-[family-name:var(--cs-body)] text-[0.75rem] font-medium tabular-nums tracking-[0.02em] sm:text-[0.82rem] ${linkClass}`
 
 const ruleClass = 'bg-[color-mix(in_srgb,var(--cs-ice)_22%,transparent)]'
 
 const warsawVenues = VENUES.filter((venue) => venue.id !== 'wroclaw')
 const wroclawVenue = VENUES.find((venue) => venue.id === 'wroclaw')
+const [warsawInstagram, wroclawInstagram] = INSTAGRAMS
 
 const COPYRIGHT_YEAR = new Date().getFullYear()
 
@@ -91,6 +94,16 @@ function useDesktopCloud() {
   return desktop
 }
 
+function CityRule({ city, className = '' }: { city: string; className?: string }) {
+  return (
+    <p className={`col-span-3 flex items-center gap-2.5 ${className}`}>
+      <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+      <span className={placeClass}>{city}</span>
+      <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+    </p>
+  )
+}
+
 function VenueRow({ venue }: { venue: (typeof VENUES)[number] }) {
   return (
     <li className="col-span-3 grid grid-cols-subgrid items-center">
@@ -151,7 +164,8 @@ function Logo() {
  * Franchise is a full-width gold band at the top of the contact row.
  * The band is only as tall as its contents, so the sky keeps the rest.
  * Logo and nav sit on the left. Contacts sit on the right:
- * Warsaw sits on a rule above its venues, then a rule, Wrocław, then Instagram.
+ * Each city name sits on a rule above its venues. Opera is the Wrocław venue.
+ * Socials span the column: Instagram and TikTok sit on one rule, accounts under each logo.
  * The veil fades out inside the sky so the band stays clear while STAY arrives.
  */
 export default function SceneBasement() {
@@ -282,43 +296,61 @@ export default function SceneBasement() {
             </div>
 
             <div className="grid w-max grid-cols-[max-content_max-content_max-content] items-center justify-self-end gap-x-2 sm:gap-x-2.5 lg:col-start-2 lg:row-start-2 lg:justify-self-end">
-              <p className="col-span-3 flex items-center gap-2.5">
-                <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
-                <span className={placeClass}>Warsaw</span>
-                <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
-              </p>
+              <CityRule city="Warsaw" />
               <ul className="col-span-3 mt-1.5 grid grid-cols-subgrid gap-y-1.5 sm:gap-y-2">
                 {warsawVenues.map((venue) => (
                   <VenueRow key={venue.id} venue={venue} />
                 ))}
               </ul>
-              <div aria-hidden className={`col-span-3 my-2 h-px sm:my-2.5 ${ruleClass}`} />
               {wroclawVenue ? (
-                <ul className="col-span-3 grid grid-cols-subgrid">
-                  <VenueRow venue={wroclawVenue} />
-                </ul>
+                <>
+                  <CityRule city="Wrocław" className="mt-2 sm:mt-2.5" />
+                  <ul className="col-span-3 mt-1.5 grid grid-cols-subgrid">
+                    <VenueRow venue={wroclawVenue} />
+                  </ul>
+                </>
               ) : null}
-              <div className="col-span-3 mt-2.5 flex flex-col items-center gap-1.5 sm:mt-3">
-                <span className="flex w-full items-center gap-2.5">
-                  <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
+              <nav
+                aria-label="Social"
+                className="col-span-3 mt-2.5 flex w-full flex-col gap-1.5 sm:mt-3"
+              >
+                <div className="flex items-center gap-2.5">
                   <InstagramIcon className="size-4 shrink-0" />
-                  <span aria-hidden className={`h-px flex-1 ${ruleClass}`} />
-                </span>
-                <nav aria-label="Social" className="flex w-full items-center justify-between">
-                  {INSTAGRAMS.map((profile) => (
+                  <span aria-hidden className={`h-px min-w-4 flex-1 ${ruleClass}`} />
+                  <TikTokIcon className="size-4 shrink-0" />
+                </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col items-start gap-1.5">
                     <a
-                      key={profile.id}
-                      href={profile.href}
+                      href={warsawInstagram.href}
                       target="_blank"
                       rel="noreferrer"
-                      aria-label={`${profile.city} on Instagram`}
-                      className={`font-[family-name:var(--cs-body)] text-[0.62rem] font-medium tracking-[0.14em] uppercase sm:text-[0.68rem] ${linkClass}`}
+                      aria-label={`${warsawInstagram.city} on Instagram`}
+                      className={socialLinkClass}
                     >
-                      {profile.city}
+                      {warsawInstagram.city}
                     </a>
-                  ))}
-                </nav>
-              </div>
+                    <a
+                      href={wroclawInstagram.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${wroclawInstagram.city} on Instagram`}
+                      className={socialLinkClass}
+                    >
+                      {wroclawInstagram.city}
+                    </a>
+                  </div>
+                  <a
+                    href={TIKTOK.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Prime on TikTok"
+                    className={socialLinkClass}
+                  >
+                    {TIKTOK.label}
+                  </a>
+                </div>
+              </nav>
             </div>
           </div>
 
