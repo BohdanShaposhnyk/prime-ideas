@@ -37,7 +37,8 @@ function AppCopy({
           <span className="block">you are</span>
         </h2>
         <p className={supportClassName}>
-          SENET is the partner app for Prime. New guests get 50 zł on their account, or their first hour free.
+          SENET is the partner app for Prime. New guests get <span className="text-[var(--cs-gold)]">50 zł</span> on their account, or their first hour free. Use
+          code <span className="text-[var(--cs-gold)]">“PRIME”</span> to activate your account.
         </p>
       </div>
       <div className={badgesClassName}>
@@ -130,7 +131,7 @@ export default function SceneApp() {
 
       {/* Mobile — page padding on three sides, phone cut by the bottom edge */}
       <div className="relative flex h-full flex-col md:hidden">
-        <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-10 sm:px-8">
+        <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] sm:px-8">
           <AppCopy
             supportClassName={`${lockupToSupportClass} max-w-[22rem] ${supportClass}`}
             badgesClassName="mt-6"

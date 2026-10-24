@@ -39,14 +39,22 @@ export type SeoVenue = {
   name: string
   streetAddress: string
   addressLocality: string
-  /** Present only when the postal code is already on the venue's map link. */
+  /** Published on the postal address when we have one. */
   postalCode?: string
   telephone: string
   telephoneLabel: string
   telegram: string
   instagram: (typeof INSTAGRAMS)[number]['href']
+  /** Google listing id. The address link and the map embed both use it. */
+  mapsCid: string
   latitude: number
   longitude: number
+}
+
+/** Same Google listing for a click and, with `output=embed`, for the iframe. */
+export function mapsHref(cid: string, embed = false) {
+  const embedFlag = embed ? '&output=embed' : ''
+  return `https://www.google.com/maps?cid=${cid}&hl=en&z=16${embedFlag}`
 }
 
 export const SEO_VENUES: SeoVenue[] = [
@@ -60,6 +68,7 @@ export const SEO_VENUES: SeoVenue[] = [
     telephoneLabel: '+48 530 811 888',
     telegram: 'https://t.me/primewarsaw',
     instagram: 'https://www.instagram.com/prime_warsaw/',
+    mapsCid: '14272506656234488151',
     latitude: 52.2341,
     longitude: 20.9927,
   },
@@ -74,6 +83,7 @@ export const SEO_VENUES: SeoVenue[] = [
     telephoneLabel: '+48 530 822 888',
     telegram: 'https://t.me/primemokotow',
     instagram: 'https://www.instagram.com/prime_warsaw/',
+    mapsCid: '8832738091500516673',
     latitude: 52.176772,
     longitude: 21.001543,
   },
@@ -88,6 +98,7 @@ export const SEO_VENUES: SeoVenue[] = [
     telephoneLabel: '+48 530 818 888',
     telegram: 'https://t.me/primewroclaw',
     instagram: 'https://www.instagram.com/prime_wroclaw/',
+    mapsCid: '1448489213028860593',
     latitude: 51.1057,
     longitude: 17.0324,
   },
@@ -134,6 +145,7 @@ function structuredData() {
           ...(venue.postalCode ? { postalCode: venue.postalCode } : {}),
           addressCountry: 'PL',
         },
+        hasMap: mapsHref(venue.mapsCid),
         geo: {
           '@type': 'GeoCoordinates',
           latitude: venue.latitude,

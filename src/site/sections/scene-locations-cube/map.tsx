@@ -1,12 +1,12 @@
 import { useLayoutEffect, useRef } from 'react'
+import { mapsHref } from '../../lib/seo'
 import { prefersReducedMotion } from '../../lib/motion'
 import type { Venue } from '../../lib/venues'
 
 const FADE = 'opacity 450ms ease-out'
 
 function mapEmbedSrc(venue: Venue) {
-  const query = `${venue.lat},${venue.lng}`
-  return `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=16&hl=en&output=embed`
+  return mapsHref(venue.mapsCid, true)
 }
 
 /**
