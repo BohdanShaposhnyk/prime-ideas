@@ -1,9 +1,9 @@
 import hookahStill from '../../assets/event-cs6/crowd-hookah-2.webp'
 import gamersStill from '../../assets/event-cs6/gamers.webp'
 import facesStill from '../../assets/showcase/faces.webp'
+import gamerStill from '../../assets/showcase/gamer-dim.webp'
 import micStill from '../../assets/showcase/mic.webp'
 import outsideStill from '../../assets/showcase/outside-dude.webp'
-import rigsStill from '../../assets/showcase/rigs.webp'
 import screenStill from '../../assets/showcase/screen-cs-2.webp'
 
 export const GAP = 8
@@ -23,7 +23,7 @@ type Tile = { id: string; fr: number; col: 0 | 1 | 2 }
 
 /** Desktop 2 / 2+lockup / 3 — portrait stills. Right cells crop landscape. */
 const TILES_DESKTOP: Tile[] = [
-  { id: 'rigs', fr: 0.62, col: 0 },
+  { id: 'gamer', fr: 0.62, col: 0 },
   { id: 'screen', fr: 0.38, col: 0 },
   { id: 'faces', fr: 0.38, col: 1 },
   { id: 'lockup', fr: 0, col: 1 },
@@ -35,7 +35,7 @@ const TILES_DESKTOP: Tile[] = [
 
 /** Mobile 2 / 2+lockup / 3 — same stills, portrait lockup and right cells. */
 const TILES_COMPACT: Tile[] = [
-  { id: 'rigs', fr: 0.55, col: 0 },
+  { id: 'gamer', fr: 0.55, col: 0 },
   { id: 'screen', fr: 0.45, col: 0 },
   { id: 'faces', fr: 0.44, col: 1 },
   { id: 'lockup', fr: 0, col: 1 },
@@ -46,7 +46,7 @@ const TILES_COMPACT: Tile[] = [
 ]
 
 const STILLS: Record<string, { src: string; objectPosition?: string }> = {
-  rigs: { src: rigsStill },
+  gamer: { src: gamerStill },
   screen: { src: screenStill, objectPosition: 'center 32%' },
   faces: { src: facesStill },
   hookah: { src: hookahStill, objectPosition: 'center 36%' },

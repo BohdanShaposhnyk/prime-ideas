@@ -6,6 +6,21 @@ import { LocationFrame } from './card'
 import { CUBE_CITIES, CUBE_LOCATIONS } from './config'
 import { VenueMapPark } from './map'
 
+function VenueTabLabel({ name }: { name: string }) {
+  return (
+    <span className="inline-flex min-w-0 items-center justify-center gap-1">
+      <svg viewBox="0 0 32 42" className="h-[17px] w-[13px] shrink-0" aria-hidden>
+        <path
+          fill="#E53935"
+          d="M16 1.4c-7.4 0-13.2 5.6-13.2 12.6 0 9.4 13.2 26.6 13.2 26.6S29.2 23.4 29.2 14C29.2 7 23.4 1.4 16 1.4z"
+        />
+        <circle cx="16" cy="13.8" r="5.6" fill="#fff" />
+      </svg>
+      <span className="truncate">{name}</span>
+    </span>
+  )
+}
+
 const segmentInset = 3
 
 function CityLabels({ activeCity }: { activeCity: string }) {
@@ -72,7 +87,7 @@ export default function SceneLocationsCube() {
               <RubberSegment
                 className="w-full"
                 aria-label="Locations"
-                items={CUBE_LOCATIONS.map((item) => ({ value: item.id, label: item.label }))}
+                items={CUBE_LOCATIONS.map((item) => ({ value: item.id, label: <VenueTabLabel name={item.label} /> }))}
                 value={CUBE_LOCATIONS[index]?.id}
                 onChange={(_, next) => choose(next)}
                 equalSlots

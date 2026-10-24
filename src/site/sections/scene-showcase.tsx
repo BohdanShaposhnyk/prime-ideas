@@ -4,10 +4,10 @@ import InfiniteSpiral from '@/site/bits/InfiniteSpiral'
 import barContrast from '../assets/bar/bar-contrast.webp'
 import carsimTilted from '../assets/gaming/carsim-tilted.webp'
 import hookahPurple from '../assets/hookah/hookah-purple.webp'
+import gameRoom from '../assets/showcase/gameroom-dim.webp'
 import guestRoom from '../assets/showcase/guest-room-3-ls.webp'
 import loungeHall from '../assets/showcase/lounge-2.webp'
 import mic from '../assets/showcase/mic.webp'
-import rigs from '../assets/showcase/rigs.webp'
 import { BookNightButton } from '../components/book-night'
 import { TypeScrim } from '../components/type-scrim'
 import { FilmGrain } from '../components/grain'
@@ -32,7 +32,7 @@ const CARDS = [
     word: 'PLAY ZONE',
     line: 'PC rooms for one, two, four, or five.',
     alt: 'Play zone',
-    src: rigs,
+    src: gameRoom,
   },
   {
     id: 'sim',
