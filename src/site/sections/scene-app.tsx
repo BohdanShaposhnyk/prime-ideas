@@ -37,7 +37,7 @@ function AppCopy({
           <span className="block">you are</span>
         </h2>
         <p className={supportClassName}>
-          SENET is the partner app for Prime. New guests get <span className="text-[var(--cs-gold)]">50 zł</span> on their account, or their first hour free. Use
+          SENET is the partner app for Prime. New guests get <span className="text-[var(--cs-gold)]">50 zł</span> on their account, or their <span className="text-[var(--cs-gold)]">first hour free</span>. Use
           code <span className="text-[var(--cs-gold)]">“PRIME”</span> to activate your account.
         </p>
       </div>
