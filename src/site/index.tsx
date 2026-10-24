@@ -5,7 +5,6 @@ import '@fontsource/barlow/600.css'
 import './styles/charge-split.css'
 
 import { lazy, Suspense, useLayoutEffect, useRef, type ReactNode, type RefObject } from 'react'
-import { ActivationProvider, ActivationStrip } from './activation'
 import HeroV2 from './sections/hero'
 import SceneShowcase from './sections/scene-showcase'
 import LazyScene from './components/lazy-scene'
@@ -94,26 +93,23 @@ export default function ChargeSplitPage() {
   useSnapPort(portRef)
 
   return (
-    <ActivationProvider>
-      <main
-        className="bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
-        style={{
-          ...cssTokens,
-          fontFamily: 'var(--cs-body)',
-        }}
-      >
-        <SiteHeader portRef={portRef} />
-        <ActivationStrip portRef={portRef} />
-        <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
-          <HeroV2 />
-          <SceneShowcase />
-          {scenes.map((scene) => (
-            <LazyScene key={scene.key} id={scene.id} minHeight={scene.minHeight}>
-              <Suspense fallback={null}>{scene.node}</Suspense>
-            </LazyScene>
-          ))}
-        </div>
-      </main>
-    </ActivationProvider>
+    <main
+      className="bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      style={{
+        ...cssTokens,
+        fontFamily: 'var(--cs-body)',
+      }}
+    >
+      <SiteHeader portRef={portRef} />
+      <div ref={portRef} data-cs-scroll="" className="cs-snap-port">
+        <HeroV2 />
+        <SceneShowcase />
+        {scenes.map((scene) => (
+          <LazyScene key={scene.key} id={scene.id} minHeight={scene.minHeight}>
+            <Suspense fallback={null}>{scene.node}</Suspense>
+          </LazyScene>
+        ))}
+      </div>
+    </main>
   )
 }

@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { ActivationSwitcher } from '@/site/activation'
 import { VIGNETTE_BG, VIGNETTE_TO, vignetteVars } from './vignette'
 import { HeroCopy } from './copy'
 import { heroFocusStyle, heroReel } from './media'
@@ -73,7 +72,6 @@ export function ReducedHeroVideo() {
         style={{ ...vignetteVars(VIGNETTE_TO), background: VIGNETTE_BG }}
       />
       <HeroCopy />
-      <ActivationSwitcher />
     </section>
   )
 }

@@ -65,9 +65,9 @@ export function LocationFrame({
           />
           {venue.address}
         </a>
-        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex w-full min-w-0 flex-wrap items-start gap-2 sm:gap-3">
           <BookNightButton className="shrink-0" />
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex h-10 shrink-0 items-center gap-2 sm:gap-3">
             <a
               href={`tel:${venue.phone}`}
               className={`${actionClass} ${iconBtnClass}`}
