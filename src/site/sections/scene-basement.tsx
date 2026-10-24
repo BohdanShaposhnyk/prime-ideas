@@ -249,7 +249,7 @@ export default function SceneBasement() {
           }`}
           inert={!ctaOn}
         >
-          <BookNightButton />
+          <BookNightButton footer />
         </div>
         </div>
 

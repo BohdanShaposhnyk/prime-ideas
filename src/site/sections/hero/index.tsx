@@ -1,4 +1,5 @@
 import { useRef, type CSSProperties } from 'react'
+import { ActivationSwitcher } from '@/site/activation'
 import MaskedHeading from '@/site/bits/MaskedHeading'
 import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
@@ -86,6 +87,7 @@ export default function HeroV2() {
         />
         <div aria-hidden className="cs-hero-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
         {copyReady ? <HeroCopy /> : null}
+        <ActivationSwitcher />
       </div>
     </section>
   )
