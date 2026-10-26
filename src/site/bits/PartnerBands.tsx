@@ -116,7 +116,6 @@ export function PartnerBands({ rows }: { rows: [PartnerMark[], PartnerMark[]] })
 
   return (
     <div className="pointer-events-none relative z-20 shrink-0 pt-1 pb-[max(0.7rem,env(safe-area-inset-bottom))]">
-      <p className="sr-only">Partners</p>
       <ul className="sr-only">
         {names.map((name) => (
           <li key={name}>{name}</li>

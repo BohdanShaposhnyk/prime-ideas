@@ -1,7 +1,6 @@
 import BorderGlow from '@/site/bits/BorderGlow'
 import MicroSlats from '@/site/bits/MicroSlats'
 import SplitFlapText from '@/site/bits/SplitFlapText'
-import { ExperiencePartners } from './experience-partners'
 import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
@@ -176,7 +175,6 @@ export default function SceneExperienceV2() {
             ))}
           </ul>
         </div>
-        <ExperiencePartners />
       </div>
     </section>
   )

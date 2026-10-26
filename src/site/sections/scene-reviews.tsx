@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
+import { ExperiencePartners } from './experience-partners'
 import { mapsHref, SEO_VENUES } from '../lib/seo'
 
 /**
@@ -165,7 +166,8 @@ export default function SceneReviews() {
         ref={scrollerRef}
         data-cs-x-pan=""
         aria-label="Google reviews"
-        className="mt-6 flex shrink-0 snap-x snap-mandatory items-start gap-3 overflow-x-auto overscroll-x-contain scroll-ps-5 scroll-pe-5 px-5 touch-pan-x [scrollbar-width:none] sm:mt-8 sm:scroll-ps-8 sm:scroll-pe-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
+        data-review-row=""
+        className="flex min-h-0 snap-x snap-mandatory items-start gap-3 overflow-x-auto overflow-y-auto overscroll-x-contain scroll-ps-5 scroll-pe-5 px-5 touch-pan-x [scrollbar-width:none] sm:scroll-ps-8 sm:scroll-pe-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
       >
         {REVIEWS.map((review) => (
           <li key={review.id} data-review-card="" className="flex shrink-0 snap-start flex-col">
@@ -211,7 +213,7 @@ export default function SceneReviews() {
       </ul>
 
       {canScroll ? (
-        <div className="flex shrink-0 justify-center gap-2 px-5 pt-1 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pb-[max(1.75rem,env(safe-area-inset-bottom))]">
+        <div className="flex shrink-0 justify-center gap-2 px-5 pt-2">
           <button
             type="button"
             className={controlClass}
@@ -231,9 +233,14 @@ export default function SceneReviews() {
             <Chevron dir="next" />
           </button>
         </div>
-      ) : (
-        <div className="shrink-0 pb-[max(1.25rem,env(safe-area-inset-bottom))]" />
-      )}
+      ) : null}
+
+      <div className="mt-auto flex w-full shrink-0 flex-col items-center pt-2">
+        <p className={kickerClass}>Our partners</p>
+        <div className="mt-3 w-full">
+          <ExperiencePartners />
+        </div>
+      </div>
     </section>
   )
 }

@@ -404,17 +404,41 @@ html.cs-snap-root body {
   }
 }
 
-/* One review across until the port is tall enough for a row.
-   A short window keeps the quote and the name on one card. */
+/* One review across until a row fits above the partner bands.
+   Narrow cards wrap the longest quote tall, so two and three columns wait
+   until the port is wide enough, or tall enough, to keep the bands on screen.
+   A short port also pulls the row up so the bands are not the piece that clips. */
+[data-scene='reviews'] [data-review-row] {
+  margin-top: 1.5rem;
+}
+@media (min-width: 640px) {
+  [data-scene='reviews'] [data-review-row] {
+    margin-top: 2rem;
+  }
+}
+@media (max-height: 700px) {
+  [data-scene='reviews'] [data-review-row] {
+    margin-top: 0.75rem;
+  }
+  [data-scene='reviews'] [data-review-card] article {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
 [data-scene='reviews'] [data-review-card] {
   width: calc(100% - 2rem);
 }
-@media (min-width: 640px) and (min-height: 640px) {
+@media (min-width: 768px) and (min-height: 780px) {
   [data-scene='reviews'] [data-review-card] {
     width: calc((100% - 2.75rem) / 2);
   }
 }
-@media (min-width: 1024px) and (min-height: 680px) {
+@media (min-width: 960px) and (min-height: 700px) {
+  [data-scene='reviews'] [data-review-card] {
+    width: calc((100% - 2.75rem) / 2);
+  }
+}
+@media (min-width: 1280px) and (min-height: 720px) {
   [data-scene='reviews'] [data-review-card] {
     width: calc((100% - 3.75rem) / 3);
   }
