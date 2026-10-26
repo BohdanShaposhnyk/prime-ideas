@@ -8,6 +8,7 @@ import gameRoom from '../assets/showcase/gameroom-dim.webp'
 import guestRoom from '../assets/showcase/guest-room-3-ls.webp'
 import loungeHall from '../assets/showcase/lounge-2.webp'
 import mic from '../assets/showcase/mic.webp'
+import prices from '../assets/prices.webp'
 import { BookNightButton } from '../components/book-night'
 import { TypeScrim } from '../components/type-scrim'
 import { FilmGrain } from '../components/grain'
@@ -18,7 +19,7 @@ import { showcaseMinHeight } from './showcase-span'
 
 /**
  * Zones. The main list of services, one card per stop:
- * play zone, sim racing, bar, karaoke, private room, cinema hall, hookah.
+ * play zone, sim racing, bar, karaoke, private room, cinema hall, hookah, PC prices.
  */
 
 const HOLD_W = 1
@@ -75,6 +76,13 @@ const CARDS = [
     line: 'Its own lounge, clear of the other rooms.',
     alt: 'Hookah',
     src: hookahPurple,
+  },
+  {
+    id: 'prices',
+    word: 'PRICES',
+    line: 'From 19 zł an hour. 10 zł an hour in a package.',
+    alt: 'PC prices, 19 zł an hour or 10 zł in a package',
+    src: prices,
   },
 ] as const
 
@@ -228,7 +236,7 @@ export default function SceneShowcase() {
         <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
 
         <h2 id="cs-showcase-title" className="sr-only">
-          Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah.
+          Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah. PC prices.
         </h2>
         <div className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
           <TypeScrim />
