@@ -19,6 +19,8 @@ The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `style
 
 Zones (`src/site/sections/scene-showcase.tsx`) is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The nav label is Zones.
 
+Reviews (`src/site/sections/scene-reviews.tsx`) is the Google review strip after the locations cube. The nav label is Reviews.
+
 The night carousel stays in `src/site/sections/scene-overview` and is commented out of `src/site/index.tsx`. The locations accordion stays in `src/site/sections/scene-locations` and is commented out of `src/site/index.tsx`. Addresses in the nav opens `src/site/sections/scene-locations-cube`. Franchise is a mailto in the basement. The full scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.
 
 ## Commands
