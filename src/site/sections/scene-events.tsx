@@ -3,6 +3,8 @@ import DotField from '@/site/bits/DotField'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
 import { BookNightButton } from '../components/book-night'
 import { GoldWord } from '../components/gold-word'
+import { usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { useSnapInView } from '../hooks/snap-in-view'
 import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 import crowd from '../assets/event-cs6/carousel/crowd.webp'
@@ -39,16 +41,18 @@ const ENTER_AT = 0.6
 
 export default function SceneEvents() {
   const ref = useRef<HTMLElement>(null)
+  const reduced = usePrefersReducedMotion()
   const live = useSnapInView(ref, { threshold: ENTER_AT })
+  useSceneParallax(ref, !reduced)
 
   return (
     <section
       ref={ref}
       aria-labelledby="cs-events-title"
       data-scene="events"
-      className="cs-scene relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      className="cs-scene cs-px relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+      <div aria-hidden className="cs-px-ground pointer-events-none absolute inset-0 -z-10">
         <DotField
           className="size-full"
           gradientFrom="rgba(207, 181, 59, 0.8)"
@@ -56,13 +60,14 @@ export default function SceneEvents() {
           glowColor="rgba(207, 181, 59, 0.45)"
         />
       </div>
-      <header className="shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
+      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-events-title" className={lockupClass}>
           <GoldWord>Prime</GoldWord> night
         </h2>
         <p className={`${lockupToSupportClass} ${supportClass}`}>Tournaments, parties, and match nights.</p>
       </header>
-      <div className="relative min-h-0 flex-1">
+      <div className="cs-px-plane relative z-10 min-h-0 flex-1">
         {live ? (
           <FlexCarousel
             items={PHOTOS}
@@ -84,7 +89,7 @@ export default function SceneEvents() {
           />
         ) : null}
       </div>
-      <div className="shrink-0 px-5 pt-2 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-[max(calc(var(--cs-h,100svh)*0.12),env(safe-area-inset-bottom))]">
+      <div className="cs-px-copy relative z-20 shrink-0 px-5 pt-2 pb-[max(2.5rem,env(safe-area-inset-bottom))] text-center sm:px-8 sm:pb-[max(calc(var(--cs-h,100svh)*0.12),env(safe-area-inset-bottom))]">
         <BookNightButton />
       </div>
     </section>

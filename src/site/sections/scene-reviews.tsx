@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
 import { ExperiencePartners } from './experience-partners'
 import { mapsHref, SEO_VENUES } from '../lib/seo'
@@ -113,8 +114,10 @@ const controlClass =
   'grid size-9 cursor-pointer place-items-center rounded-full border border-white/15 text-[var(--cs-ice)] transition-colors hover:border-[var(--cs-gold)] hover:text-[var(--cs-gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] disabled:cursor-default disabled:opacity-30 disabled:hover:border-white/15 disabled:hover:text-[var(--cs-ice)]'
 
 export default function SceneReviews() {
+  const rootRef = useRef<HTMLElement>(null)
   const scrollerRef = useRef<HTMLUListElement>(null)
   const reduced = usePrefersReducedMotion()
+  useSceneParallax(rootRef, !reduced)
   const [edges, setEdges] = useState({ start: true, end: true })
 
   useEffect(() => {
@@ -149,11 +152,13 @@ export default function SceneReviews() {
 
   return (
     <section
+      ref={rootRef}
       aria-labelledby="cs-reviews-title"
       data-scene="reviews"
-      className="cs-scene relative flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
+      className="cs-scene cs-px relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
-      <header className="shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
+      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-reviews-title" className={lockupClass}>
           <GoldWord>Reviews</GoldWord>
         </h2>
@@ -162,6 +167,7 @@ export default function SceneReviews() {
         </p>
       </header>
 
+      <div className="cs-px-mid relative z-20 flex min-h-0 flex-col">
       <ul
         ref={scrollerRef}
         data-cs-x-pan=""
@@ -234,8 +240,9 @@ export default function SceneReviews() {
           </button>
         </div>
       ) : null}
+      </div>
 
-      <div className="mt-auto flex w-full shrink-0 flex-col items-center pt-2">
+      <div className="cs-px-ground relative z-10 mt-auto flex w-full shrink-0 flex-col items-center pt-2">
         <p className={kickerClass}>Our partners</p>
         <div className="mt-3 w-full">
           <ExperiencePartners />

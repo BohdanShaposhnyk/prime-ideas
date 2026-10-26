@@ -12,6 +12,8 @@ import prices from '../assets/prices.webp'
 import { BookNightButton } from '../components/book-night'
 import { TypeScrim } from '../components/type-scrim'
 import { FilmGrain } from '../components/grain'
+import { usePrefersReducedMotion } from '../hooks/media'
+import { useSceneParallax } from '../hooks/scene-parallax'
 import { clamp } from '../lib/math'
 import { prefersReducedMotion } from '../lib/motion'
 import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
@@ -119,6 +121,8 @@ export default function SceneShowcase() {
   const stickyRef = useRef<HTMLDivElement>(null)
   const drivenProgressRef = useRef(0)
   const [wordIndex, setWordIndex] = useState(0)
+  const reduced = usePrefersReducedMotion()
+  useSceneParallax(stickyRef, !reduced)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -215,8 +219,8 @@ export default function SceneShowcase() {
           style={{ top: `calc(${i} * var(--cs-card-pitch, calc(var(--cs-h, 100svh) * 0.8)))` }}
         />
       ))}
-      <div ref={stickyRef} className="cs-scene sticky top-0 overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      <div ref={stickyRef} className="cs-scene cs-px sticky top-0 isolate overflow-hidden">
+        <div className="cs-px-ground pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
           {CARDS.map((card, i) => (
             <div
               key={card.id}
@@ -234,11 +238,12 @@ export default function SceneShowcase() {
           <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--cs-pitch)_84%,transparent)]" />
         </div>
         <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
+        <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
 
         <h2 id="cs-showcase-title" className="sr-only">
           Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah. PC prices.
         </h2>
-        <div className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
+        <div className="cs-px-copy pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
           <TypeScrim />
           <div aria-live="polite">
             <p
@@ -259,7 +264,7 @@ export default function SceneShowcase() {
           </div>
         </div>
 
-        <div className="absolute inset-0 z-20">
+        <div className="cs-px-plane absolute inset-0 z-10">
           <InfiniteSpiral
             items={SPIRAL_ITEMS}
             drivenProgressRef={drivenProgressRef}

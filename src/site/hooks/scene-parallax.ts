@@ -11,7 +11,7 @@ function shape(raw: number) {
  * scene rises into the port, and `--cs-out` while it leaves. Same curve as
  * the hero scroll-out.
  */
-export function useSceneParallax(rootRef: RefObject<HTMLElement | null>, enabled: boolean) {
+export function useSceneParallax<T extends HTMLElement>(rootRef: RefObject<T | null>, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return
     const root = rootRef.current

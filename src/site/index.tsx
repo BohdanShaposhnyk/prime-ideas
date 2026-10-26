@@ -22,6 +22,7 @@ const SceneEvents = lazy(() => import('./sections/scene-events'))
 // const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneLocationsCube = lazy(() => import('./sections/scene-locations-cube'))
 const SceneReviews = lazy(() => import('./sections/scene-reviews'))
+const SceneQuestions = lazy(() => import('./sections/scene-questions'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
 // Parked. Franchise is a mailto in the basement until this scene comes back.
 // const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
@@ -34,6 +35,7 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
   // { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
   { key: 'locations-cube', id: 'cs-nav-addresses', node: <SceneLocationsCube /> },
   { key: 'reviews', id: 'cs-nav-reviews', node: <SceneReviews /> },
+  { key: 'questions', id: 'cs-nav-questions', node: <SceneQuestions /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'app', id: 'cs-nav-app', node: <SceneApp /> },
   // { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
@@ -87,6 +89,7 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
  * Zones is the services list in scene-showcase: play zone through hookah.
  * The night carousel, the locations accordion, and the franchise scene stay commented out above.
  * Addresses in the nav opens the locations cube. Reviews in the nav opens the strip that follows it.
+ * Questions in the nav opens the list after reviews.
  * Franchise is a mailto in the basement.
  * Split-hold pin / pane recut live later in motion/.
  */
