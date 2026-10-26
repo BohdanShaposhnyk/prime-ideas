@@ -35,7 +35,7 @@ export function BookNightButton({
       >
         {children}
       </StarBorder>
-      <p className="mt-1.5 w-0 min-w-full text-balance text-center font-[family-name:var(--cs-body)] text-[0.62rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_8px_rgba(0,0,0,0.65)]">
+      <p className="mt-1.5 w-0 min-w-full text-balance text-center font-[family-name:var(--cs-body)] text-[0.75rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_8px_rgba(0,0,0,0.65)]">
         Use code <span className="text-[var(--cs-gold)]">“PRIME”</span> to activate your account and get more
       </p>
     </span>
