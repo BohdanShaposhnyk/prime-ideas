@@ -29,10 +29,10 @@ const SceneBasement = lazy(() => import('./sections/scene-basement'))
 const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', id: 'cs-nav-experience', node: <SceneExperienceV2 /> },
   // { key: 'overview', id: 'cs-nav-night', node: <SceneOverview /> },
-  { key: 'screen', node: <SceneScreen /> },
   { key: 'events', node: <SceneEvents /> },
   // { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
   { key: 'locations-cube', id: 'cs-nav-addresses', node: <SceneLocationsCube /> },
+  { key: 'screen', node: <SceneScreen /> },
   { key: 'app', id: 'cs-nav-app', node: <SceneApp /> },
   // { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
   { key: 'basement', id: 'cs-nav-contact', node: <SceneBasement /> },
@@ -44,7 +44,7 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
  * One-screen scenes use scroll-snap-stop: always. Showcase cards are shorter stops.
  * Touch eases to one stop in either direction. Mouse and trackpad stay on CSS snap.
  * Showcase follows the hero and stays mounted, so its card stops exist before the
- * first flick. The night carousel is parked, so experience snaps straight to screen.
+ * first flick. The night carousel is parked, so experience snaps straight to events.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()

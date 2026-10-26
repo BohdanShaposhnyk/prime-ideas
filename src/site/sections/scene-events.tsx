@@ -69,6 +69,7 @@ export default function SceneEvents() {
             fit="portrait"
             intro="spin"
             autoplay
+            focusOnClick={false}
             liquid={0.84}
             reach={0.37}
             radius={10}
