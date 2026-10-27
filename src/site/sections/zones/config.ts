@@ -6,7 +6,7 @@ import gameRoom from '../../assets/showcase/gameroom-dim.webp'
 import guestRoom from '../../assets/showcase/guest-room-3-ls.webp'
 import loungeHall from '../../assets/showcase/lounge-2.webp'
 import mic from '../../assets/showcase/mic.webp'
-import { showcaseMinHeight } from './span'
+import { zonesMinHeight } from './span'
 
 /**
  * Zones. The main list of services, one card per stop:
@@ -77,7 +77,7 @@ export const CARDS = [
   },
 ] as const
 
-export const SHOWCASE_MIN_HEIGHT = showcaseMinHeight(CARDS.length)
+export const ZONES_MIN_HEIGHT = zonesMinHeight(CARDS.length)
 
 export const SPIRAL_ITEMS = CARDS.map(({ id, src, alt, word }) => ({
   id,

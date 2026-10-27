@@ -30,12 +30,16 @@ pnpm assets
 
 ## Page
 
-Snap scenes: hero, zones, experience, events, locations, reviews, screen, app, basement.
+Snap scenes: hero, zones, offers, events, locations, reviews, atmosphere, app, basement.
 
-Zones (`src/site/sections/scene-showcase.tsx`) is the main list of services: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The header and footer label it Zones.
+Zones (`src/site/sections/zones`) is the main list of services: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The header and footer label it Zones.
 
-Reviews (`src/site/sections/scene-reviews.tsx`) is the Google review strip after the locations cube. The header and footer label it Reviews.
+Offers (`src/site/sections/offers.tsx`) is the welcome and birthday split. The header and footer label it Offers.
 
-The night carousel stays in `src/site/sections/scene-overview` and is commented out of `src/site/index.tsx`. The header link to it is commented out with the scene.
+Addresses in the header and footer opens locations (`src/site/sections/locations`).
 
-Franchise is a mailto in the basement (`franchise@premiumlounge.club`), styled like the events gallery link. The full franchise scene stays in `src/site/sections/scene-franchise-v2.tsx` and is commented out of `src/site/index.tsx`.
+Atmosphere (`src/site/sections/atmosphere`) is the masonry after questions.
+
+Reviews (`src/site/sections/scene-reviews`) is the Google review strip after locations. The header and footer label it Reviews.
+
+Franchise is a mailto in the basement (`franchise@premiumlounge.club`).

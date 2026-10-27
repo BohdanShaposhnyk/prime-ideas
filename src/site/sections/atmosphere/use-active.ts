@@ -1,7 +1,7 @@
 import { useEffect, useState, type RefObject } from 'react'
 import { ACTIVE_TOP_MAX, ACTIVE_TOP_MIN } from './config'
 
-export function useScreenActive(sectionRef: RefObject<HTMLElement | null>) {
+export function useAtmosphereActive(sectionRef: RefObject<HTMLElement | null>) {
   const [active, setActive] = useState(false)
 
   useEffect(() => {

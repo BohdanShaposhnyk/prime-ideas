@@ -23,10 +23,10 @@ function measureStops(port: HTMLElement) {
   const topOf = (el: HTMLElement) =>
     Math.round(el.getBoundingClientRect().top - portTop + scrollTop)
   const scenes = [...port.querySelectorAll<HTMLElement>('[data-scene]')].filter(
-    (el) => !(el.dataset.scene === 'showcase' && el.querySelector('[data-showcase-stop]')),
+    (el) => !(el.dataset.scene === 'zones' && el.querySelector('[data-zones-stop]')),
   )
-  const showcase = [...port.querySelectorAll<HTMLElement>('[data-showcase-stop]')]
-  const tops = [...scenes, ...showcase].map(topOf).toSorted((a, b) => a - b)
+  const zones = [...port.querySelectorAll<HTMLElement>('[data-zones-stop]')]
+  const tops = [...scenes, ...zones].map(topOf).toSorted((a, b) => a - b)
   return tops.filter((top, index) => index === 0 || top - tops[index - 1] > 8)
 }
 

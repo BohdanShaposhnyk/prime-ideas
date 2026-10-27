@@ -5,12 +5,12 @@ import { TypeScrim } from '../../components/type-scrim'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { useSceneParallax } from '../../hooks/scene-parallax'
 import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../../lib/palette'
-import { CARDS, SHOWCASE_MIN_HEIGHT, SPIRAL, SPIRAL_ITEMS } from './config'
-import { useShowcaseMotion } from './use-showcase-motion'
+import { CARDS, ZONES_MIN_HEIGHT, SPIRAL, SPIRAL_ITEMS } from './config'
+import { useZonesMotion } from './use-zones-motion'
 
-export default function SceneShowcase() {
+export default function Zones() {
   const reduced = usePrefersReducedMotion()
-  const { sectionRef, stickyRef, drivenProgressRef, wordIndex } = useShowcaseMotion()
+  const { sectionRef, stickyRef, drivenProgressRef, wordIndex } = useZonesMotion()
   useSceneParallax(stickyRef, !reduced)
   const card = CARDS[wordIndex]
 
@@ -18,16 +18,16 @@ export default function SceneShowcase() {
     <section
       ref={sectionRef}
       id="cs-nav-zones"
-      aria-labelledby="cs-showcase-title"
-      data-scene="showcase"
-      data-scroll="showcase-spiral"
+      aria-labelledby="cs-zones-title"
+      data-scene="zones"
+      data-scroll="zones-spiral"
       className="relative bg-[var(--cs-pitch)]"
-      style={{ height: SHOWCASE_MIN_HEIGHT }}
+      style={{ height: ZONES_MIN_HEIGHT }}
     >
       {CARDS.map((item, i) => (
         <div
           key={item.id}
-          data-showcase-stop=""
+          data-zones-stop=""
           aria-hidden
           className="pointer-events-none absolute inset-x-0 h-px"
           style={{ top: `calc(${i} * var(--cs-card-pitch, calc(var(--cs-h, 100svh) * 0.8)))` }}
@@ -54,7 +54,7 @@ export default function SceneShowcase() {
         <FilmGrain className="pointer-events-none absolute inset-0 z-[1] mix-blend-soft-light opacity-[0.14]" />
         <div aria-hidden className={sceneVeilClass} />
 
-        <h2 id="cs-showcase-title" className="sr-only">
+        <h2 id="cs-zones-title" className="sr-only">
           Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah. PC prices.
         </h2>
         <div className="cs-px-copy pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">

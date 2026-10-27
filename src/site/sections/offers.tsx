@@ -55,10 +55,10 @@ const glassClass = 'bg-[color-mix(in_srgb,#07060C_62%,transparent)]'
 const glassContentClass =
   'h-full min-h-0 justify-start !overflow-hidden sm:justify-center'
 
-function ExperienceCopy() {
+function OffersCopy() {
   return (
     <div className="cs-px-copy relative z-20 flex min-w-0 flex-col justify-start pt-[var(--cs-header-h)] pb-10 pl-5 pr-5 sm:pl-8 sm:pr-8 md:h-full md:min-h-0 md:pb-8 md:pr-6 lg:pl-12 lg:pr-10">
-      <h2 id="cs-experience-offers-title" className={lockupClass}>
+      <h2 id="cs-offers-title" className={lockupClass}>
         <span className="block">
           <GoldWord>Prime</GoldWord>
         </span>
@@ -141,7 +141,7 @@ function OfferCard({
   )
 }
 
-export default function SceneExperienceV2() {
+export default function Offers() {
   const reduced = usePrefersReducedMotion()
   const [rootRef, seen] = useInView<HTMLElement>({ once: true, threshold: 0.45 })
   useSceneParallax(rootRef, !reduced)
@@ -150,8 +150,8 @@ export default function SceneExperienceV2() {
   return (
     <section
       ref={rootRef}
-      aria-labelledby="cs-experience-offers-title"
-      data-scene="experience-offers"
+      aria-labelledby="cs-offers-title"
+      data-scene="offers"
       className="cs-scene cs-px relative isolate overflow-hidden text-[var(--cs-ice)]"
       style={{ backgroundColor: SLAT_BG }}
     >
@@ -173,7 +173,7 @@ export default function SceneExperienceV2() {
       <div aria-hidden className={sceneVeilClass} />
       <div className="relative z-20 flex h-full min-h-0 flex-col">
         <div className="relative flex min-h-0 flex-1 flex-col md:grid md:grid-cols-2">
-          <ExperienceCopy />
+          <OffersCopy />
           <ul className="cs-px-mid relative flex shrink-0 flex-row gap-2 px-5 pb-2 sm:gap-3 sm:px-8 sm:pb-3 md:h-full md:min-h-0 md:flex-col md:gap-4 md:pt-[var(--cs-header-h)] md:pr-8 md:pb-3 md:pl-6 lg:pr-12 lg:pb-4 lg:pl-8">
             {OFFERS.map((offer) => (
               <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">

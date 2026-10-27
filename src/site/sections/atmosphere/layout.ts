@@ -55,7 +55,7 @@ const STILLS: Record<string, { src: string; objectPosition?: string }> = {
   outside: { src: outsideStill },
 }
 
-export type ScreenTile = {
+export type AtmosphereTile = {
   id: string
   column: 0 | 1 | 2
   height: number
@@ -64,10 +64,10 @@ export type ScreenTile = {
   isLockup: boolean
 }
 
-export type ScreenLayout = {
+export type AtmosphereLayout = {
   colFracs: number[]
   captionDelay: number
-  tiles: ScreenTile[]
+  tiles: AtmosphereTile[]
 }
 
 function splitHeights(parts: number[], total: number) {
@@ -106,7 +106,7 @@ function tileHeights(
   return new Map(columns.flatMap(col => columnHeights(col, stageH, lockupH)))
 }
 
-export function screenLayout(stage: { w: number; h: number }): ScreenLayout | null {
+export function atmosphereLayout(stage: { w: number; h: number }): AtmosphereLayout | null {
   if (stage.w <= 0 || stage.h <= 0) return null
   const compact = stage.w < COMPACT_MAX
   const tiles = compact ? TILES_COMPACT : TILES_DESKTOP

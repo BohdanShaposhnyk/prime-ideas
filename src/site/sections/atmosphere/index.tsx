@@ -2,19 +2,19 @@ import { useMemo, useRef } from 'react'
 import Masonry from '@/site/bits/Masonry'
 import { useCoarsePointer, usePrefersReducedMotion } from '../../hooks/media'
 import { Lockup } from './lockup'
-import { GAP, MASONRY_DURATION, MASONRY_STAGGER, screenLayout } from './layout'
-import { useScreenActive } from './use-active'
+import { GAP, MASONRY_DURATION, MASONRY_STAGGER, atmosphereLayout } from './layout'
+import { useAtmosphereActive } from './use-active'
 import { useStageSize } from './use-stage'
 
-export default function SceneScreen() {
+export default function Atmosphere() {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const stage = useStageSize(stageRef)
-  const active = useScreenActive(sectionRef)
+  const active = useAtmosphereActive(sectionRef)
   const coarse = useCoarsePointer()
   const reduced = usePrefersReducedMotion()
 
-  const layout = useMemo(() => screenLayout(stage), [stage])
+  const layout = useMemo(() => atmosphereLayout(stage), [stage])
   const items = useMemo(() => {
     if (!layout) return []
     return layout.tiles.map(tile => ({
@@ -32,9 +32,9 @@ export default function SceneScreen() {
   return (
     <section
       ref={sectionRef}
-      aria-labelledby="cs-screen-title"
-      data-scene="screen"
-      data-scroll="screen-masonry"
+      aria-labelledby="cs-atmosphere-title"
+      data-scene="atmosphere"
+      data-scroll="atmosphere-masonry"
       data-masonry-active={active ? '1' : '0'}
       className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"
     >

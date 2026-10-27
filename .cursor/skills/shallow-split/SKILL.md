@@ -22,7 +22,7 @@ foo/
   layout.ts     existing geometry or data module, if this file owns it
 ```
 
-Match `src/site/sections/hero` and `src/site/sections/scene-screen`. Add a file only when it has a single job. Leave a short map or JSX prop list in `index.tsx`.
+Match `src/site/sections/hero` and `src/site/sections/atmosphere`. Add a file only when it has a single job. Leave a short map or JSX prop list in `index.tsx`.
 
 ## Steps
 

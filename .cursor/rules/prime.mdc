@@ -17,13 +17,17 @@ The Prime Warsaw landing page: gaming, cinema, karaoke, hookah, and bar. Brand: 
 
 The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets` live in `assets-src`.
 
-Zones (`src/site/sections/scene-showcase`) is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The nav label is Zones.
+Zones (`src/site/sections/zones`) is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The nav label is Zones.
 
-Reviews (`src/site/sections/scene-reviews`) is the Google review strip after the locations cube. The nav label is Reviews.
+Offers (`src/site/sections/offers.tsx`) is the welcome and birthday split. The nav label is Offers.
+
+Reviews (`src/site/sections/scene-reviews`) is the Google review strip after locations. The nav label is Reviews.
 
 Questions (`src/site/sections/scene-questions.tsx`) is the Q&A list after reviews. The nav label is Questions.
 
-Addresses in the nav opens `src/site/sections/scene-locations-cube`. Franchise is a mailto in the basement.
+Addresses in the nav opens `src/site/sections/locations`. Atmosphere (`src/site/sections/atmosphere`) is the masonry after questions.
+
+Franchise is a mailto in the basement.
 
 ## Commands
 

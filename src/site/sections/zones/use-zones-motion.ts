@@ -29,7 +29,7 @@ function motionAt(t: number) {
  * on the scroll event. The word waits one frame: it is React state, and the
  * stills fade on CSS, so it does not need to land in the same turn.
  */
-export function useShowcaseMotion() {
+export function useZonesMotion() {
   const sectionRef = useRef<HTMLElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
   const drivenProgressRef = useRef(0)

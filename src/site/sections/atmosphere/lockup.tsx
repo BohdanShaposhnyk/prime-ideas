@@ -27,7 +27,7 @@ export function Lockup({ play, delay, coarse, reduced }: LockupProps) {
         aria-hidden
       />
       <h2
-        id="cs-screen-title"
+        id="cs-atmosphere-title"
         data-copy="caption"
         aria-label="Your night. Your PRIME"
         className="relative z-10 flex max-w-[92%] flex-col items-center"
