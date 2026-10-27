@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
-import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
+import { kickerClass, lockupClass, lockupToSupportClass } from '../lib/palette'
 import { ExperiencePartners } from './experience-partners'
 import { mapsHref, SEO_VENUES } from '../lib/seo'
 
@@ -74,24 +74,100 @@ function googleHref(venueId: (typeof REVIEWS)[number]['venue']) {
 
 const CARD_GAP = 12
 
+/** Collective Google score for Mennica, Mokotów, and Wrocław. */
+const GOOGLE_RATING = 4.8
+
+const STAR_PATH =
+  'M10 1.4 12.35 6.7l5.75.5-4.35 3.75 1.35 5.55L10 13.85 4.9 16.5l1.35-5.55L1.9 7.2l5.75-.5z'
+
 function initials(name: string) {
   const parts = name.split(/\s+/).filter((part) => part !== '“Cesare”')
   const letters = parts.slice(0, 2).map((part) => part[0] ?? '')
   return letters.join('').toUpperCase()
 }
 
+function StarGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" className={className} aria-hidden>
+      <path fill="currentColor" d={STAR_PATH} />
+    </svg>
+  )
+}
+
 function Stars() {
   return (
     <span className="inline-flex gap-0.5 text-[var(--cs-gold)]" aria-hidden>
       {Array.from({ length: 5 }, (_, index) => (
-        <svg key={index} viewBox="0 0 20 20" className="size-3.5">
-          <path
-            fill="currentColor"
-            d="M10 1.4 12.35 6.7l5.75.5-4.35 3.75 1.35 5.55L10 13.85 4.9 16.5l1.35-5.55L1.9 7.2l5.75-.5z"
-          />
-        </svg>
+        <StarGlyph key={index} className="size-3.5" />
       ))}
     </span>
+  )
+}
+
+/** Gold stars with a clipped last point, so 4.8 reads as four full and one partial. */
+function RatingStars({ value }: { value: number }) {
+  return (
+    <span className="inline-flex gap-0.5" aria-hidden>
+      {Array.from({ length: 5 }, (_, index) => {
+        const fill = Math.max(0, Math.min(1, value - index))
+        return (
+          <span key={index} className="relative size-3.5">
+            <StarGlyph className="absolute inset-0 size-full text-white/20" />
+            <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
+              <StarGlyph className="absolute top-0 left-0 size-3.5 max-w-none text-[var(--cs-gold)]" />
+            </span>
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
+function GoogleMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className={className}>
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+      />
+    </svg>
+  )
+}
+
+function GoogleRating() {
+  return (
+    <p className={`${lockupToSupportClass} mx-auto flex w-fit items-center gap-3 rounded-[1.15rem] border border-white/10 bg-[var(--cs-well)] py-2.5 pr-4 pl-2.5 sm:gap-3.5 sm:py-3 sm:pr-5 sm:pl-3`}>
+      <span className="sr-only">
+        Rated {GOOGLE_RATING} out of 5 on Google, from more than 2,000 reviews across three lounges.
+      </span>
+      <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-black sm:size-11">
+        <GoogleMark className="size-6 sm:size-[1.65rem]" />
+      </span>
+      <span aria-hidden className="h-8 w-px shrink-0 bg-[var(--cs-gold)]/45" />
+      <span aria-hidden className="text-left">
+        <span className="flex items-center gap-2">
+          <span className="font-[family-name:var(--cs-display)] text-[2.15rem] leading-none tracking-[0.02em] text-[var(--cs-ice)]">
+            {GOOGLE_RATING}
+          </span>
+          <RatingStars value={GOOGLE_RATING} />
+        </span>
+        <span className="mt-1 block font-[family-name:var(--cs-body)] text-[0.75rem] leading-tight text-[var(--cs-caption)]">
+          2,000+ reviews across three lounges
+        </span>
+      </span>
+    </p>
   )
 }
 
@@ -162,9 +238,7 @@ export default function SceneReviews() {
         <h2 id="cs-reviews-title" className={lockupClass}>
           <GoldWord>Reviews</GoldWord>
         </h2>
-        <p className={`${lockupToSupportClass} mx-auto max-w-[26rem] ${supportClass}`}>
-          What people say after a night here.
-        </p>
+        <GoogleRating />
       </header>
 
       <div className="cs-px-mid relative z-20 flex min-h-0 flex-col">
