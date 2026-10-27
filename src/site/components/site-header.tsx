@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from 'react'
 import { usePrefersReducedMotion } from '../hooks/media'
-import { PAGE_LINKS } from '../lib/nav'
+import { PAGE_LINKS, scrollSnapPortTo } from '../lib/nav'
 import { HeroMark } from '../sections/hero/mark'
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -53,11 +53,9 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
 
   const scrollToId = (id: string) => {
     const port = portRef.current
-    const el = document.getElementById(id)
-    if (!port || !el) return
+    if (!port) return
     setOpen(false)
-    const top = el.getBoundingClientRect().top - port.getBoundingClientRect().top + port.scrollTop
-    port.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' })
+    scrollSnapPortTo(port, id, reduced)
   }
 
   const tucked = hidden && !open

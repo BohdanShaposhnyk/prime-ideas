@@ -1,4 +1,5 @@
 import { useEffect, useRef, type HTMLAttributes } from 'react'
+import { clamp } from '@/site/lib/math'
 import { prefersReducedMotion } from '@/site/lib/motion'
 
 export type GalaxyDirection = 'forward' | 'backward'
@@ -272,8 +273,6 @@ void main() {
     outColor = vec4(mix(uBackground, col, uOpacity), 1.0);
   }
 }`
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 const keyOf = (palette: boolean, repel: boolean, warp: boolean) =>
   (palette ? 4 : 0) + (repel ? 2 : 0) + (warp ? 1 : 0)

@@ -6,7 +6,7 @@ import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { useSnapInView } from '../hooks/snap-in-view'
-import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../lib/palette'
 import crowd from '../assets/event-cs6/carousel/crowd.webp'
 import crowd2 from '../assets/event-cs6/carousel/crowd-2.webp'
 import dj from '../assets/event-cs6/carousel/dj.webp'
@@ -39,6 +39,19 @@ const PHOTOS: FlexCarouselItem[] = [
 /** Gallery exists only while the scene owns the port, so the intro restarts on each visit. */
 const ENTER_AT = 0.6
 
+const NIGHT_CAROUSEL = {
+  fit: 'portrait',
+  intro: 'spin',
+  liquid: 0.84,
+  reach: 0.37,
+  radius: 10,
+  squeeze: 0.35,
+  dispersion: 1.76,
+  bend: 0.08,
+  gap: 57,
+  tilt: 126,
+} as const
+
 export default function SceneEvents() {
   const ref = useRef<HTMLElement>(null)
   const reduced = usePrefersReducedMotion()
@@ -60,7 +73,7 @@ export default function SceneEvents() {
           glowColor="rgba(207, 181, 59, 0.45)"
         />
       </div>
-      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <div aria-hidden className={sceneVeilClass} />
       <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-events-title" className={lockupClass}>
           <GoldWord>Prime</GoldWord> night
@@ -71,18 +84,9 @@ export default function SceneEvents() {
         {live ? (
           <FlexCarousel
             items={PHOTOS}
-            fit="portrait"
-            intro="spin"
+            {...NIGHT_CAROUSEL}
             autoplay
             focusOnClick={false}
-            liquid={0.84}
-            reach={0.37}
-            radius={10}
-            squeeze={0.35}
-            dispersion={1.76}
-            bend={0.08}
-            gap={57}
-            tilt={126}
             captions={false}
             captureWheel={false}
             className="absolute inset-0"

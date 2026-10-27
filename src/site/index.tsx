@@ -14,31 +14,22 @@ import { cssTokens } from './lib/palette'
 import { bindTouchSnap } from './lib/touch-snap'
 
 const SceneExperienceV2 = lazy(() => import('./sections/scene-experience-v2'))
-// Parked. The night carousel stays in scene-overview until it comes back.
-// const SceneOverview = lazy(() => import('./sections/scene-overview'))
 const SceneScreen = lazy(() => import('./sections/scene-screen'))
 const SceneEvents = lazy(() => import('./sections/scene-events'))
-// Parked. The accordion stays in scene-locations until it comes back.
-// const SceneLocations = lazy(() => import('./sections/scene-locations'))
 const SceneLocationsCube = lazy(() => import('./sections/scene-locations-cube'))
 const SceneReviews = lazy(() => import('./sections/scene-reviews'))
 const SceneQuestions = lazy(() => import('./sections/scene-questions'))
 const SceneApp = lazy(() => import('./sections/scene-app'))
-// Parked. Franchise is a mailto in the basement until this scene comes back.
-// const SceneFranchiseV2 = lazy(() => import('./sections/scene-franchise-v2'))
 const SceneBasement = lazy(() => import('./sections/scene-basement'))
 
 const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[] = [
   { key: 'experience', id: 'cs-nav-experience', node: <SceneExperienceV2 /> },
-  // { key: 'overview', id: 'cs-nav-night', node: <SceneOverview /> },
   { key: 'events', node: <SceneEvents /> },
-  // { key: 'locations', id: 'cs-nav-addresses', node: <SceneLocations /> },
   { key: 'locations-cube', id: 'cs-nav-addresses', node: <SceneLocationsCube /> },
   { key: 'reviews', id: 'cs-nav-reviews', node: <SceneReviews /> },
   { key: 'questions', id: 'cs-nav-questions', node: <SceneQuestions /> },
   { key: 'screen', node: <SceneScreen /> },
   { key: 'app', id: 'cs-nav-app', node: <SceneApp /> },
-  // { key: 'franchise', id: 'cs-nav-franchise', node: <SceneFranchiseV2 /> },
   { key: 'basement', id: 'cs-nav-contact', node: <SceneBasement /> },
 ]
 
@@ -48,7 +39,7 @@ const scenes: { key: string; id?: string; minHeight?: string; node: ReactNode }[
  * One-screen scenes use scroll-snap-stop: always. Showcase cards are shorter stops.
  * Touch eases to one stop in either direction. Mouse and trackpad stay on CSS snap.
  * Showcase follows the hero and stays mounted, so its card stops exist before the
- * first flick. The night carousel is parked, so experience snaps straight to events.
+ * first flick. Experience snaps straight to events.
  */
 function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
   const reduced = usePrefersReducedMotion()
@@ -87,7 +78,6 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
 /**
  * Charge Split — 50/50 charge cell, book lockup, zones list, experience split, screen masonry.
  * Zones is the services list in scene-showcase: play zone through hookah.
- * The night carousel, the locations accordion, and the franchise scene stay commented out above.
  * Addresses in the nav opens the locations cube. Reviews in the nav opens the strip that follows it.
  * Questions in the nav opens the list after reviews.
  * Franchise is a mailto in the basement.

@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { clamp } from '@/site/lib/math';
 import { prefersReducedMotion } from '@/site/lib/motion';
 
 export interface CarouselItem {
@@ -61,7 +62,6 @@ type Engine = {
 const STIFFNESS = 150;
 const DAMPING = 24;
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const wrap = (value: number, count: number) => ((value % count) + count) % count;
 const nearest = (offset: number, count: number) => wrap(offset + count / 2, count) - count / 2;
 

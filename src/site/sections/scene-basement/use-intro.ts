@@ -1,11 +1,12 @@
 import { useEffect, useState, type RefObject } from 'react'
+import { usePrefersReducedMotion } from '../../hooks/media'
 import { gsap, useGSAP } from '@/site/lib/gsap'
-import { usePrefersReducedMotion } from '../hooks/media'
 
 const VEIL_S = 0.85
 const STAY_AT = 0.5
 const FOLD_S = 0.3
 const FOLD_STAGGER = 0.06
+/** Stay and prime mount on the same beat. The CTA is the step that waits. */
 const PRIME_AT = STAY_AT
 
 /** Lockup word. Character count times the fold stagger is when the word has landed. */
@@ -22,10 +23,10 @@ export const stayFold = {
 
 /**
  * Basement intro.
- * `veil` — entry veil fades out.
- * `stay` — one second after enter, FoldText mounts and unfolds.
- * `prime` — ParticleText mounts only after STAY has finished, and unmounts on leave.
+ * `veil` — entry veil fades out from the start.
+ * `stay` and `prime` — FoldText and ParticleText mount together at half a second.
  * `cta` — Book a night fades in once STAY's fold has landed.
+ * Prime unmounts with stay when the floor leaves the port.
  */
 export function useBasementIntro(
   sectionRef: RefObject<HTMLElement | null>,

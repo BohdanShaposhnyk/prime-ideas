@@ -6,9 +6,6 @@ export const palette = {
   caption: '#A9BBE0',
   pitch: '#000000',
   gold: '#CFB53B',
-  goldInk: '#3a3420',
-  blue: '#0A2478',
-  navy: '#071A52',
   void: '#0C0E14',
   well: '#161A24',
 } as const
@@ -26,12 +23,9 @@ export const displayLeading = 0.82
 
 export const cssTokens = {
   '--cs-pitch': palette.pitch,
-  '--cs-blue': palette.blue,
-  '--cs-navy': palette.navy,
   '--cs-ice': palette.ice,
   '--cs-caption': palette.caption,
   '--cs-gold': palette.gold,
-  '--cs-gold-ink': palette.goldInk,
   '--cs-void': palette.void,
   '--cs-well': palette.well,
   '--cs-display': '"Bebas Neue", sans-serif',
@@ -53,14 +47,11 @@ export function hexToRgb(hex: string): [number, number, number] {
   return [parseInt(match[1], 16) / 255, parseInt(match[2], 16) / 255, parseInt(match[3], 16) / 255]
 }
 
-export const specularInk = {
-  textColor: palette.ice,
-  lineColor: palette.gold,
-  baseColor: palette.goldInk,
-} as const
-
 export const kickerClass =
   'font-[family-name:var(--cs-body)] text-[length:var(--cs-text-kicker)] tracking-[0.14em] text-[var(--cs-caption)] uppercase sm:tracking-[var(--cs-track-micro)]'
+
+/** Dim veil over a parallax scene. Opacity comes from `--cs-in` and `--cs-out`. */
+export const sceneVeilClass = 'cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black'
 
 /** Scene lockup. Phone floor is 4rem so the line box clears the CTA pill; from ~711px the 9vw term takes over and hits the 5.4rem ceiling near 960px. */
 export const lockupClass =

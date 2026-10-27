@@ -5,7 +5,7 @@ import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockup from '../assets/senet-mockup.webp'
 import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
-import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../lib/palette'
 
 const APP_STORE =
   'https://apps.apple.com/app/senet-id/id6748773918'
@@ -110,7 +110,7 @@ export default function SceneApp() {
         />
       </div>
 
-      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <div aria-hidden className={sceneVeilClass} />
 
       {/* Desktop — phone on the right, bottom third past the scene edge */}
       <div className="relative mx-auto hidden h-full w-full max-w-[88rem] md:block">

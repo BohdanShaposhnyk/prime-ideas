@@ -151,9 +151,6 @@ html.cs-snap-root body {
   [data-scene='app'] .cs-px-plane {
     --cs-px-origin: 84% 8%;
   }
-  [data-scene='franchise-v2'] .cs-px-plane {
-    --cs-px-origin: 74% 22%;
-  }
 }
 .cs-px[data-cs-away] .cs-px-copy,
 .cs-px[data-cs-away] .cs-px-mid {
@@ -170,131 +167,6 @@ html.cs-snap-root body {
   .cs-px-veil {
     opacity: 0;
   }
-}
-
-/* Overview deck. Centering is a fixed `translate` on the card and does
-   not run. The plate's `translate` is only the slot offset, so iOS never
-   interpolates `-50%` together with a custom property — that, and
-   replacing `transition` as the move starts, is the first-frame twitch. */
-.cs-overview-card {
-  left: 50%;
-  top: 50%;
-  width: var(--cs-overview-side-w);
-  z-index: 6;
-  opacity: 0;
-  translate: -50% -50%;
-}
-.cs-overview-plate {
-  translate: var(--cs-overview-x, 0px) 0;
-}
-.cs-overview-stage[data-phase="tension"] .cs-overview-plate {
-  translate: calc(var(--cs-overview-x, 0px) - 1.45rem) 0;
-}
-.cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) {
-  transition:
-    width var(--cs-snap) var(--cs-roll-ease),
-    opacity 180ms linear;
-}
-.cs-overview-stage[data-ready="true"] .cs-overview-card:not([data-skip]) .cs-overview-plate {
-  transition: translate var(--cs-snap) var(--cs-roll-ease);
-}
-.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="-1"]:not([data-skip]),
-.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="0"]:not([data-skip]),
-.cs-overview-stage[data-ready="true"] .cs-overview-card[data-slot="1"]:not([data-skip]) {
-  transition-delay: 0s, 220ms;
-}
-.cs-overview-card[data-slot="0"] {
-  z-index: 20;
-  width: var(--cs-overview-center-w);
-  opacity: 1;
-  --cs-overview-x: 0px;
-}
-.cs-overview-card[data-slot="-1"] {
-  z-index: 12;
-  opacity: 1;
-  --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - var(--cs-overview-gap) - 0.5 * var(--cs-overview-side-w));
-}
-.cs-overview-card[data-slot="1"] {
-  z-index: 8;
-  opacity: 1;
-  --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + var(--cs-overview-gap) + 0.5 * var(--cs-overview-side-w));
-}
-.cs-overview-card[data-slot="-2"] {
-  --cs-overview-x: calc(-0.5 * var(--cs-overview-center-w) - 2 * var(--cs-overview-gap) - 1.5 * var(--cs-overview-side-w));
-}
-.cs-overview-card[data-slot="2"] {
-  --cs-overview-x: calc(0.5 * var(--cs-overview-center-w) + 2 * var(--cs-overview-gap) + 1.5 * var(--cs-overview-side-w));
-}
-.cs-overview-card[data-front] {
-  z-index: 30;
-}
-.cs-overview-card img {
-  filter: blur(2px);
-}
-.cs-overview-card[data-front] img {
-  filter: none;
-}
-.cs-overview-card[data-front] .cs-overview-plate {
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62);
-}
-.cs-overview-type {
-  animation: cs-overview-type 22s linear infinite;
-  animation-play-state: paused;
-}
-.cs-overview-live .cs-overview-type {
-  animation-play-state: running;
-}
-@keyframes cs-overview-type {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
-}
-.cs-overview-wash {
-  z-index: 0;
-  opacity: clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1);
-}
-.cs-overview-grain {
-  opacity: calc(0.14 * clamp(0, calc((var(--se-progress, 1) - 0.04) / 0.4), 1));
-}
-/* The front card punches a hole so the line reads behind it, never over it. */
-.cs-overview-type-wrap {
-  --cs-overview-hole-w: 0px;
-  --cs-overview-hole-h: 0px;
-  --cs-overview-hole-x: -9999px;
-  --cs-overview-hole-y: -9999px;
-  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
-  -webkit-mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
-  -webkit-mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-composite: xor;
-  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0);
-  mask-size: 100% 100%, var(--cs-overview-hole-w) var(--cs-overview-hole-h);
-  mask-position: 0 0, var(--cs-overview-hole-x) var(--cs-overview-hole-y);
-  mask-repeat: no-repeat;
-  mask-composite: exclude;
-}
-.cs-overview-bg {
-  opacity: 0;
-}
-.cs-overview-bg[data-active] {
-  opacity: 1;
-}
-.cs-overview-wash[data-ready="true"] .cs-overview-bg {
-  transition: opacity var(--cs-bg-fade, 820ms) ease;
-}
-.cs-overview-bg img {
-  transform: scale(1.12);
-}
-@media (prefers-reduced-motion: reduce) {
-  .cs-overview-stage[data-ready="true"] .cs-overview-card,
-  .cs-overview-stage[data-ready="true"] .cs-overview-plate,
-  .cs-overview-stage[data-ready="true"] .cs-overview-card img,
-  .cs-overview-wash[data-ready="true"] .cs-overview-bg {
-    transition: none;
-  }
-  .cs-overview-type { animation: none; }
-  .cs-overview-type-wrap { transition: none; }
-  .cs-overview-wash { opacity: 1; }
-  .cs-overview-grain { opacity: 0.14; }
 }
 
 /* Gold heading word. The sheen is a clipped gradient, not a JS loop, and
@@ -373,34 +245,6 @@ html.cs-snap-root body {
   .cs-gold-band.cs-gold-live {
     animation: none;
     background-image: none;
-  }
-}
-
-/* Proof words in the franchise wall. The box is the card turned −90°, matching the
-   photos, so each line runs along the long side and Bebas on the page can draw it. */
-[data-scene='franchise-v2'] .dw-label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: var(--dw-tile-h);
-  height: var(--dw-tile-w);
-  transform: translate(-50%, -50%) rotate(-90deg);
-  text-align: center;
-  font-family: var(--cs-display);
-  font-size: 1rem;
-  line-height: 0.85;
-  letter-spacing: var(--cs-track-display);
-  padding-inline: 0.35em;
-  text-transform: uppercase;
-  color: var(--cs-ice);
-}
-@media (min-width: 768px) {
-  [data-scene='franchise-v2'] .dw-label {
-    font-size: clamp(1.65rem, 2vw, 2.15rem);
   }
 }
 

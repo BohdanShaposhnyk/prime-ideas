@@ -3,7 +3,7 @@ import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { BOOKING_URL } from '../lib/booking'
-import { lockupClass, lockupToSupportClass, supportClass } from '../lib/palette'
+import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../lib/palette'
 
 /**
  * Questions after reviews. One port tall, seven rows, one answer open.
@@ -124,7 +124,7 @@ export default function SceneQuestions() {
       data-scene="questions"
       className="cs-scene cs-px relative isolate flex flex-col overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
-      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <div aria-hidden className={sceneVeilClass} />
       <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-questions-title" className={lockupClass}>
           <GoldWord>Questions</GoldWord>

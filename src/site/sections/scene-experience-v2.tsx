@@ -6,7 +6,7 @@ import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
-import { kickerClass, lockupClass, lockupToSupportClass, supportClass, violet } from '../lib/palette'
+import { kickerClass, lockupClass, lockupToSupportClass, sceneVeilClass, supportClass, violet } from '../lib/palette'
 
 const OFFERS = [
   {
@@ -42,13 +42,18 @@ const SLAT_BG = '#07060C'
 const GLOW = {
   glowColor: '248 100 74',
   colors: [violet.accent, violet.glint, violet.void],
+  edgeSensitivity: 46,
+  coneSpread: 8,
+  glowRadius: 12,
 } as const
 
 /** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
 const VENUE_VERBS = ['PLAY', 'WATCH', 'DRINK', 'CHILL', 'SING'] as const
 
-const glassClass =
-  'bg-[color-mix(in_srgb,#07060C_62%,transparent)] [&>div:nth-child(-n+2)]:hidden [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:justify-start [&>div:last-child]:!overflow-hidden sm:[&>div:last-child]:justify-center'
+const glassClass = 'bg-[color-mix(in_srgb,#07060C_62%,transparent)]'
+
+const glassContentClass =
+  'h-full min-h-0 justify-start !overflow-hidden sm:justify-center'
 
 function ExperienceCopy() {
   return (
@@ -105,13 +110,15 @@ function OfferCard({
   return (
     <BorderGlow
       className={`h-full min-h-0 w-full flex-1 ${glassClass}`}
-      edgeSensitivity={46}
+      contentClassName={glassContentClass}
+      mesh={false}
+      edgeSensitivity={GLOW.edgeSensitivity}
       glowColor={GLOW.glowColor}
       backgroundColor="rgba(10, 8, 18, 0.28)"
       borderRadius={22}
-      glowRadius={12}
+      glowRadius={GLOW.glowRadius}
       glowIntensity={0.55}
-      coneSpread={8}
+      coneSpread={GLOW.coneSpread}
       animated={animated}
       colors={[...GLOW.colors]}
       fillOpacity={0}
@@ -163,7 +170,7 @@ export default function SceneExperienceV2() {
           intro={!reduced}
         />
       </div>
-      <div aria-hidden className="cs-px-veil pointer-events-none absolute inset-0 z-[15] bg-black" />
+      <div aria-hidden className={sceneVeilClass} />
       <div className="relative z-20 flex h-full min-h-0 flex-col">
         <div className="relative flex min-h-0 flex-1 flex-col md:grid md:grid-cols-2">
           <ExperienceCopy />

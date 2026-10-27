@@ -15,6 +15,9 @@ interface BorderGlowProps {
   animated?: boolean;
   colors?: string[];
   fillOpacity?: number;
+  /** Mesh border and fill. Off leaves the outer glow and the content. */
+  mesh?: boolean;
+  contentClassName?: string;
 }
 
 function parseHSL(hslStr: string): { h: number; s: number; l: number } {
@@ -93,6 +96,8 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
   animated = false,
   colors = ['#c084fc', '#f472b6', '#38bdf8'],
   fillOpacity = 0.5,
+  mesh = true,
+  contentClassName = '',
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -191,6 +196,8 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
           : 'rgba(0,0,0,0.1) 0 1px 2px, rgba(0,0,0,0.1) 0 2px 4px, rgba(0,0,0,0.1) 0 4px 8px, rgba(0,0,0,0.1) 0 8px 16px, rgba(0,0,0,0.1) 0 16px 32px, rgba(0,0,0,0.1) 0 32px 64px',
       }}
     >
+      {mesh ? (
+      <>
       {/* mesh gradient border */}
       <div
         className="absolute inset-0 rounded-[inherit] -z-[1]"
@@ -239,6 +246,8 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
           transition: isVisible ? 'opacity 0.25s ease-out' : 'opacity 0.75s ease-in-out',
         } as React.CSSProperties}
       />
+      </>
+      ) : null}
 
       {/* outer glow */}
       <span
@@ -261,7 +270,7 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
         />
       </span>
 
-      <div className="flex flex-col relative overflow-auto z-[1]">
+      <div className={`relative z-[1] flex flex-col overflow-auto ${contentClassName}`}>
         {children}
       </div>
     </div>

@@ -1,15 +1,15 @@
 import { PartnerBands, type PartnerMark } from '@/site/bits/PartnerBands'
-import amd from '../assets/partners/amd.svg'
-import lg from '../assets/partners/lg.svg'
-import logitech from '../assets/partners/logitech.svg'
-import microsoft from '../assets/partners/microsoft.svg'
-import navi from '../assets/partners/navi.svg'
-import nvidia from '../assets/partners/nvidia.svg'
-import playstation from '../assets/partners/playstation.svg'
-import rog from '../assets/partners/rog.png'
-import senet from '../assets/partners/senet.png'
-import steam from '../assets/partners/steam.svg'
-import syrve from '../assets/partners/syrve.png'
+import amd from '../../assets/partners/amd.svg'
+import lg from '../../assets/partners/lg.svg'
+import logitech from '../../assets/partners/logitech.svg'
+import microsoft from '../../assets/partners/microsoft.svg'
+import navi from '../../assets/partners/navi.svg'
+import nvidia from '../../assets/partners/nvidia.svg'
+import playstation from '../../assets/partners/playstation.svg'
+import rog from '../../assets/partners/rog.png'
+import senet from '../../assets/partners/senet.png'
+import steam from '../../assets/partners/steam.svg'
+import syrve from '../../assets/partners/syrve.png'
 
 const rowA: PartnerMark[] = [
   { name: 'NAVI', src: navi },
@@ -33,6 +33,6 @@ const rowB: PartnerMark[] = [
   { name: 'GlobalTips' },
 ]
 
-export function ExperiencePartners() {
+export function Partners() {
   return <PartnerBands rows={[rowA, rowB]} />
 }

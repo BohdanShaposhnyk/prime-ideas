@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { gsap } from 'gsap';
 import { usePrefersReducedMotion } from '@/site/hooks/media';
+import { clamp } from '@/site/lib/math';
 
 export type RubberSegmentSize = 'sm' | 'md' | 'lg';
 export type RubberSegmentItem = string | { value: string; label: ReactNode };
@@ -62,7 +63,6 @@ const SIZES: Record<RubberSegmentSize, { height: number; font: number; pad: numb
   lg: { height: 44, font: 14, pad: 18, min: 48 },
 };
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const rubber = (over: number, dim: number) => (over * dim * RUBBER) / (dim + RUBBER * Math.abs(over));
 const project = (v: number, glide: number) => {
   const d = 1 - 0.1 * Math.pow(0.05, glide / 100);

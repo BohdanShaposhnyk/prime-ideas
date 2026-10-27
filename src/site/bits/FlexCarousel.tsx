@@ -31,7 +31,7 @@ interface PresetValues {
 }
 
 export interface FlexCarouselProps extends Partial<PresetValues> {
-  items?: FlexCarouselItem[];
+  items: FlexCarouselItem[];
   preset?: BendPreset;
   intro?: CarouselIntro;
   cardHeight?: number;
@@ -126,43 +126,6 @@ interface Callbacks {
   onChange?: (index: number, item: FlexCarouselItem) => void;
   onSelect?: (index: number, item: FlexCarouselItem) => void;
 }
-
-const photo = (id: string) => `https://images.unsplash.com/${id}?w=1200&q=80&auto=format&fit=max`;
-
-const DEFAULT_ITEMS: FlexCarouselItem[] = [
-  {
-    src: photo('photo-1737071371043-761e02b1ef95'),
-    alt: 'An iridescent chrome sculpture of a head',
-    title: 'Iridescence'
-  },
-  {
-    src: photo('photo-1693645325828-62cd35c8da8f'),
-    alt: 'A person in dark clothes standing in front of a white backdrop',
-    title: 'White Room'
-  },
-  { src: photo('photo-1739056238917-d89cd05c48d5'), alt: 'A twisted chrome form on black', title: 'Liquid Metal' },
-  { src: photo('photo-1747191092806-c7da11881986'), alt: 'A clay bust shown in profile', title: 'Clay Study' },
-  { src: photo('photo-1605034313761-73ea4a0cfbf3'), alt: 'Black and white low top sneakers', title: 'Low Tops' },
-  { src: photo('photo-1495462911434-be47104d70fa'), alt: 'A woman in a wide black hat', title: 'Brim' },
-  {
-    src: photo('photo-1786835568925-20cd20007ed0'),
-    alt: 'Three swirling shapes in white, gold and silver on grey',
-    title: 'Three Forms'
-  },
-  { src: photo('photo-1770249196550-ff6c641165cb'), alt: 'A chrome humanoid sculpture', title: 'Automaton' },
-  {
-    src: photo('photo-1787181875088-087d612262a7'),
-    alt: 'A black textured sculpture with an opening at its center',
-    title: 'Obsidian'
-  },
-  {
-    src: photo('photo-1770062422885-2dfcbe8fb65b'),
-    alt: 'A woman in a white shirt crouching on a dark set',
-    title: 'Poise'
-  },
-  { src: photo('photo-1726910133626-9b573eca70ff'), alt: 'Black curved shapes stacked like a fan', title: 'Fins' },
-  { src: photo('photo-1604854574958-59047362c165'), alt: 'A white plaster bust on a black table', title: 'Plaster' }
-];
 
 const BEND_PRESETS: Record<BendPreset, PresetValues> = {
   liquid: {
@@ -397,7 +360,7 @@ const Digits = ({ value }: { value: number }) => (
 );
 
 const FlexCarousel = ({
-  items = DEFAULT_ITEMS,
+  items,
   preset = 'liquid',
   intro = 'rise',
   cardHeight = 0.5,
@@ -438,7 +401,7 @@ const FlexCarousel = ({
   const pick = <K extends keyof PresetValues>(value: PresetValues[K] | undefined, key: K): PresetValues[K] =>
     value === undefined || value === null ? base[key] : value;
 
-  const list = items && items.length ? items : DEFAULT_ITEMS;
+  const list = items;
   const itemsKey = list.map(item => item.src).join('|');
 
   useEffect(() => {

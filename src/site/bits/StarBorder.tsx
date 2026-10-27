@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type ComponentPropsWithoutRef, type CSSProperties, type ElementType, type ReactNode } from 'react';
+import { clamp } from '@/site/lib/math';
 
 export type StarBorderTheme = 'dark' | 'light';
 
@@ -88,7 +89,6 @@ const LAP = 0.9;
 const TAU = Math.PI * 2;
 const WHITE: Rgb = [255, 255, 255];
 
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const wrap = (value: number, total: number) => ((value % total) + total) % total;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (2 - 2 * t) ** 3 / 2);
 const mix = (a: Rgb, b: Rgb, t: number): Rgb => [
