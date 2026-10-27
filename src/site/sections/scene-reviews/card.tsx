@@ -1,5 +1,6 @@
+import { useTranslation } from '../../copy'
 import { kickerClass } from '../../lib/palette'
-import { googleHref, VENUE_LABEL, type Review } from './config'
+import { googleHref, venueLabel, type Review } from './config'
 import { Stars } from './star'
 
 function initials(name: string) {
@@ -9,12 +10,13 @@ function initials(name: string) {
 }
 
 export function ReviewCard({ review }: { review: Review }) {
+  const { t } = useTranslation()
   const href = googleHref(review.venue)
 
   return (
     <article className="flex flex-col rounded-[var(--cs-radius-panel)] border border-white/10 bg-[var(--cs-well)] px-5 py-5 sm:px-6 sm:py-6">
       <div className="flex items-center justify-between gap-3">
-        <span className="sr-only">5 out of 5 stars</span>
+        <span className="sr-only">{t('reviews.stars')}</span>
         <Stars />
         {href ? (
           <a
@@ -23,10 +25,10 @@ export function ReviewCard({ review }: { review: Review }) {
             rel="noopener noreferrer"
             className={`${kickerClass} hover:text-[var(--cs-gold)]`}
           >
-            Google
+            {t('reviews.google')}
           </a>
         ) : (
-          <span className={kickerClass}>Google</span>
+          <span className={kickerClass}>{t('reviews.google')}</span>
         )}
       </div>
       <blockquote className="mt-4 font-[family-name:var(--cs-body)] text-[0.98rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:text-[1.05rem]">
@@ -44,7 +46,7 @@ export function ReviewCard({ review }: { review: Review }) {
             {review.name}
           </span>
           <span className="mt-0.5 block font-[family-name:var(--cs-body)] text-[0.75rem] leading-tight text-[var(--cs-caption)]">
-            {VENUE_LABEL[review.venue]} · {review.date}
+            {t('reviews.byline', { venue: venueLabel(review.venue), date: review.date })}
           </span>
         </span>
       </footer>

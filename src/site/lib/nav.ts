@@ -4,14 +4,16 @@
  * Questions opens the list after reviews.
  * Zones is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, hookah.
  */
+import { t } from '../copy/translate'
+
 export const PAGE_LINKS = [
-  { id: 'cs-nav-zones', label: 'Zones' },
-  { id: 'cs-nav-offers', label: 'Offers' },
-  { id: 'cs-nav-addresses', label: 'Addresses' },
-  { id: 'cs-nav-reviews', label: 'Reviews' },
-  { id: 'cs-nav-questions', label: 'Questions' },
-  { id: 'cs-nav-app', label: 'App' },
-  { id: 'cs-nav-contact', label: 'Contact' },
+  { id: 'cs-nav-zones', label: t('nav.zones') },
+  { id: 'cs-nav-offers', label: t('nav.offers') },
+  { id: 'cs-nav-addresses', label: t('nav.addresses') },
+  { id: 'cs-nav-reviews', label: t('nav.reviews') },
+  { id: 'cs-nav-questions', label: t('nav.questions') },
+  { id: 'cs-nav-app', label: t('nav.app') },
+  { id: 'cs-nav-contact', label: t('nav.contact') },
 ] as const
 
 /** Footer omits Contact. That scene is the footer itself. */

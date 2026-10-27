@@ -1,5 +1,6 @@
 import { useRef, type CSSProperties } from 'react'
 import MaskedHeading from '@/site/bits/MaskedHeading'
+import { useTranslation } from '../../copy'
 import { displayLeading, displayTracking } from '../../lib/palette'
 import { HeroCopy } from './copy'
 import { HeroGalaxy } from './galaxy'
@@ -15,6 +16,7 @@ const HeroField = introFields.molten
 // const HeroField = introFields.galaxy
 
 export default function HeroV2() {
+  const { t } = useTranslation()
   const rootRef = useRef<HTMLElement>(null)
   const brandRef = useRef<HTMLDivElement>(null)
   const vignetteRef = useRef<HTMLDivElement>(null)
@@ -57,7 +59,7 @@ export default function HeroV2() {
           {fontReady ? (
             <MaskedHeading
               id="cs-hero-v2-brand"
-              text="PRIME"
+              text={t('hero.mark')}
               tag="h1"
               mediaType="video"
               src={heroReel.src}

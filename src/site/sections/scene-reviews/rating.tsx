@@ -1,3 +1,4 @@
+import { useTranslation } from '../../copy'
 import { lockupToSupportClass } from '../../lib/palette'
 import { GOOGLE_RATING } from './config'
 import { RatingStars } from './star'
@@ -26,10 +27,12 @@ function GoogleMark({ className }: { className?: string }) {
 }
 
 export function GoogleRating() {
+  const { t } = useTranslation()
+
   return (
     <p className={`${lockupToSupportClass} mx-auto flex w-fit items-center gap-3 rounded-[1.15rem] border border-white/10 bg-[var(--cs-well)] py-2.5 pr-4 pl-2.5 sm:gap-3.5 sm:py-3 sm:pr-5 sm:pl-3`}>
       <span className="sr-only">
-        Rated {GOOGLE_RATING} out of 5 on Google, from more than 2,000 reviews across three lounges.
+        {t('reviews.srSummary', { score: t('reviews.score') })}
       </span>
       <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-black sm:size-11">
         <GoogleMark className="size-6 sm:size-[1.65rem]" />
@@ -38,12 +41,12 @@ export function GoogleRating() {
       <span aria-hidden className="text-left">
         <span className="flex items-center gap-2">
           <span className="font-[family-name:var(--cs-display)] text-[2.15rem] leading-none tracking-[0.02em] text-[var(--cs-ice)]">
-            {GOOGLE_RATING}
+            {t('reviews.score')}
           </span>
           <RatingStars value={GOOGLE_RATING} />
         </span>
         <span className="mt-1 block font-[family-name:var(--cs-body)] text-[0.75rem] leading-tight text-[var(--cs-caption)]">
-          2,000+ reviews across three lounges
+          {t('reviews.summary')}
         </span>
       </span>
     </p>

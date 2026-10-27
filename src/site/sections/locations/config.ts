@@ -1,19 +1,14 @@
+import { t } from '../../copy/translate'
 import { VENUES, type Venue } from '../../lib/venues'
 
-const ORDER = [
-  { id: 'mokotow', label: 'Mokotów', city: 'Warsaw' },
-  { id: 'mennica', label: 'Mennica', city: 'Warsaw' },
-  { id: 'wroclaw', label: 'Opera', city: 'Wrocław' },
-] as const
-
 export type Location = {
-  id: (typeof ORDER)[number]['id']
+  id: string
   label: string
   city: string
   venue: Venue
 }
 
-export const LOCATIONS: Location[] = ORDER.map((item) => {
+export const LOCATIONS: Location[] = t('locations.tabs').map((item) => {
   const venue = VENUES.find((entry) => entry.id === item.id)
   if (!venue) throw new Error(`Missing venue ${item.id}`)
   return { id: item.id, label: item.label, city: item.city, venue }

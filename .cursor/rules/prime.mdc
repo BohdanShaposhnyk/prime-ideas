@@ -15,7 +15,7 @@ The Prime Warsaw landing page: gaming, cinema, karaoke, hookah, and bar. Brand: 
 
 ## Layout
 
-The page lives in `src/site`: sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets` live in `assets-src`.
+The page lives in `src/site`: `copy`, sections, components, hooks, `lib`, `bits`, `styles`, and `assets`. `src/main.tsx` renders it. Full-quality originals for `pnpm assets` live in `assets-src`.
 
 Zones (`src/site/sections/zones`) is the services list: play zone, sim racing, bar, karaoke, private room, cinema hall, and hookah. The nav label is Zones.
 
@@ -29,13 +29,27 @@ Addresses in the nav opens `src/site/sections/locations`. Atmosphere (`src/site/
 
 Franchise is a mailto in the basement.
 
+## Prose
+
+User-facing English lives only in `src/site/copy/en.json`. That includes headings, body, buttons, alt text, aria labels, nav labels, review quotes, and the SEO title and description.
+
+Components use `const { t, rich } = useTranslation()` from `src/site/copy`. Non-React modules, including `seo.ts`, import `t` from `src/site/copy/translate.ts`.
+
+Keys are grouped by section (`hero`, `zones`, `offers`, `events`, `locations`, `reviews`, `questions`, `atmosphere`, `app`, `basement`) plus `common`, `facts`, `seo`, `nav`, and `venues`. Repeating rows are arrays with a stable `id`. Image sets are keyed records plus an `order` list, so a missing image fails typecheck. Question rows are keyed by id, in file order.
+
+Amounts, hours, and the club code are written once under `facts` and enter a sentence as `{placeholders}`. Each sentence stays full at its call site.
+
+`t` is plain text. `rich` is only for `<em>` and `<booking>`.
+
+URLs, image imports, DOM ids, coordinates, E.164 phones, map cids, and motion numbers stay in TypeScript.
+
 ## Commands
 
 `pnpm install` · `pnpm dev` · `pnpm lint` · `pnpm typecheck` · `pnpm build`
 
 ## Hard constraints
 
-- Mobile-first; English microcopy only
+- Mobile-first; English microcopy only, in `src/site/copy/en.json`. No second locale and no language switcher unless asked
 - Motion uses GSAP and the pieces in `src/site/bits`
 - `instagram_ref/` is moodboard only — don’t import it unless the still is already in `src/site/assets`
 - Keep `pnpm lint` and `pnpm build` green

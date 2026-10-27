@@ -1,0 +1,328 @@
+{
+  "meta": {
+    "lang": "en",
+    "ogLocale": "en_US"
+  },
+  "facts": {
+    "clubCode": "PRIME",
+    "welcomeAmount": "50",
+    "birthdayAmount": "300",
+    "currency": "zł",
+    "hourAmount": "19",
+    "packageAmount": "10",
+    "hours": "16:00–03:00",
+    "nightStart": "22:00"
+  },
+  "common": {
+    "bookNight": "Book a night",
+    "clubCodeLine": "Use code <em>“{clubCode}”</em> to activate your account and get more",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "page": "Page",
+    "call": "Call",
+    "telegram": "Telegram",
+    "prime": "Prime",
+    "social": "Social",
+    "warsaw": "Warsaw",
+    "wroclaw": "Wrocław",
+    "cities": "Warsaw · Wrocław",
+    "imageCarousel": "Image carousel",
+    "imageN": "Image {n}",
+    "carouselLive": "{label}, {n} of {count}",
+    "carousel": "Carousel",
+    "slide": "{n} of {count}",
+    "spiralGallery": "Spiral gallery",
+    "infiniteSpiral": "Infinite spiral gallery",
+    "segmented": "Segmented control"
+  },
+  "seo": {
+    "title": "Prime Warsaw — gaming, karaoke, cinema, hookah, bar",
+    "description": "Prime Warsaw is a gaming lounge, cinema, karaoke, hookah, and bar in Warsaw and Wrocław. Visit Prime Mennica, Prime Mokotów, or Prime Wrocław tonight."
+  },
+  "nav": {
+    "zones": "Zones",
+    "offers": "Offers",
+    "addresses": "Addresses",
+    "reviews": "Reviews",
+    "questions": "Questions",
+    "app": "App",
+    "contact": "Contact"
+  },
+  "hero": {
+    "kickerLead": "Official",
+    "kickerMark": "NAVI",
+    "kickerTail": "partner",
+    "heading": "enter your prime",
+    "support": "A cyber lounge with a bar, a cinema, and karaoke.",
+    "mark": "PRIME"
+  },
+  "zones": {
+    "srHeading": "Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah. PC prices.",
+    "order": ["play", "sim", "bar", "karaoke", "room", "hall", "hookah", "prices"],
+    "cards": {
+      "play": {
+        "word": "PLAY ZONE",
+        "line": "PC rooms for one, two, four, or five.",
+        "alt": "Play zone"
+      },
+      "sim": {
+        "word": "SIM RACING",
+        "line": "Motorsport simulators.",
+        "alt": "Sim racing"
+      },
+      "bar": {
+        "word": "BAR",
+        "line": "A restaurant kitchen and bar.",
+        "alt": "Bar"
+      },
+      "karaoke": {
+        "word": "KARAOKE",
+        "line": "A room for your group to sing.",
+        "alt": "Karaoke"
+      },
+      "room": {
+        "word": "PRIVATE ROOM",
+        "line": "A private cinema for your group.",
+        "alt": "Private room"
+      },
+      "hall": {
+        "word": "CINEMA HALL",
+        "line": "The large hall. PlayStation 5 in every cinema and lounge.",
+        "alt": "Cinema hall"
+      },
+      "hookah": {
+        "word": "HOOKAH",
+        "line": "Its own lounge, clear of the other rooms.",
+        "alt": "Hookah"
+      },
+      "prices": {
+        "word": "PRICES",
+        "line": "From {hourAmount} {currency} an hour. {packageAmount} {currency} an hour in a package.",
+        "alt": "PC prices, {hourAmount} {currency} an hour or {packageAmount} {currency} in a package"
+      }
+    }
+  },
+  "offers": {
+    "titlePrime": "Prime",
+    "titleRest": "welcome",
+    "support": "New guests and birthdays, on the house.",
+    "leadIn": "Come on in and",
+    "srVerbs": "Come on in and play, watch, drink, chill, or sing",
+    "verbs": ["PLAY", "WATCH", "DRINK", "CHILL", "SING"],
+    "items": [
+      {
+        "id": "welcome",
+        "kicker": "New guests",
+        "lead": "On your account,",
+        "rest": "or your first hour free.",
+        "note": "For every new guest."
+      },
+      {
+        "id": "birthday",
+        "kicker": "Birthday",
+        "lead": "On your account,",
+        "rest": "the day you celebrate.",
+        "note": "Bring an ID."
+      }
+    ]
+  },
+  "events": {
+    "titlePrime": "Prime",
+    "titleRest": "night",
+    "support": "Tournaments, parties, and match nights.",
+    "order": ["stage", "crowd", "gamers", "dj", "emotions", "team", "screen", "prize", "stage2", "crowd2", "gamers2", "girls"],
+    "photos": {
+      "stage": "Host with a microphone addressing the room",
+      "crowd": "Guests on the lounge sofas",
+      "gamers": "Players at the PCs with headsets on",
+      "dj": "DJ at the decks",
+      "emotions": "Team in a group hug",
+      "team": "Players standing in front of the stage screen",
+      "screen": "Crowd watching the match on the big screen",
+      "prize": "Winner holding a red plush prize overhead",
+      "stage2": "Host on stage in front of the match screen",
+      "crowd2": "Two guests on a red sofa",
+      "gamers2": "Player at a match PC",
+      "girls": "Two guests posing on a sofa"
+    }
+  },
+  "locations": {
+    "label": "Locations",
+    "maps": "Location maps",
+    "openMaps": "Open {address} in Maps",
+    "mapTitle": "Map — {address}",
+    "callAria": "Call {phone}",
+    "addressLine": "{street}, {city}",
+    "tabs": [
+      { "id": "mokotow", "label": "Mokotów", "city": "Warsaw" },
+      { "id": "mennica", "label": "Mennica", "city": "Warsaw" },
+      { "id": "wroclaw", "label": "Opera", "city": "Wrocław" }
+    ]
+  },
+  "reviews": {
+    "title": "Reviews",
+    "listLabel": "Google reviews",
+    "previous": "Previous reviews",
+    "next": "Next reviews",
+    "score": "4.8",
+    "summary": "2,000+ reviews across three lounges",
+    "srSummary": "Rated {score} out of 5 on Google, from more than 2,000 reviews across three lounges.",
+    "stars": "5 out of 5 stars",
+    "google": "Google",
+    "partnersKicker": "Our partners",
+    "byline": "{venue} · {date}",
+    "venueLabel": {
+      "mennica": "Mennica",
+      "mokotow": "Mokotów",
+      "wroclaw": "Wrocław"
+    },
+    "partners": {
+      "a": [
+        { "id": "navi", "name": "NAVI" },
+        { "id": "fastcup", "name": "FASTCUP" },
+        { "id": "rog", "name": "ROG" },
+        { "id": "logitech", "name": "Logitech" },
+        { "id": "senet", "name": "SENET" },
+        { "id": "steam", "name": "Steam" },
+        { "id": "amd", "name": "AMD" },
+        { "id": "nvidia", "name": "NVIDIA" }
+      ],
+      "b": [
+        { "id": "andaseat", "name": "AndaSeat" },
+        { "id": "fanatec", "name": "FANATEC" },
+        { "id": "playstation", "name": "PlayStation" },
+        { "id": "lg", "name": "LG Display" },
+        { "id": "microsoft", "name": "Microsoft" },
+        { "id": "syrve", "name": "Syrve" },
+        { "id": "vivawallet", "name": "Viva Wallet" },
+        { "id": "globaltips", "name": "GlobalTips" }
+      ]
+    },
+    "items": [
+      {
+        "id": "kampouri",
+        "venue": "mennica",
+        "name": "Maria Kampouri",
+        "date": "August 2025",
+        "quote": "Amazing PCs, WiFi, and equipment. We took the duo private area and it was an amazing experience — gaming, eating, and relaxing in our own space. The service is amazing and the people here are polite. I will come again."
+      },
+      {
+        "id": "bolatbek",
+        "venue": "mokotow",
+        "name": "Alisher Bolatbek",
+        "date": "April 2026",
+        "quote": "It was the best cyber lounge I have ever been. The PCs are really cool and the internet is fast. The music in the reception is nice. I surely recommend this place if you want to relax with friends and play some games."
+      },
+      {
+        "id": "chanel",
+        "venue": "wroclaw",
+        "name": "Jvachka Chanel",
+        "date": "August 2025",
+        "quote": "A wonderful bootcamp experience. This club provides an unforgettable experience. The service staff is top notch. Also pleasantly surprised by the cinema room. Excellent Dolby Atmos sound and noise isolation provides great emotions."
+      },
+      {
+        "id": "sawchuk",
+        "venue": "mennica",
+        "name": "Alex Sawchuk",
+        "date": "August 2025",
+        "quote": "I visited this place with my friend. Computers, mice, and keyboards are incredible. PlayStation with a cinema room is a great option for a large company. The service was incredible."
+      },
+      {
+        "id": "barmaley",
+        "venue": "mokotow",
+        "name": "barmaley",
+        "date": "April 2026",
+        "quote": "Prime Lounge Mokotów feels like a perfect setup — smooth like a high-end PC running without any lag. Clean vibe, great service, and everything just works. Hookah quality is on point too. Definitely coming back."
+      },
+      {
+        "id": "frantsishko",
+        "venue": "wroclaw",
+        "name": "Vitalii Frantsishko",
+        "date": "September 2026",
+        "quote": "The wholesome experience starting from atmosphere, service, quality to simply prices. Highly recommend."
+      }
+    ]
+  },
+  "questions": {
+    "title": "Questions",
+    "support": "Before you book a night.",
+    "club": {
+      "q": "How do I activate the club?",
+      "a": "Open SENET and enter club code <em>“{clubCode}”</em>. New guests get <em>{welcomeAmount} {currency}</em> on the account, or the first hour free."
+    },
+    "book": {
+      "q": "How do I book a PC or a room?",
+      "a": "Book <booking>online</booking>, on Telegram or Instagram, or at the desk. A PC is pay on arrival. Rooms and night packages hold once we confirm."
+    },
+    "hours": {
+      "q": "What are the hours?",
+      "a": "Open every day, <em>{hours}</em>, at every lounge. Night packages start at <em>{nightStart}</em>. We are not open 24/7."
+    },
+    "prices": {
+      "q": "What are the prices?",
+      "a": "<em>{hourAmount} {currency}</em> an hour, or <em>{packageAmount} {currency}</em> an hour in a package. Night packages cover the stretch from {nightStart}. Play zone, private room, and cinema hall are priced on their own."
+    },
+    "deals": {
+      "q": "What discounts are on?",
+      "a": "New guests get <em>{welcomeAmount} {currency}</em> or the first hour free. Birthdays get <em>{birthdayAmount} {currency}</em> with an ID. Students and groups of four or more get a rate at the desk."
+    },
+    "age": {
+      "q": "From what age can I come?",
+      "a": "Under 16, come with an adult and an ID, and stay until <em>{nightStart}</em>. From 16 you can come alone. The bar is 18+."
+    },
+    "pay": {
+      "q": "Where are you, and how do I pay?",
+      "a": "Waliców 11, Rzymowskiego 53 in Mokotów, and Plac Teatralny 6–8 in Wrocław. Card, BLIK, or cash."
+    }
+  },
+  "atmosphere": {
+    "label": "Your night. Your PRIME",
+    "your": "Your",
+    "night": "night.",
+    "prime": "PRIME"
+  },
+  "app": {
+    "titleLead": "Ready when",
+    "titleTail": "you are",
+    "label": "Ready when you are",
+    "body": "SENET is the partner app for Prime. New guests get <em>{welcomeAmount} {currency}</em> on their account, or their <em>first hour free</em>. Use code <em>“{clubCode}”</em> to activate your account.",
+    "appStore": "Download on the App Store",
+    "playStore": "Get it on Google Play",
+    "phoneAlt": "SENET, the partner app, on iPhone"
+  },
+  "basement": {
+    "stay": "Stay",
+    "prime": "PRIME",
+    "primeFallback": "Prime",
+    "srStay": "Stay Prime",
+    "franchise": "Open a franchise >",
+    "tiktok": "TikTok",
+    "tiktokAria": "Prime on TikTok",
+    "onTelegram": "{name} on Telegram",
+    "onInstagram": "{city} on Instagram",
+    "copyright": "© {year} {company} · NIP {nip} · All rights reserved."
+  },
+  "venues": {
+    "mennica": {
+      "shortName": "Mennica",
+      "name": "Prime Mennica",
+      "street": "Waliców 11",
+      "city": "Warsaw",
+      "phoneLabel": "+48 530 811 888"
+    },
+    "mokotow": {
+      "shortName": "Mokotów",
+      "name": "Prime Mokotów",
+      "street": "Wincentego Rzymowskiego 53",
+      "city": "Warsaw",
+      "phoneLabel": "+48 530 822 888"
+    },
+    "wroclaw": {
+      "shortName": "Opera",
+      "name": "Prime Wrocław",
+      "street": "Plac Teatralny 6-8",
+      "city": "Wrocław",
+      "phoneLabel": "+48 530 818 888"
+    }
+  }
+}

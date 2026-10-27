@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { InstagramIcon, TelegramIcon, TikTokIcon } from '../../components/icons'
+import { useTranslation } from '../../copy'
 import { useGoldShine } from '../../hooks/gold-shine'
 import { useWordmark, wordmarkAspect } from '../../hooks/wordmark'
 import { FOOTER_LINKS, scrollSnapPortTo } from '../../lib/nav'
@@ -45,6 +46,8 @@ function CityRule({ city, className = '' }: { city: string; className?: string }
 }
 
 function VenueRow({ venue }: { venue: (typeof VENUES)[number] }) {
+  const { t } = useTranslation()
+
   return (
     <li className="col-span-3 grid grid-cols-subgrid items-center">
       <span className={placeClass}>{venue.shortName}</span>
@@ -52,7 +55,7 @@ function VenueRow({ venue }: { venue: (typeof VENUES)[number] }) {
         href={venue.telegram}
         target="_blank"
         rel="noreferrer"
-        aria-label={`${venue.shortName} on Telegram`}
+        aria-label={t('basement.onTelegram', { name: venue.shortName })}
         className={`inline-flex shrink-0 ${linkClass}`}
       >
         <TelegramIcon className="size-3.5 shrink-0 sm:size-4" />
@@ -69,6 +72,7 @@ const franchiseBandClass =
   'cs-gold-band relative z-20 flex h-[2.5rem] w-full shrink-0 items-center justify-center font-[family-name:var(--cs-body)] text-[length:var(--cs-text-cta)] font-medium tracking-[0.14em] text-black no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-black sm:tracking-[var(--cs-track-micro)]'
 
 function FranchiseBand() {
+  const { t } = useTranslation()
   const ref = useRef<HTMLAnchorElement>(null)
   const live = useGoldShine(ref)
 
@@ -78,18 +82,19 @@ function FranchiseBand() {
       href={FRANCHISE_MAIL}
       className={`${franchiseBandClass}${live ? ' cs-gold-live' : ''}`}
     >
-      Open a franchise &gt;
+      {t('basement.franchise')}
     </a>
   )
 }
 
 function Logo() {
+  const { t } = useTranslation()
   const src = useWordmark()
 
   return (
     <img
       src={src ?? undefined}
-      alt="Prime"
+      alt={t('common.prime')}
       draggable={false}
       className="block h-[clamp(1.55rem,3.8vh,2.7rem)] w-auto max-w-none shrink-0 self-start object-contain lg:col-start-1 lg:row-start-1"
       style={{ aspectRatio: wordmarkAspect, visibility: src ? 'visible' : 'hidden' }}
@@ -98,6 +103,8 @@ function Logo() {
 }
 
 export function BasementContacts({ reduced }: { reduced: boolean }) {
+  const { t } = useTranslation()
+
   return (
     <div
       className="relative z-10 shrink-0 backdrop-blur-md"
@@ -109,7 +116,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
           <div className="flex min-w-0 flex-col items-start gap-3 sm:gap-4 lg:contents">
             <Logo />
             <nav
-              aria-label="Page"
+              aria-label={t('common.page')}
               className="flex flex-col items-start gap-1.5 sm:gap-2 lg:col-start-1 lg:row-start-2"
             >
               {FOOTER_LINKS.map((link) => (
@@ -126,7 +133,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
           </div>
 
           <div className="grid w-max grid-cols-[max-content_max-content_max-content] items-center justify-self-end gap-x-2 sm:gap-x-2.5 lg:col-start-2 lg:row-start-2 lg:justify-self-end">
-            <CityRule city="Warsaw" />
+            <CityRule city={t('common.warsaw')} />
             <ul className="col-span-3 mt-1.5 grid grid-cols-subgrid gap-y-1.5 sm:gap-y-2">
               {warsawVenues.map((venue) => (
                 <VenueRow key={venue.id} venue={venue} />
@@ -134,14 +141,14 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
             </ul>
             {wroclawVenue ? (
               <>
-                <CityRule city="Wrocław" className="mt-2 sm:mt-2.5" />
+                <CityRule city={t('common.wroclaw')} className="mt-2 sm:mt-2.5" />
                 <ul className="col-span-3 mt-1.5 grid grid-cols-subgrid">
                   <VenueRow venue={wroclawVenue} />
                 </ul>
               </>
             ) : null}
             <nav
-              aria-label="Social"
+              aria-label={t('common.social')}
               className="col-span-3 mt-2.5 flex w-full flex-col gap-1.5 sm:mt-3"
             >
               <div className="flex items-center gap-2.5">
@@ -155,7 +162,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
                     href={warsawInstagram.href}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${warsawInstagram.city} on Instagram`}
+                    aria-label={t('basement.onInstagram', { city: warsawInstagram.city })}
                     className={socialLinkClass}
                   >
                     {warsawInstagram.city}
@@ -164,7 +171,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
                     href={wroclawInstagram.href}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${wroclawInstagram.city} on Instagram`}
+                    aria-label={t('basement.onInstagram', { city: wroclawInstagram.city })}
                     className={socialLinkClass}
                   >
                     {wroclawInstagram.city}
@@ -174,7 +181,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
                   href={TIKTOK.href}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Prime on TikTok"
+                  aria-label={t('basement.tiktokAria')}
                   className={socialLinkClass}
                 >
                   {TIKTOK.label}
@@ -185,7 +192,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
         </div>
 
         <p className="text-center font-[family-name:var(--cs-body)] text-[0.68rem] leading-snug text-balance text-[var(--cs-caption)] sm:text-[0.75rem]">
-          © {COPYRIGHT_YEAR} {COMPANY_NAME} · NIP {COMPANY_NIP} · All rights reserved.
+          {t('basement.copyright', { year: COPYRIGHT_YEAR, company: COMPANY_NAME, nip: COMPANY_NIP })}
         </p>
       </div>
     </div>

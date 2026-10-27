@@ -2,6 +2,8 @@ import { useRef } from 'react'
 import DotField from '@/site/bits/DotField'
 import FlexCarousel, { type FlexCarouselItem } from '@/site/bits/FlexCarousel'
 import { BookNightButton } from '../components/book-night'
+import { useTranslation } from '../copy'
+import { orderedIds, t, type Catalog } from '../copy/translate'
 import { GoldWord } from '../components/gold-word'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
@@ -20,21 +22,27 @@ import stage from '../assets/event-cs6/carousel/stage.webp'
 import stage2 from '../assets/event-cs6/carousel/stage-2.webp'
 import team from '../assets/event-cs6/carousel/team.webp'
 
+type EventId = keyof Catalog['events']['photos']
+
 /** Mixed so autoplay does not sit on one kind of shot. */
-const PHOTOS: FlexCarouselItem[] = [
-  { src: stage, alt: 'Host with a microphone addressing the room' },
-  { src: crowd, alt: 'Guests on the lounge sofas' },
-  { src: gamers, alt: 'Players at the PCs with headsets on' },
-  { src: dj, alt: 'DJ at the decks' },
-  { src: emotions, alt: 'Team in a group hug' },
-  { src: team, alt: 'Players standing in front of the stage screen' },
-  { src: screen, alt: 'Crowd watching the match on the big screen' },
-  { src: prize, alt: 'Winner holding a red plush prize overhead' },
-  { src: stage2, alt: 'Host on stage in front of the match screen' },
-  { src: crowd2, alt: 'Two guests on a red sofa' },
-  { src: gamers2, alt: 'Player at a match PC' },
-  { src: girls, alt: 'Two guests posing on a sofa' },
-]
+const art = {
+  stage,
+  crowd,
+  gamers,
+  dj,
+  emotions,
+  team,
+  screen,
+  prize,
+  stage2,
+  crowd2,
+  gamers2,
+  girls,
+} as const satisfies Record<EventId, string>
+
+const PHOTOS: FlexCarouselItem[] = orderedIds(t('events.order'), Object.keys(art) as EventId[], 'Events').map(
+  (id) => ({ src: art[id], alt: t(`events.photos.${id}`) }),
+)
 
 /** Gallery exists only while the scene owns the port, so the intro restarts on each visit. */
 const ENTER_AT = 0.6
@@ -53,6 +61,7 @@ const NIGHT_CAROUSEL = {
 } as const
 
 export default function SceneEvents() {
+  const { t } = useTranslation()
   const ref = useRef<HTMLElement>(null)
   const reduced = usePrefersReducedMotion()
   const live = useSnapInView(ref, { threshold: ENTER_AT })
@@ -76,9 +85,9 @@ export default function SceneEvents() {
       <div aria-hidden className={sceneVeilClass} />
       <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-events-title" className={lockupClass}>
-          <GoldWord>Prime</GoldWord> night
+          <GoldWord>{t('events.titlePrime')}</GoldWord> {t('events.titleRest')}
         </h2>
-        <p className={`${lockupToSupportClass} ${supportClass}`}>Tournaments, parties, and match nights.</p>
+        <p className={`${lockupToSupportClass} ${supportClass}`}>{t('events.support')}</p>
       </header>
       <div className="cs-px-plane relative z-10 min-h-0 flex-1">
         {live ? (

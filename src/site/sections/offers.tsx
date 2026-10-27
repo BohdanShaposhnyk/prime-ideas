@@ -2,30 +2,13 @@ import BorderGlow from '@/site/bits/BorderGlow'
 import MicroSlats from '@/site/bits/MicroSlats'
 import SplitFlapText from '@/site/bits/SplitFlapText'
 import { BookNightButton } from '../components/book-night'
+import { useTranslation } from '../copy'
+import type { Catalog } from '../copy/translate'
 import { GoldWord } from '../components/gold-word'
 import { useInView } from '../hooks/in-view'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { kickerClass, lockupClass, lockupToSupportClass, sceneVeilClass, supportClass, violet } from '../lib/palette'
-
-const OFFERS = [
-  {
-    id: 'welcome',
-    kicker: 'New guests',
-    amount: '50',
-    lead: 'On your account,',
-    rest: 'or your first hour free.',
-    note: 'For every new guest.',
-  },
-  {
-    id: 'birthday',
-    kicker: 'Birthday',
-    amount: '300',
-    lead: 'On your account,',
-    rest: 'the day you celebrate.',
-    note: 'Bring an ID.',
-  },
-] as const
 
 const amountClass =
   'font-[family-name:var(--cs-display)] text-[clamp(1.9rem,8.5vw,4.8rem)] leading-none tracking-[var(--cs-track-display)] text-[var(--cs-ice)] md:text-[clamp(3.2rem,6.4vw,4.8rem)]'
@@ -47,40 +30,47 @@ const GLOW = {
   glowRadius: 12,
 } as const
 
-/** Longest verb sets the tile count. Uppercase so flaps stay inside the tile. */
-const VENUE_VERBS = ['PLAY', 'WATCH', 'DRINK', 'CHILL', 'SING'] as const
-
 const glassClass = 'bg-[color-mix(in_srgb,#07060C_62%,transparent)]'
 
 const glassContentClass =
   'h-full min-h-0 justify-start !overflow-hidden sm:justify-center'
 
+function offerAmount(id: string) {
+  if (id === 'welcome') return 'facts.welcomeAmount' as const
+  if (id === 'birthday') return 'facts.birthdayAmount' as const
+  throw new Error(`Missing offer amount: ${id}`)
+}
+
 function OffersCopy() {
+  const { t } = useTranslation()
+  const verbs = t('offers.verbs')
+  const padTo = verbs.reduce((max, word) => Math.max(max, word.length), 1)
+
   return (
     <div className="cs-px-copy relative z-20 flex min-w-0 flex-col justify-start pt-[var(--cs-header-h)] pb-10 pl-5 pr-5 sm:pl-8 sm:pr-8 md:h-full md:min-h-0 md:pb-8 md:pr-6 lg:pl-12 lg:pr-10">
       <h2 id="cs-offers-title" className={lockupClass}>
         <span className="block">
-          <GoldWord>Prime</GoldWord>
+          <GoldWord>{t('offers.titlePrime')}</GoldWord>
         </span>
-        <span className="block">welcome</span>
+        <span className="block">{t('offers.titleRest')}</span>
       </h2>
       <p className={`${lockupToSupportClass} max-w-[24rem] ${supportClass}`}>
-        New guests and birthdays, on the house.
+        {t('offers.support')}
       </p>
       <div className="mt-5 flex w-fit max-w-full flex-col items-start sm:mt-6">
-        <p className="sr-only">Come on in and play, watch, drink, chill, or sing</p>
+        <p className="sr-only">{t('offers.srVerbs')}</p>
         <p
           aria-hidden
           className="mb-2 font-[family-name:var(--cs-body)] text-[0.95rem] leading-relaxed font-normal text-[var(--cs-ice)] sm:mb-2.5 sm:text-[1.02rem]"
         >
-          Come on in and
+          {t('offers.leadIn')}
         </p>
         <SplitFlapText
           aria-hidden
-          words={[...VENUE_VERBS]}
+          words={[...verbs]}
           loop
           charset="alpha"
-          padTo={5}
+          padTo={padTo}
           flipsPerChar={5}
           flipDuration={0.1}
           stagger={0.045}
@@ -104,9 +94,11 @@ function OfferCard({
   offer,
   animated,
 }: {
-  offer: (typeof OFFERS)[number]
+  offer: Catalog['offers']['items'][number]
   animated: boolean
 }) {
+  const { t } = useTranslation()
+
   return (
     <BorderGlow
       className={`h-full min-h-0 w-full flex-1 ${glassClass}`}
@@ -126,9 +118,9 @@ function OfferCard({
       <div className="flex h-full min-h-0 flex-col justify-start px-3 py-2.5 text-left sm:justify-center sm:px-5 sm:py-6 md:px-8 lg:px-9">
         <p className={kickerClass}>{offer.kicker}</p>
         <p className="mt-1.5 flex items-end gap-[0.3em] sm:mt-3">
-          <span className={amountClass}>{offer.amount}</span>
+          <span className={amountClass}>{t(offerAmount(offer.id))}</span>
           <span className="mb-[0.08em] font-[family-name:var(--cs-body)] text-[clamp(1.15rem,2vw,1.4rem)] leading-none font-medium text-[var(--cs-gold)]">
-            zł
+            {t('facts.currency')}
           </span>
         </p>
         <p className={`mt-2 sm:mt-3 ${lineClass}`}>
@@ -142,6 +134,8 @@ function OfferCard({
 }
 
 export default function Offers() {
+  const { t } = useTranslation()
+  const offers = t('offers.items')
   const reduced = usePrefersReducedMotion()
   const [rootRef, seen] = useInView<HTMLElement>({ once: true, threshold: 0.45 })
   useSceneParallax(rootRef, !reduced)
@@ -175,7 +169,7 @@ export default function Offers() {
         <div className="relative flex min-h-0 flex-1 flex-col md:grid md:grid-cols-2">
           <OffersCopy />
           <ul className="cs-px-mid relative flex shrink-0 flex-row gap-2 px-5 pb-2 sm:gap-3 sm:px-8 sm:pb-3 md:h-full md:min-h-0 md:flex-col md:gap-4 md:pt-[var(--cs-header-h)] md:pr-8 md:pb-3 md:pl-6 lg:pr-12 lg:pb-4 lg:pl-8">
-            {OFFERS.map((offer) => (
+            {offers.map((offer) => (
               <li key={offer.id} className="flex min-h-0 min-w-0 flex-1 flex-col">
                 <OfferCard offer={offer} animated={sweep} />
               </li>

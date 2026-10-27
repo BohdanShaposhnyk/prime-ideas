@@ -1,4 +1,5 @@
 import { PartnerBands, type PartnerMark } from '@/site/bits/PartnerBands'
+import { t } from '../../copy/translate'
 import amd from '../../assets/partners/amd.svg'
 import lg from '../../assets/partners/lg.svg'
 import logitech from '../../assets/partners/logitech.svg'
@@ -11,27 +12,29 @@ import senet from '../../assets/partners/senet.png'
 import steam from '../../assets/partners/steam.svg'
 import syrve from '../../assets/partners/syrve.png'
 
-const rowA: PartnerMark[] = [
-  { name: 'NAVI', src: navi },
-  { name: 'FASTCUP' },
-  { name: 'ROG', src: rog },
-  { name: 'Logitech', src: logitech },
-  { name: 'SENET', src: senet },
-  { name: 'Steam', src: steam },
-  { name: 'AMD', src: amd },
-  { name: 'NVIDIA', src: nvidia },
-]
+const logos = {
+  navi,
+  rog,
+  logitech,
+  senet,
+  steam,
+  amd,
+  nvidia,
+  playstation,
+  lg,
+  microsoft,
+  syrve,
+} as const
 
-const rowB: PartnerMark[] = [
-  { name: 'AndaSeat' },
-  { name: 'FANATEC' },
-  { name: 'PlayStation', src: playstation },
-  { name: 'LG Display', src: lg },
-  { name: 'Microsoft', src: microsoft },
-  { name: 'Syrve', src: syrve },
-  { name: 'Viva Wallet' },
-  { name: 'GlobalTips' },
-]
+function row(id: 'a' | 'b'): PartnerMark[] {
+  return t(`reviews.partners.${id}`).map((partner) => {
+    const src = partner.id in logos ? logos[partner.id as keyof typeof logos] : undefined
+    return src ? { name: partner.name, src } : { name: partner.name }
+  })
+}
+
+const rowA = row('a')
+const rowB = row('b')
 
 export function Partners() {
   return <PartnerBands rows={[rowA, rowB]} />

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Renderer, Program, Mesh, Triangle, Plane, Texture, RenderTarget } from 'ogl';
+import { t } from '@/site/copy/translate';
 import { intersectsSnapPort, observeSnapPort } from '@/site/hooks/snap-in-view';
 import { clamp01 } from '@/site/lib/math';
 import { prefersReducedMotion } from '@/site/lib/motion';
@@ -1399,7 +1400,7 @@ const FlexCarousel = ({
   }, []);
 
   const current = list[active] || list[0];
-  const label = current ? current.title || current.alt || `Image ${active + 1}` : '';
+  const label = current ? current.title || current.alt || t('common.imageN', { n: active + 1 }) : '';
 
   return (
     <div
@@ -1409,7 +1410,7 @@ const FlexCarousel = ({
       style={{ ...style, '--flex-carousel-half': `${Math.min(Math.max(cardHeight, 0.05), 1) * 50}%` } as CSSProperties}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Image carousel"
+      aria-label={t('common.imageCarousel')}
       tabIndex={0}
     >
       <style>{STYLE}</style>
@@ -1436,7 +1437,7 @@ const FlexCarousel = ({
         </div>
       )}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {`${label}, ${active + 1} of ${list.length}`}
+        {t('common.carouselLive', { label, n: active + 1, count: list.length })}
       </div>
     </div>
   );

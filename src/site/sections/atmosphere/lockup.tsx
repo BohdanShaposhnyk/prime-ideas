@@ -1,4 +1,5 @@
 import EchoText from '@/site/bits/EchoText'
+import { useTranslation } from '../../copy'
 import { palette } from '../../lib/palette'
 import { GOLD_TINT, WORD_CLASS } from './config'
 import { useLockupPlay } from './use-lockup'
@@ -11,7 +12,9 @@ type LockupProps = {
 }
 
 export function Lockup({ play, delay, coarse, reduced }: LockupProps) {
+  const { t } = useTranslation()
   const { rootRef, showPrime } = useLockupPlay(play, delay, coarse, reduced)
+  const prime = t('atmosphere.prime')
 
   return (
     <div
@@ -29,24 +32,24 @@ export function Lockup({ play, delay, coarse, reduced }: LockupProps) {
       <h2
         id="cs-atmosphere-title"
         data-copy="caption"
-        aria-label="Your night. Your PRIME"
+        aria-label={t('atmosphere.label')}
         className="relative z-10 flex max-w-[92%] flex-col items-center"
       >
         <span className="block">
           <span data-cs-word className={WORD_CLASS}>
-            Your
+            {t('atmosphere.your')}
           </span>{' '}
           <span data-cs-word className={WORD_CLASS}>
-            night.
+            {t('atmosphere.night')}
           </span>
         </span>
         <span className="mt-[0.22em] flex flex-col items-center sm:mt-[0.12em] sm:flex-row sm:items-baseline sm:justify-center sm:gap-x-[0.28em]">
           <span data-cs-word className={WORD_CLASS}>
-            Your
+            {t('atmosphere.your')}
           </span>
           <span className="relative mt-[0.08em] inline-flex items-center justify-center font-[family-name:var(--cs-display)] text-[clamp(2.6rem,52cqw,5.4rem)] leading-[var(--cs-lead-display)] tracking-[var(--cs-track-display)] uppercase sm:mt-0 sm:items-baseline sm:text-[clamp(1.05rem,20cqw,5.4rem)] sm:leading-[var(--cs-lead-display)]">
             <span className="invisible" aria-hidden>
-              PRIME
+              {prime}
             </span>
             {showPrime ? (
               <span
@@ -54,7 +57,7 @@ export function Lockup({ play, delay, coarse, reduced }: LockupProps) {
                 aria-hidden
               >
                 <EchoText
-                  text="PRIME"
+                  text={prime}
                   fontSize="1em"
                   fontWeight={400}
                   color={palette.gold}

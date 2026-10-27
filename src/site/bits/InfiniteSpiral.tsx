@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type RefObject } from 'react';
+import { t } from '@/site/copy/translate';
 import { intersectsSnapPort, observeSnapPort, snapScrollRoot } from '@/site/hooks/snap-in-view';
 import { clamp } from '@/site/lib/math';
 import { prefersReducedMotion } from '@/site/lib/motion';
@@ -337,7 +338,7 @@ const InfiniteSpiral = ({
         dragMovedRef.current = false;
       }}
     >
-      <div className="absolute inset-0 [transform-style:preserve-3d]" role="list" aria-label={finite ? 'Spiral gallery' : 'Infinite spiral gallery'}>
+      <div className="absolute inset-0 [transform-style:preserve-3d]" role="list" aria-label={finite ? t('common.spiralGallery') : t('common.infiniteSpiral')}>
         {normalizedItems.map((item, index) => {
           const content = (
             <img

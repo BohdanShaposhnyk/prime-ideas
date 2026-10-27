@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { MapPin, Phone } from 'lucide-react'
 import { BookNightButton } from '../../components/book-night'
+import { useTranslation } from '../../copy'
 import { TelegramIcon } from '../../components/icons'
 import { FilmGrain } from '../../components/grain'
 import { ctaClass, palette } from '../../lib/palette'
@@ -24,6 +25,7 @@ export function LocationFrame({
   map: ReactNode
   overlay: ReactNode
 }) {
+  const { t } = useTranslation()
   const venue = venues[index]
   if (!venue) return null
 
@@ -55,7 +57,7 @@ export function LocationFrame({
           href={venue.maps}
           target="_blank"
           rel="noreferrer"
-          aria-label={`Open ${venue.address} in Maps`}
+          aria-label={t('locations.openMaps', { address: venue.address })}
           className="inline-flex items-start gap-1.5 font-[family-name:var(--cs-body)] text-[0.78rem] leading-snug text-[var(--cs-caption)] [text-shadow:0_1px_10px_rgba(0,0,0,0.5)] underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none sm:text-[0.85rem]"
         >
           <MapPin
@@ -71,20 +73,20 @@ export function LocationFrame({
             <a
               href={`tel:${venue.phone}`}
               className={`${actionClass} ${iconBtnClass}`}
-              aria-label={`Call ${venue.phoneLabel}`}
+              aria-label={t('locations.callAria', { phone: venue.phoneLabel })}
             >
               <Phone className="size-8 shrink-0 text-[#34C759] sm:size-[1.05em]" strokeWidth={2.25} aria-hidden />
-              <span className="sr-only sm:not-sr-only">Call</span>
+              <span className="sr-only sm:not-sr-only">{t('common.call')}</span>
             </a>
             <a
               href={venue.telegram}
               target="_blank"
               rel="noreferrer"
               className={`${actionClass} ${iconBtnClass}`}
-              aria-label="Telegram"
+              aria-label={t('common.telegram')}
             >
               <TelegramIcon className="size-8 shrink-0 sm:size-[1.1em]" />
-              <span className="sr-only sm:not-sr-only">Telegram</span>
+              <span className="sr-only sm:not-sr-only">{t('common.telegram')}</span>
             </a>
           </div>
             </div>

@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { t } from '@/site/copy/translate';
 import { clamp } from '@/site/lib/math';
 import { prefersReducedMotion } from '@/site/lib/motion';
 
@@ -104,7 +105,7 @@ export default function Carousel({
   loop = false,
   draggable = true,
   className = '',
-  'aria-label': ariaLabel = 'Carousel',
+  'aria-label': ariaLabel = t('common.carousel'),
 }: CarouselProps) {
   const count = items.length;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -492,7 +493,7 @@ export default function Carousel({
                 data-current={itemIndex === active ? 'true' : undefined}
                 role="group"
                 aria-roledescription="slide"
-                aria-label={`${itemIndex + 1} of ${count}`}
+                aria-label={t('common.slide', { n: itemIndex + 1, count })}
               >
                 <div className="h-full w-full overflow-hidden rounded-[var(--carousel-radius)]">{item.node}</div>
                 <span

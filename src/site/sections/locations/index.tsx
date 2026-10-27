@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import Carousel from '@/site/bits/Carousel'
 import RubberSegment from '@/site/bits/RubberSegment'
+import { useTranslation } from '../../copy'
 import { palette } from '../../lib/palette'
 import { LocationFrame } from './card'
 import { CITIES, LOCATIONS } from './config'
@@ -49,6 +50,7 @@ function CityLabels({ activeCity }: { activeCity: string }) {
 }
 
 export default function Locations() {
+  const { t } = useTranslation()
   const [index, setIndex] = useState(0)
   const [settled, setSettled] = useState(true)
   const [slots, setSlots] = useState<(HTMLDivElement | null)[]>(() => LOCATIONS.map(() => null))
@@ -74,7 +76,7 @@ export default function Locations() {
 
   return (
     <section
-      aria-label="Locations"
+      aria-label={t('locations.label')}
       data-scene="locations"
       className="cs-scene relative overflow-clip bg-[var(--cs-pitch)]"
     >
@@ -86,7 +88,7 @@ export default function Locations() {
               <CityLabels activeCity={LOCATIONS[index]?.city ?? ''} />
               <RubberSegment
                 className="w-full"
-                aria-label="Locations"
+                aria-label={t('locations.label')}
                 items={LOCATIONS.map((item) => ({ value: item.id, label: <VenueTabLabel name={item.label} /> }))}
                 value={LOCATIONS[index]?.id}
                 onChange={(_, next) => choose(next)}
@@ -103,7 +105,7 @@ export default function Locations() {
           }
           map={
             <Carousel
-              aria-label="Location maps"
+              aria-label={t('locations.maps')}
               index={index}
               onChange={setIndex}
               onSettledChange={setSettled}

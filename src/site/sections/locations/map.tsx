@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
+import { useTranslation } from '../../copy'
 import { mapsHref } from '../../lib/seo'
 import { prefersReducedMotion } from '../../lib/motion'
 import type { Venue } from '../../lib/venues'
@@ -29,6 +30,7 @@ export function VenueMapPark({
   index: number
   settled: boolean
 }) {
+  const { t } = useTranslation()
   const frames = useRef<(HTMLDivElement | null)[]>([])
   const shown = useRef<boolean[]>([])
   const fades = useRef<number[]>([])
@@ -116,7 +118,7 @@ export function VenueMapPark({
       className="pointer-events-none fixed z-[3] overflow-hidden rounded-[var(--cs-radius-media)] opacity-0"
     >
       <iframe
-        title={`Map — ${venue.address}`}
+        title={t('locations.mapTitle', { address: venue.address })}
         src={mapEmbedSrc(venue)}
         className="h-full w-full border-0"
         loading="eager"

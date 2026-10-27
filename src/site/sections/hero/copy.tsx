@@ -2,12 +2,14 @@ import { useRef } from 'react'
 import SplitText from '@/site/bits/SplitText'
 import { gsap, useGSAP } from '@/site/lib/gsap'
 import { BookNightButton } from '../../components/book-night'
+import { useTranslation } from '../../copy'
 import { TypeScrim } from '../../components/type-scrim'
 import { useGoldShine } from '../../hooks/gold-shine'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { kickerClass, lockupClass, lockupToSupportClass, supportClass } from '../../lib/palette'
 
 export function HeroCopy() {
+  const { t } = useTranslation()
   const copyRef = useRef<HTMLDivElement>(null)
   const reduced = usePrefersReducedMotion()
   const goldLive = useGoldShine(copyRef)
@@ -47,10 +49,11 @@ export function HeroCopy() {
           data-hero-extra=""
           className={`mb-3 sm:mb-4 ${kickerClass} ${quiet}`}
         >
-          Official <span className="text-[var(--cs-gold)] italic">NAVI</span> partner
+          {t('hero.kickerLead')} <span className="text-[var(--cs-gold)] italic">{t('hero.kickerMark')}</span>{' '}
+          {t('hero.kickerTail')}
         </p>
         <SplitText
-          text="enter your prime"
+          text={t('hero.heading')}
           splitType="words"
           tag="p"
           textAlign="center"
@@ -67,7 +70,7 @@ export function HeroCopy() {
           data-hero-extra=""
           className={`${lockupToSupportClass} max-w-[36rem] ${supportClass} ${quiet}`}
         >
-          A cyber lounge with a bar, a cinema, and karaoke.
+          {t('hero.support')}
         </p>
         <div
           data-hero-extra=""

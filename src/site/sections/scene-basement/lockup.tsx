@@ -1,6 +1,7 @@
 import FoldText from '@/site/bits/FoldText'
 import ParticleText from '@/site/bits/ParticleText'
 import { BookNightButton } from '../../components/book-night'
+import { useTranslation } from '../../copy'
 import { lockupClass, palette } from '../../lib/palette'
 import { FIELD, lockupSize, primeSlot } from './field'
 import { stayFold, stayWord } from './use-intro'
@@ -16,6 +17,9 @@ export function BasementLockup({
   ctaOn: boolean
   desktop: boolean
 }) {
+  const { t } = useTranslation()
+  const prime = t('basement.prime')
+
   return (
     <div className="relative z-[1] flex flex-1 flex-col items-center justify-center gap-5 px-5 sm:gap-6">
       <h2
@@ -44,7 +48,7 @@ export function BasementLockup({
             <span className="relative shrink-0" style={primeSlot}>
               {primeOn ? (
                 <ParticleText
-                  text="PRIME"
+                  text={prime}
                   color={palette.gold}
                   highlightColor="#F6E7A8"
                   particleSize={1.7}
@@ -64,12 +68,12 @@ export function BasementLockup({
                   style={desktop ? FIELD.desktop : FIELD.phone}
                 />
               ) : (
-                <span className="sr-only">Prime</span>
+                <span className="sr-only">{t('basement.primeFallback')}</span>
               )}
             </span>
           </>
         ) : (
-          <span className="sr-only">Stay Prime</span>
+          <span className="sr-only">{t('basement.srStay')}</span>
         )}
       </h2>
       <div

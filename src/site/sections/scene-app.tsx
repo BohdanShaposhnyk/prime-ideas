@@ -3,6 +3,7 @@ import SideRays from '@/site/bits/SideRays'
 import badgeAppStore from '../assets/badge-app-store.svg'
 import badgeGooglePlay from '../assets/badge-google-play.png'
 import mockup from '../assets/senet-mockup.webp'
+import { useTranslation } from '../copy'
 import { useMediaQuery, usePrefersReducedMotion } from '../hooks/media'
 import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../lib/palette'
@@ -29,17 +30,16 @@ function AppCopy({
   supportClassName: string
   badgesClassName?: string
 }) {
+  const { t, rich } = useTranslation()
+
   return (
     <>
       <div>
         <h2 className={lockupClass}>
-          <span className="block">Ready when</span>
-          <span className="block">you are</span>
+          <span className="block">{t('app.titleLead')}</span>
+          <span className="block">{t('app.titleTail')}</span>
         </h2>
-        <p className={supportClassName}>
-          SENET is the partner app for Prime. New guests get <span className="text-[var(--cs-gold)]">50 zł</span> on their account, or their <span className="text-[var(--cs-gold)]">first hour free</span>. Use
-          code <span className="text-[var(--cs-gold)]">“PRIME”</span> to activate your account.
-        </p>
+        <p className={supportClassName}>{rich('app.body')}</p>
       </div>
       <div className={badgesClassName}>
         <StoreBadges />
@@ -49,6 +49,8 @@ function AppCopy({
 }
 
 function StoreBadges() {
+  const { t } = useTranslation()
+
   return (
     <div className="flex flex-wrap items-center gap-3">
       <a
@@ -59,7 +61,7 @@ function StoreBadges() {
       >
         <img
           src={badgeAppStore}
-          alt="Download on the App Store"
+          alt={t('app.appStore')}
           className="h-10 w-auto"
           draggable={false}
         />
@@ -72,7 +74,7 @@ function StoreBadges() {
       >
         <img
           src={badgeGooglePlay}
-          alt="Get it on Google Play"
+          alt={t('app.playStore')}
           className="h-10 w-auto"
           draggable={false}
         />
@@ -82,6 +84,7 @@ function StoreBadges() {
 }
 
 export default function SceneApp() {
+  const { t } = useTranslation()
   const rootRef = useRef<HTMLElement>(null)
   const reduced = usePrefersReducedMotion()
   const desktop = useMediaQuery(DESKTOP_QUERY)
@@ -90,7 +93,7 @@ export default function SceneApp() {
   return (
     <section
       ref={rootRef}
-      aria-label="Ready when you are"
+      aria-label={t('app.label')}
       data-scene="app"
       className="cs-scene cs-px relative isolate overflow-hidden bg-[var(--cs-pitch)] text-[var(--cs-ice)]"
     >
@@ -120,7 +123,7 @@ export default function SceneApp() {
         <div className="cs-px-plane pointer-events-none absolute inset-y-0 right-0 z-10 w-1/2">
           <img
             src={mockup}
-            alt="SENET, the partner app, on iPhone"
+            alt={t('app.phoneAlt')}
             className="absolute right-4 bottom-0 w-[min(86%,62svh)] max-w-none translate-y-[33%] select-none lg:right-8"
             decoding="async"
             loading="lazy"
@@ -141,7 +144,7 @@ export default function SceneApp() {
         <div className="cs-px-plane relative z-10 mt-5 shrink-0 px-5 sm:mt-8 sm:px-8">
           <img
             src={mockup}
-            alt="SENET, the partner app, on iPhone"
+            alt={t('app.phoneAlt')}
             className="block h-auto w-full select-none"
             decoding="async"
             loading="lazy"

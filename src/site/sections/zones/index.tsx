@@ -1,5 +1,6 @@
 import InfiniteSpiral from '@/site/bits/InfiniteSpiral'
 import { BookNightButton } from '../../components/book-night'
+import { useTranslation } from '../../copy'
 import { FilmGrain } from '../../components/grain'
 import { TypeScrim } from '../../components/type-scrim'
 import { usePrefersReducedMotion } from '../../hooks/media'
@@ -9,6 +10,7 @@ import { CARDS, ZONES_MIN_HEIGHT, SPIRAL, SPIRAL_ITEMS } from './config'
 import { useZonesMotion } from './use-zones-motion'
 
 export default function Zones() {
+  const { t } = useTranslation()
   const reduced = usePrefersReducedMotion()
   const { sectionRef, stickyRef, drivenProgressRef, wordIndex } = useZonesMotion()
   useSceneParallax(stickyRef, !reduced)
@@ -55,7 +57,7 @@ export default function Zones() {
         <div aria-hidden className={sceneVeilClass} />
 
         <h2 id="cs-zones-title" className="sr-only">
-          Play zone. Sim racing. Bar. Karaoke. Private room. Cinema hall. Hookah. PC prices.
+          {t('zones.srHeading')}
         </h2>
         <div className="cs-px-copy pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-[5%] z-30 w-[min(20rem,86vw)] sm:bottom-[12%] sm:left-[6%] sm:w-[min(88vw,36rem)]">
           <TypeScrim />

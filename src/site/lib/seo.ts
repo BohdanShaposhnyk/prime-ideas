@@ -1,10 +1,11 @@
 /** Crawlable head for https://primelounge.club/. Injected into index.html by Vite. */
 
+import { t } from '../copy/translate.ts'
+
 export const SITE_ORIGIN = 'https://primelounge.club'
 export const SITE_URL = `${SITE_ORIGIN}/`
-export const SITE_TITLE = 'Prime Warsaw — gaming, karaoke, cinema, hookah, bar'
-export const SITE_DESCRIPTION =
-  'Prime Warsaw is a gaming lounge, cinema, karaoke, hookah, and bar in Warsaw and Wrocław. Visit Prime Mennica, Prime Mokotów, or Prime Wrocław tonight.'
+export const SITE_TITLE = t('seo.title')
+export const SITE_DESCRIPTION = t('seo.description')
 
 export const COMPANY_NAME = 'Prime Cyber Lounge Sp. z o.o.'
 /** Polish NIP. The VAT id is the same number with the PL prefix. */
@@ -15,23 +16,23 @@ const ORGANIZATION_ID = `${SITE_URL}#organization`
 
 export const INSTAGRAMS = [
   {
-    id: 'warsaw',
+    id: 'warsaw' as const,
     handle: 'prime_warsaw',
-    city: 'Warsaw',
-    href: 'https://www.instagram.com/prime_warsaw/',
+    city: t('common.warsaw'),
+    href: 'https://www.instagram.com/prime_warsaw/' as const,
   },
   {
-    id: 'wroclaw',
+    id: 'wroclaw' as const,
     handle: 'prime_wroclaw',
-    city: 'Wrocław',
-    href: 'https://www.instagram.com/prime_wroclaw/',
+    city: t('common.wroclaw'),
+    href: 'https://www.instagram.com/prime_wroclaw/' as const,
   },
-] as const
+]
 
 export const TIKTOK = {
-  label: 'TikTok',
-  href: 'https://www.tiktok.com/@primelounge.club',
-} as const
+  label: t('basement.tiktok'),
+  href: 'https://www.tiktok.com/@primelounge.club' as const,
+}
 
 export type SeoVenue = {
   id: 'mennica' | 'mokotow' | 'wroclaw'
@@ -54,55 +55,64 @@ export type SeoVenue = {
 /** Same Google listing for a click and, with `output=embed`, for the iframe. */
 export function mapsHref(cid: string, embed = false) {
   const embedFlag = embed ? '&output=embed' : ''
-  return `https://www.google.com/maps?cid=${cid}&hl=en&z=16${embedFlag}`
+  return `https://www.google.com/maps?cid=${cid}&hl=${t('meta.lang')}&z=16${embedFlag}`
 }
 
-export const SEO_VENUES: SeoVenue[] = [
+const VENUE_IDS = ['mennica', 'mokotow', 'wroclaw'] as const
+type VenueId = (typeof VENUE_IDS)[number]
+
+const VENUE_DATA: Record<
+  VenueId,
   {
-    id: 'mennica',
-    shortName: 'Mennica',
-    name: 'Prime Mennica',
-    streetAddress: 'Waliców 11',
-    addressLocality: 'Warsaw',
+    telephone: string
+    telegram: string
+    instagram: (typeof INSTAGRAMS)[number]['href']
+    mapsCid: string
+    latitude: number
+    longitude: number
+    postalCode?: string
+  }
+> = {
+  mennica: {
     telephone: '+48530811888',
-    telephoneLabel: '+48 530 811 888',
     telegram: 'https://t.me/primewarsaw',
     instagram: 'https://www.instagram.com/prime_warsaw/',
     mapsCid: '14272506656234488151',
     latitude: 52.2341,
     longitude: 20.9927,
   },
-  {
-    id: 'mokotow',
-    shortName: 'Mokotów',
-    name: 'Prime Mokotów',
-    streetAddress: 'Wincentego Rzymowskiego 53',
-    addressLocality: 'Warsaw',
-    postalCode: '02-697',
+  mokotow: {
     telephone: '+48530822888',
-    telephoneLabel: '+48 530 822 888',
     telegram: 'https://t.me/primemokotow',
     instagram: 'https://www.instagram.com/prime_warsaw/',
     mapsCid: '8832738091500516673',
     latitude: 52.176772,
     longitude: 21.001543,
+    postalCode: '02-697',
   },
-  {
-    id: 'wroclaw',
-    shortName: 'Opera',
-    name: 'Prime Wrocław',
-    streetAddress: 'Plac Teatralny 6-8',
-    addressLocality: 'Wrocław',
-    postalCode: '50-051',
+  wroclaw: {
     telephone: '+48530881888',
-    telephoneLabel: '+48 530 818 888',
     telegram: 'https://t.me/primewroclaw',
     instagram: 'https://www.instagram.com/prime_wroclaw/',
     mapsCid: '1448489213028860593',
     latitude: 51.1057,
     longitude: 17.0324,
+    postalCode: '50-051',
   },
-]
+}
+
+export const SEO_VENUES: SeoVenue[] = VENUE_IDS.map((id) => {
+  const data = VENUE_DATA[id]
+  return {
+    id,
+    shortName: t(`venues.${id}.shortName`),
+    name: t(`venues.${id}.name`),
+    streetAddress: t(`venues.${id}.street`),
+    addressLocality: t(`venues.${id}.city`),
+    telephoneLabel: t(`venues.${id}.phoneLabel`),
+    ...data,
+  }
+})
 
 const SAME_AS = [
   ...INSTAGRAMS.map((profile) => profile.href),
@@ -175,7 +185,7 @@ export function headMarkup() {
     `<meta property="og:image" content="${image}" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
-    `<meta property="og:locale" content="en_US" />`,
+    `<meta property="og:locale" content="${attr(t('meta.ogLocale'))}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${description}" />`,

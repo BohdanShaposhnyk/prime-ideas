@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from 'react'
+import { useTranslation } from '../copy'
 import { usePrefersReducedMotion } from '../hooks/media'
 import { PAGE_LINKS, scrollSnapPortTo } from '../lib/nav'
 import { HeroMark } from '../sections/hero/mark'
@@ -20,6 +21,7 @@ function MenuIcon({ open }: { open: boolean }) {
  * returns on the way up, so full-bleed scenes stay clear.
  */
 export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | null> }) {
+  const { t } = useTranslation()
   const reduced = usePrefersReducedMotion()
   const [open, setOpen] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -65,7 +67,7 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
       {open ? (
         <button
           type="button"
-          aria-label="Close menu"
+          aria-label={t('common.menuClose')}
           className="fixed inset-0 z-40 bg-black/45"
           onClick={() => setOpen(false)}
         />
@@ -76,21 +78,21 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
         <div className="grid h-[var(--cs-header-bar)] grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 sm:px-6">
           <button
             type="button"
-            aria-label="Prime"
+            aria-label={t('common.prime')}
             className="justify-self-start rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)]"
             onClick={() => scrollToId('cs-nav-hero')}
           >
             <HeroMark />
           </button>
           <p className="text-center font-[family-name:var(--cs-body)] text-[0.62rem] tracking-[0.12em] text-[var(--cs-ice)] uppercase whitespace-nowrap [text-shadow:0_1px_12px_rgba(0,0,0,0.75)] sm:text-[length:var(--cs-text-kicker)] sm:tracking-[var(--cs-track-micro)]">
-            Warsaw · Wrocław
+            {t('common.cities')}
           </p>
           <button
             type="button"
             className="justify-self-end inline-flex size-11 items-center justify-center rounded-full text-[var(--cs-ice)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)]"
             aria-expanded={open}
             aria-controls="cs-site-menu"
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t('common.menuClose') : t('common.menuOpen')}
             onClick={() => setOpen((value) => !value)}
           >
             <MenuIcon open={open} />
@@ -98,7 +100,7 @@ export function SiteHeader({ portRef }: { portRef: RefObject<HTMLDivElement | nu
         </div>
         <nav
           id="cs-site-menu"
-          aria-label="Page"
+          aria-label={t('common.page')}
           hidden={!open}
           className="mx-4 mb-3 rounded-[var(--cs-radius-panel)] border border-[color-mix(in_srgb,var(--cs-ice)_14%,transparent)] bg-[var(--cs-pitch)] px-2 py-2 sm:mx-6"
         >

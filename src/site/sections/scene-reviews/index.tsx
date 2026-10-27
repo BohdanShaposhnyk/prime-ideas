@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { GoldWord } from '../../components/gold-word'
+import { useTranslation } from '../../copy'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { useSceneParallax } from '../../hooks/scene-parallax'
 import { kickerClass, lockupClass, sceneVeilClass } from '../../lib/palette'
@@ -28,6 +29,7 @@ const controlClass =
   'grid size-9 cursor-pointer place-items-center rounded-full border border-white/15 text-[var(--cs-ice)] transition-colors hover:border-[var(--cs-gold)] hover:text-[var(--cs-gold)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cs-ice)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--cs-pitch)] disabled:cursor-default disabled:opacity-30 disabled:hover:border-white/15 disabled:hover:text-[var(--cs-ice)]'
 
 export default function SceneReviews() {
+  const { t } = useTranslation()
   const rootRef = useRef<HTMLElement>(null)
   const reduced = usePrefersReducedMotion()
   useSceneParallax(rootRef, !reduced)
@@ -44,7 +46,7 @@ export default function SceneReviews() {
       <div aria-hidden className={sceneVeilClass} />
       <header className="cs-px-copy relative z-20 shrink-0 px-5 pt-[var(--cs-header-h)] text-center sm:px-8">
         <h2 id="cs-reviews-title" className={lockupClass}>
-          <GoldWord>Reviews</GoldWord>
+          <GoldWord>{t('reviews.title')}</GoldWord>
         </h2>
         <GoogleRating />
       </header>
@@ -53,7 +55,7 @@ export default function SceneReviews() {
         <ul
           ref={scrollerRef}
           data-cs-x-pan=""
-          aria-label="Google reviews"
+          aria-label={t('reviews.listLabel')}
           data-review-row=""
           className="flex min-h-0 snap-x snap-mandatory items-start gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-ps-5 scroll-pe-5 px-5 touch-pan-x [scrollbar-width:none] sm:scroll-ps-8 sm:scroll-pe-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
         >
@@ -69,7 +71,7 @@ export default function SceneReviews() {
             <button
               type="button"
               className={controlClass}
-              aria-label="Previous reviews"
+              aria-label={t('reviews.previous')}
               disabled={edges.start}
               onClick={() => move(-1)}
             >
@@ -78,7 +80,7 @@ export default function SceneReviews() {
             <button
               type="button"
               className={controlClass}
-              aria-label="Next reviews"
+              aria-label={t('reviews.next')}
               disabled={edges.end}
               onClick={() => move(1)}
             >
@@ -89,7 +91,7 @@ export default function SceneReviews() {
       </div>
 
       <div className="cs-px-ground relative z-10 mt-auto flex w-full shrink-0 flex-col items-center pt-2">
-        <p className={kickerClass}>Our partners</p>
+        <p className={kickerClass}>{t('reviews.partnersKicker')}</p>
         <div className="mt-3 w-full">
           <Partners />
         </div>

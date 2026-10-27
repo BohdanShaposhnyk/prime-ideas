@@ -1,6 +1,7 @@
 import barExt from '@/site/assets/bar_ext.webp'
 import danceNeon from '@/site/assets/dance_neon.webp'
 import barInterior from '@/site/assets/bar_interior.webp'
+import { t } from '../copy/translate'
 import { SEO_VENUES, mapsHref, type SeoVenue } from './seo'
 
 export type Venue = {
@@ -28,7 +29,10 @@ export const VENUES: Venue[] = SEO_VENUES.map((venue) => ({
   id: venue.id,
   shortName: venue.shortName,
   title: venue.name,
-  address: `${venue.streetAddress}, ${venue.addressLocality}`,
+  address: t('locations.addressLine', {
+    street: venue.streetAddress,
+    city: venue.addressLocality,
+  }),
   phone: venue.telephone,
   phoneLabel: venue.telephoneLabel,
   telegram: venue.telegram,

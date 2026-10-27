@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { VIGNETTE_BG, VIGNETTE_TO, vignetteVars } from './vignette'
+import { useTranslation } from '../../copy'
 import { HeroCopy } from './copy'
 import { heroFocusStyle, heroReel } from './media'
 
 export function ReducedHeroVideo() {
+  const { t } = useTranslation()
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -47,7 +49,7 @@ export function ReducedHeroVideo() {
     <section
       ref={sectionRef}
       id="cs-nav-hero"
-      aria-label="PRIME"
+      aria-label={t('hero.mark')}
       data-scroll="split-hold"
       data-scene="hero"
       className="cs-scene relative overflow-hidden bg-[var(--cs-pitch)]"

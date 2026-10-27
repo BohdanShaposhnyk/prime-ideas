@@ -6,7 +6,10 @@ import gameRoom from '../../assets/showcase/gameroom-dim.webp'
 import guestRoom from '../../assets/showcase/guest-room-3-ls.webp'
 import loungeHall from '../../assets/showcase/lounge-2.webp'
 import mic from '../../assets/showcase/mic.webp'
+import { orderedIds, t, type Catalog } from '../../copy/translate'
 import { zonesMinHeight } from './span'
+
+type ZoneId = keyof Catalog['zones']['cards']
 
 /**
  * Zones. The main list of services, one card per stop:
@@ -18,64 +21,24 @@ export const ROLL_W = 1.85
 /** Share of each card step that rests before the roll. */
 export const STEP_HOLD = HOLD_W / (HOLD_W + ROLL_W)
 
-export const CARDS = [
-  {
-    id: 'play',
-    word: 'PLAY ZONE',
-    line: 'PC rooms for one, two, four, or five.',
-    alt: 'Play zone',
-    src: gameRoom,
-  },
-  {
-    id: 'sim',
-    word: 'SIM RACING',
-    line: 'Motorsport simulators.',
-    alt: 'Sim racing',
-    src: carsimTilted,
-  },
-  {
-    id: 'bar',
-    word: 'BAR',
-    line: 'A restaurant kitchen and bar.',
-    alt: 'Bar',
-    src: barContrast,
-  },
-  {
-    id: 'karaoke',
-    word: 'KARAOKE',
-    line: 'A room for your group to sing.',
-    alt: 'Karaoke',
-    src: mic,
-  },
-  {
-    id: 'room',
-    word: 'PRIVATE ROOM',
-    line: 'A private cinema for your group.',
-    alt: 'Private room',
-    src: guestRoom,
-  },
-  {
-    id: 'hall',
-    word: 'CINEMA HALL',
-    line: 'The large hall. PlayStation 5 in every cinema and lounge.',
-    alt: 'Cinema hall',
-    src: loungeHall,
-  },
-  {
-    id: 'hookah',
-    word: 'HOOKAH',
-    line: 'Its own lounge, clear of the other rooms.',
-    alt: 'Hookah',
-    src: hookahPurple,
-  },
-  {
-    id: 'prices',
-    word: 'PRICES',
-    line: 'From 19 zł an hour. 10 zł an hour in a package.',
-    alt: 'PC prices, 19 zł an hour or 10 zł in a package',
-    src: prices,
-  },
-] as const
+const art = {
+  play: gameRoom,
+  sim: carsimTilted,
+  bar: barContrast,
+  karaoke: mic,
+  room: guestRoom,
+  hall: loungeHall,
+  hookah: hookahPurple,
+  prices,
+} as const satisfies Record<ZoneId, string>
+
+export const CARDS = orderedIds(t('zones.order'), Object.keys(art) as ZoneId[], 'Zones').map((id) => ({
+  id,
+  word: t(`zones.cards.${id}.word`),
+  line: t(`zones.cards.${id}.line`),
+  alt: t(`zones.cards.${id}.alt`),
+  src: art[id],
+}))
 
 export const ZONES_MIN_HEIGHT = zonesMinHeight(CARDS.length)
 

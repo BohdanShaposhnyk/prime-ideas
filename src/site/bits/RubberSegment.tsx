@@ -6,6 +6,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { t } from '@/site/copy/translate';
 import { gsap } from 'gsap';
 import { usePrefersReducedMotion } from '@/site/hooks/media';
 import { clamp } from '@/site/lib/math';
@@ -107,7 +108,7 @@ export default function RubberSegment({
   draggable = true,
   disabled = false,
   className = '',
-  'aria-label': ariaLabel = 'Segmented control',
+  'aria-label': ariaLabel = t('common.segmented'),
 }: RubberSegmentProps) {
   const list = items.map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
   const [inner, setInner] = useState(defaultValue ?? list[0]?.value);

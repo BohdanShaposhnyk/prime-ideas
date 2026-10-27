@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from 'react'
+import { t } from '../../copy/translate'
 import { usePrefersReducedMotion } from '../../hooks/media'
 import { gsap, useGSAP } from '@/site/lib/gsap'
 
@@ -10,7 +11,7 @@ const FOLD_STAGGER = 0.06
 const PRIME_AT = STAY_AT
 
 /** Lockup word. Character count times the fold stagger is when the word has landed. */
-export const stayWord = 'Stay'
+export const stayWord = t('basement.stay')
 const STAY_LAND_MS = (FOLD_S + FOLD_STAGGER * (stayWord.length - 1)) * 1000
 
 /** How much of the floor must be in the snap port before the intro plays. */
