@@ -5,13 +5,10 @@
   },
   "facts": {
     "clubCode": "PRIME",
-    "welcomeAmount": "50",
     "birthdayAmount": "300",
+    "studentRate": "33%",
     "currency": "zł",
-    "hourAmount": "19",
-    "packageAmount": "10",
-    "hours": "16:00–03:00",
-    "nightStart": "22:00"
+    "hours": "16:00–03:00"
   },
   "common": {
     "bookNight": "Book a night",
@@ -97,8 +94,8 @@
       },
       "prices": {
         "word": "PRICES",
-        "line": "From {hourAmount} {currency} an hour. {packageAmount} {currency} an hour in a package.",
-        "alt": "PC prices, {hourAmount} {currency} an hour or {packageAmount} {currency} in a package"
+        "line": "PC rates depend on the lounge.",
+        "alt": "PC prices, which depend on the lounge"
       }
     }
   },
@@ -113,16 +110,20 @@
       {
         "id": "welcome",
         "kicker": "New guests",
-        "lead": "On your account,",
-        "rest": "or your first hour free.",
+        "figure": "1",
+        "unit": "h",
+        "lead": "Your first hour",
+        "rest": "is free.",
         "note": "For every new guest."
       },
       {
         "id": "birthday",
         "kicker": "Birthday",
-        "lead": "On your account,",
+        "figure": "{birthdayAmount}",
+        "unit": "{currency}",
+        "lead": "On your PC balance,",
         "rest": "the day you celebrate.",
-        "note": "Bring an ID."
+        "note": "Show ID that your birthday is today."
       }
     ]
   },
@@ -248,27 +249,23 @@
     "support": "Before you book a night.",
     "club": {
       "q": "How do I activate the club?",
-      "a": "Open SENET and enter club code <em>“{clubCode}”</em>. New guests get <em>{welcomeAmount} {currency}</em> on the account, or the first hour free."
+      "a": "Open SENET and enter club code <em>“{clubCode}”</em>. New guests get the first hour free."
     },
     "book": {
       "q": "How do I book a PC or a room?",
-      "a": "Book <booking>online</booking>, on Telegram or Instagram, or at the desk. A PC is pay on arrival. Rooms and night packages hold once we confirm."
+      "a": "A PC is pay on arrival. Book a room or a PlayStation with the administrator, in the SENET ID app, or at <booking>prime.booking.enes.tech</booking>."
     },
     "hours": {
       "q": "What are the hours?",
-      "a": "Open every day, <em>{hours}</em>, at every lounge. Night packages start at <em>{nightStart}</em>. We are not open 24/7."
+      "a": "Open every day, <em>{hours}</em>, at every lounge. We are not open 24/7. The club can open earlier or stay open longer if you arrange it with the administrator by phone."
     },
     "prices": {
       "q": "What are the prices?",
-      "a": "<em>{hourAmount} {currency}</em> an hour, or <em>{packageAmount} {currency}</em> an hour in a package. Night packages cover the stretch from {nightStart}. Play zone, private room, and cinema hall are priced on their own."
+      "a": "PC prices depend on the lounge. Private rooms, the cinema hall, and PlayStation are priced on their own. Ask the administrator."
     },
     "deals": {
       "q": "What discounts are on?",
-      "a": "New guests get <em>{welcomeAmount} {currency}</em> or the first hour free. Birthdays get <em>{birthdayAmount} {currency}</em> with an ID. Students and groups of four or more get a rate at the desk."
-    },
-    "age": {
-      "q": "From what age can I come?",
-      "a": "Under 16, come with an adult and an ID, and stay until <em>{nightStart}</em>. From 16 you can come alone. The bar is 18+."
+      "a": "New guests get the first hour free. Birthdays get <em>{birthdayAmount} {currency}</em> on the PC balance when you show ID that your birthday is today. Students get <em>{studentRate}</em> off with a valid student card."
     },
     "pay": {
       "q": "Where are you, and how do I pay?",
@@ -285,7 +282,7 @@
     "titleLead": "Ready when",
     "titleTail": "you are",
     "label": "Ready when you are",
-    "body": "SENET is the partner app for Prime. New guests get <em>{welcomeAmount} {currency}</em> on their account, or their <em>first hour free</em>. Use code <em>“{clubCode}”</em> to activate your account.",
+    "body": "SENET is the partner app for Prime. New guests get their <em>first hour free</em>. Use code <em>“{clubCode}”</em> to activate your account.",
     "appStore": "Download on the App Store",
     "playStore": "Get it on Google Play",
     "phoneAlt": "SENET, the partner app, on iPhone"
@@ -322,7 +319,7 @@
       "name": "Prime Wrocław",
       "street": "Plac Teatralny 6-8",
       "city": "Wrocław",
-      "phoneLabel": "+48 530 818 888"
+      "phoneLabel": "+48 530 881 888"
     }
   }
 }

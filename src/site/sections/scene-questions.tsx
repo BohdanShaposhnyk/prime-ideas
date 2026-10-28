@@ -7,9 +7,7 @@ import { useSceneParallax } from '../hooks/scene-parallax'
 import { lockupClass, lockupToSupportClass, sceneVeilClass, supportClass } from '../lib/palette'
 
 /**
- * Questions after reviews. One port tall, seven rows, one answer open.
- * Club code, welcome gift, birthday gift, hourly rate, and addresses are the live lines.
- * Hours, deposits, student and group rates, and the age rule are stand-ins.
+ * Questions after reviews. One port tall, six rows, one answer open.
  */
 function Mark({ open }: { open: boolean }) {
   return (

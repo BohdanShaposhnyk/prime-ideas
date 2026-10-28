@@ -35,12 +35,6 @@ const glassClass = 'bg-[color-mix(in_srgb,#07060C_62%,transparent)]'
 const glassContentClass =
   'h-full min-h-0 justify-start !overflow-hidden sm:justify-center'
 
-function offerAmount(id: string) {
-  if (id === 'welcome') return 'facts.welcomeAmount' as const
-  if (id === 'birthday') return 'facts.birthdayAmount' as const
-  throw new Error(`Missing offer amount: ${id}`)
-}
-
 function OffersCopy() {
   const { t } = useTranslation()
   const verbs = t('offers.verbs')
@@ -97,8 +91,6 @@ function OfferCard({
   offer: Catalog['offers']['items'][number]
   animated: boolean
 }) {
-  const { t } = useTranslation()
-
   return (
     <BorderGlow
       className={`h-full min-h-0 w-full flex-1 ${glassClass}`}
@@ -118,9 +110,9 @@ function OfferCard({
       <div className="flex h-full min-h-0 flex-col justify-start px-3 py-2.5 text-left sm:justify-center sm:px-5 sm:py-6 md:px-8 lg:px-9">
         <p className={kickerClass}>{offer.kicker}</p>
         <p className="mt-1.5 flex items-end gap-[0.3em] sm:mt-3">
-          <span className={amountClass}>{t(offerAmount(offer.id))}</span>
+          <span className={amountClass}>{offer.figure}</span>
           <span className="mb-[0.08em] font-[family-name:var(--cs-body)] text-[clamp(1.15rem,2vw,1.4rem)] leading-none font-medium text-[var(--cs-gold)]">
-            {t('facts.currency')}
+            {offer.unit}
           </span>
         </p>
         <p className={`mt-2 sm:mt-3 ${lineClass}`}>
