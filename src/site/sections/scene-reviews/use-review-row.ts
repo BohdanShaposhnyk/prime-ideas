@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { AXIS_BIAS, AXIS_LOCK_MS, EDGE_SLOP, LINE_PX, SNAP_RESTORE_MS, WHEEL_DEAD } from './config'
 
+/** Same distance as the page touch snap. A shorter move is a tap. */
+const TOUCH_SLOP = 16
+
 /**
  * Horizontal review row. Tracks which end is in view, and sends a vertical
  * wheel to the snap port. The row never receives that wheel, so without this
  * the page would stay put. Snap stays off for the gesture, and travel stops
  * at the neighboring scene.
+ * A sideways finger moves the cards. An upright finger stays with the page.
  */
 export function useReviewRow(reduced: boolean) {
   const scrollerRef = useRef<HTMLUListElement>(null)
@@ -78,14 +82,100 @@ export function useReviewRow(reduced: boolean) {
     }
   }, [])
 
+  useEffect(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    let pointerId = -1
+    let startX = 0
+    let startY = 0
+    let originLeft = 0
+    let axis: '' | 'x' | 'y' = ''
+    let dragged = false
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch' || !event.isPrimary) return
+      pointerId = event.pointerId
+      startX = event.clientX
+      startY = event.clientY
+      originLeft = el.scrollLeft
+      axis = ''
+      dragged = false
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return
+      const dx = event.clientX - startX
+      const dy = event.clientY - startY
+      if (!axis) {
+        if (Math.abs(dx) < TOUCH_SLOP && Math.abs(dy) < TOUCH_SLOP) return
+        axis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y'
+        if (axis !== 'x') return
+        el.style.scrollSnapType = 'none'
+      }
+      if (axis !== 'x') return
+      dragged = true
+      const max = Math.max(0, el.scrollWidth - el.clientWidth)
+      el.scrollLeft = Math.min(max, Math.max(0, originLeft - dx))
+    }
+
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return
+      pointerId = -1
+      if (axis !== 'x') {
+        axis = ''
+        return
+      }
+      axis = ''
+      el.style.scrollSnapType = ''
+      const step = cardDistance(el)
+      const max = Math.max(0, el.scrollWidth - el.clientWidth)
+      const left = step > 0 ? Math.round(el.scrollLeft / step) * step : 0
+      el.scrollTo({ left: Math.min(max, Math.max(0, left)), behavior: reduced ? 'auto' : 'smooth' })
+    }
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (axis !== 'x' || !event.cancelable) return
+      event.preventDefault()
+    }
+
+    const onClick = (event: MouseEvent) => {
+      if (!dragged) return
+      dragged = false
+      event.preventDefault()
+      event.stopPropagation()
+    }
+
+    el.addEventListener('pointerdown', onPointerDown)
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    el.addEventListener('click', onClick, true)
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', onPointerUp)
+    window.addEventListener('pointercancel', onPointerUp)
+    return () => {
+      el.style.scrollSnapType = ''
+      el.removeEventListener('pointerdown', onPointerDown)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('click', onClick, true)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('pointercancel', onPointerUp)
+    }
+  }, [reduced])
+
   const move = (dir: -1 | 1) => {
     const el = scrollerRef.current
-    const card = el?.querySelector('li')
-    if (!el || !card) return
-    const gap = Number.parseFloat(getComputedStyle(el).columnGap)
-    const distance = card.getBoundingClientRect().width + (Number.isFinite(gap) ? gap : 0)
+    if (!el) return
+    const distance = cardDistance(el)
+    if (distance <= 0) return
     el.scrollBy({ left: dir * distance, behavior: reduced ? 'auto' : 'smooth' })
   }
 
   return { scrollerRef, edges, move }
+}
+
+function cardDistance(el: HTMLElement) {
+  const card = el.querySelector('li')
+  if (!card) return 0
+  const gap = Number.parseFloat(getComputedStyle(el).columnGap)
+  return card.getBoundingClientRect().width + (Number.isFinite(gap) ? gap : 0)
 }

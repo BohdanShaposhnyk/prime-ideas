@@ -57,7 +57,7 @@ export default function SceneReviews() {
           data-cs-x-pan=""
           aria-label={t('reviews.listLabel')}
           data-review-row=""
-          className="flex min-h-0 snap-x snap-mandatory items-start gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-ps-5 scroll-pe-5 px-5 touch-pan-x [scrollbar-width:none] sm:scroll-ps-8 sm:scroll-pe-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
+          className="flex min-h-0 snap-x snap-mandatory items-start gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-ps-5 scroll-pe-5 px-5 touch-pan-y [scrollbar-width:none] sm:scroll-ps-8 sm:scroll-pe-8 sm:px-8 [&::-webkit-scrollbar]:hidden"
         >
           {REVIEWS.map((review) => (
             <li key={review.id} data-review-card="" className="flex shrink-0 snap-start flex-col">
