@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Check, Copy } from 'lucide-react'
 import { InstagramIcon, TelegramIcon, TikTokIcon } from '../../components/icons'
 import { useTranslation } from '../../copy'
 import { useGoldShine } from '../../hooks/gold-shine'
@@ -7,7 +8,11 @@ import { FOOTER_LINKS, scrollSnapPortTo } from '../../lib/nav'
 import { COMPANY_NAME, COMPANY_NIP, INSTAGRAMS, TIKTOK } from '../../lib/seo'
 import { VENUES } from '../../lib/venues'
 
-const FRANCHISE_MAIL = 'mailto:franchise@premiumlounge.club'
+/** Gmail compose. `view=cm` opens the draft; `fs=1` makes it the whole tab. */
+function franchiseComposeHref(to: string, subject: string) {
+  const params = new URLSearchParams({ view: 'cm', fs: '1', to, su: subject })
+  return `https://mail.google.com/mail/?${params}`
+}
 
 const linkClass =
   'text-[var(--cs-ice)] transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline-none'
@@ -79,11 +84,56 @@ function FranchiseBand() {
   return (
     <a
       ref={ref}
-      href={FRANCHISE_MAIL}
+      href={franchiseComposeHref(t('basement.franchiseMail'), t('basement.franchiseSubject'))}
+      target="_blank"
+      rel="noreferrer"
       className={`${franchiseBandClass}${live ? ' cs-gold-live' : ''}`}
     >
       {t('basement.franchise')}
     </a>
+  )
+}
+
+const franchiseMailClass =
+  'inline-flex cursor-pointer items-center gap-1.5 font-[family-name:var(--cs-body)] text-[0.75rem] font-medium tracking-normal text-[var(--cs-ice)] lowercase transition-colors hover:text-[var(--cs-gold)] focus-visible:text-[var(--cs-gold)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cs-gold)]'
+
+function FranchiseMail() {
+  const { t } = useTranslation()
+  const address = t('basement.franchiseMail')
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timer.current != null) window.clearTimeout(timer.current)
+    }
+  }, [])
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(address)
+    } catch {
+      return
+    }
+    setCopied(true)
+    if (timer.current != null) window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setCopied(false), 1600)
+  }
+
+  const Icon = copied ? Check : Copy
+
+  return (
+    <div className="flex justify-center px-4 pt-2.5">
+      <button
+        type="button"
+        onClick={() => void copy()}
+        aria-label={copied ? t('basement.copiedMail') : t('basement.copyMail', { mail: address })}
+        className={franchiseMailClass}
+      >
+        <Icon className="size-3.5 shrink-0" aria-hidden />
+        <span>{address}</span>
+      </button>
+    </div>
   )
 }
 
@@ -111,6 +161,7 @@ export function BasementContacts({ reduced }: { reduced: boolean }) {
       style={{ background: 'rgba(0, 0, 0, 0.55)' }}
     >
       <FranchiseBand />
+      <FranchiseMail />
       <div className="mx-auto flex w-full max-w-[88rem] flex-col gap-4 px-4 pt-[clamp(0.85rem,2.2vh,1.5rem)] pb-[max(0.85rem,env(safe-area-inset-bottom))] sm:px-8 lg:gap-6 lg:px-12">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 lg:grid-cols-[auto_1fr] lg:gap-x-16 lg:gap-y-5">
           <div className="flex min-w-0 flex-col items-start gap-3 sm:gap-4 lg:contents">

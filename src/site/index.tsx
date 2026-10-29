@@ -80,7 +80,7 @@ function useSnapPort(portRef: RefObject<HTMLDivElement | null>) {
  * Zones is the services list: play zone through hookah.
  * Addresses in the nav opens locations. Reviews in the nav opens the strip that follows it.
  * Questions in the nav opens the list after reviews.
- * Franchise is a mailto in the basement.
+ * Franchise opens a Gmail draft. The address sits under the band and copies on click.
  * Split-hold pin / pane recut live later in motion/.
  */
 export default function ChargeSplitPage() {

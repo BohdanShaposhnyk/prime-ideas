@@ -57,6 +57,7 @@ const EXTRAS = [
   'event-cs6/gamers.jpg',
   'event-cs6/crowd-hookah-2.jpg',
   'event-cs6/glass-ls.jpg',
+  'event-cs6/stage-mic.jpg',
 ]
 
 /** Default long edge. Full-bleed washes use this. The carousel target sets its own. */

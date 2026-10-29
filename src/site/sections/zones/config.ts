@@ -5,7 +5,7 @@ import prices from '../../assets/prices.webp'
 import gameRoom from '../../assets/showcase/gameroom-dim.webp'
 import guestRoom from '../../assets/showcase/guest-room-3-ls.webp'
 import loungeHall from '../../assets/showcase/lounge-2.webp'
-import mic from '../../assets/showcase/mic.webp'
+import mic from '../../assets/event-cs6/stage-mic.webp'
 import { orderedIds, t, type Catalog } from '../../copy/translate'
 import { zonesMinHeight } from './span'
 

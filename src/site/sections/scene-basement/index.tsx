@@ -10,6 +10,7 @@ import { useBasementIntro } from './use-intro'
  * Enter timeline: veil fades, then STAY and PRIME mount together. PRIME unmounts on leave.
  * The booking CTA keeps its resting slot and fades in only after STAY has landed.
  * Franchise is a full-width gold band at the top of the contact row.
+ * The address sits under the band, on the contact background, and copies on click.
  * The band is only as tall as its contents, so the sky keeps the rest.
  * Logo and nav sit on the left. Contacts sit on the right:
  * Each city name sits on a rule above its venues. Opera is the Wrocław venue.

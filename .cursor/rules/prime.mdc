@@ -27,7 +27,7 @@ Questions (`src/site/sections/scene-questions.tsx`) is the Q&A list after review
 
 Addresses in the nav opens `src/site/sections/locations`. Atmosphere (`src/site/sections/atmosphere`) is the masonry after questions.
 
-Franchise is a mailto in the basement.
+Franchise opens a Gmail draft from the basement. The address sits under the band and copies on click.
 
 ## Prose
 

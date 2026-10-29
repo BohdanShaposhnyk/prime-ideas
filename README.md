@@ -42,4 +42,4 @@ Atmosphere (`src/site/sections/atmosphere`) is the masonry after questions.
 
 Reviews (`src/site/sections/scene-reviews`) is the Google review strip after locations. The header and footer label it Reviews.
 
-Franchise is a mailto in the basement (`franchise@premiumlounge.club`).
+Franchise opens a Gmail draft from the basement. The address (`franchise@premiumlounge.club`) sits under the band and copies on click.
